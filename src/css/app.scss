@@ -1,0 +1,32 @@
+// app global css in SCSS form
+
+@font-face {
+  font-family: space_mono;
+  src: url('../assets/fonts/Space_Mono/regular.ttf');
+}
+
+/** EXO FONT */
+@font-face {
+  font-family: exo;
+  src: url('../assets/fonts/Exo/regular.ttf');
+}
+
+/** ANEK FONT */
+@font-face { font-family: anek; src: url('../assets/fonts/Anek/regular.ttf'); }
+@font-face { font-family: "anek-md"; src: url('../assets/fonts/Anek/medium.ttf'); }
+@font-face { font-family: "anek-bold"; src: url('../assets/fonts/Anek/bold.ttf'); }
+@font-face { font-family: "anek-xbold"; src: url('../assets/fonts/Anek/xbold.ttf'); }
+@font-face { font-family: "anek-light"; src: url('../assets/fonts/Anek/light.ttf'); }
+@font-face { font-family: "anek-thin"; src: url('../assets/fonts/Anek/thin.ttf'); }
+
+
+.space_mono{ font-family: space_mono; }
+.exo{ font-family: exo; }
+.anek{ font-family: anek; }
+.anek-md{ font-family: "anek-md"; }
+.anek-bld{ font-family: "anek-bold"; }
+.anek-xbld{ font-family: "anek-xbold"; }
+.anek-lg{ font-family: "anek-light"; }
+.anek-thin{ font-family: "anek-thin"; }
+
+.seeme{border:1px dashed black;}
