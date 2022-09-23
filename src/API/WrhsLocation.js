@@ -11,5 +11,10 @@ export default{
   structure(wid,lid){
     let burl = `store/${piniaAccount.join}/warehouses/${wid}/section/${lid}/structure`;
     return vizapi.get(burl).then( done => done.data ).catch( fail => { return {error:fail.response} });
+  },
+
+  sectionate(data,wid,lid){
+    let burl = `store/${piniaAccount.join}/warehouses/${wid}/section/${lid}/structure`;
+    return vizapi.post(burl,data).then( done => done.data ).catch( fail => { return {error:fail.response} });
   }
 }

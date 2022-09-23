@@ -17,8 +17,7 @@
             <q-item-label class="anek-bld">{{section.path}}</q-item-label>
           </q-item-section>
           <q-item-section>
-            <!-- <q-item-label caption class="text-grey-6">{{warehouse.type.name}}</q-item-label> -->
-            <q-item-label>{{section.name}}</q-item-label>
+            <q-item-label>{{section.name}} <span class="text-grey-6">({{section.alias}})</span></q-item-label>
           </q-item-section>
           <q-item-section side>
             <q-icon name="fas fa-chevron-right" size="10px" color="secondary"/>
@@ -31,8 +30,8 @@
     </q-card>
   </div>
 
-  <q-dialog v-model="wndSectionator.state">
-    <SectionatorLoc :sections="sectionsdb" @add="add"/>
+  <q-dialog v-model="wndSectionator.state" :persistent="wndSectionator.block">
+    <SectionatorLoc :sections="sectionsdb" @add="sectionate"/>
   </q-dialog>
 </template>
 
@@ -44,7 +43,6 @@
   import { useWarehouseStore } from 'stores/Warehouse';
   import SectionatorLoc from 'src/components/Warehouse/SectionatorLoc.vue';
   import Lapi from 'src/API/WrhsLocation';
-  import Wapi from 'src/API/WarehouseApi';
 
   const $q = useQuasar();
   const $route = useRoute();
@@ -52,7 +50,7 @@
   const piniaAccount = useAccountStore();
   const piniaWarehouse = useWarehouseStore();
   const sectionsdb = ref([]);
-  const wndSectionator = ref({state:false});
+  const wndSectionator = ref({state:false,block:false});
 
   const $emit = defineEmits(['setloc']);
 
@@ -66,12 +64,21 @@
     sectionsdb.value = resp.sections;
 
     $q.loading.hide();
-
   };
 
   const open = (lid) => $router.push(`/store/${piniaAccount.join}/almacenes/${$route.params.wid}/seccion/${lid}/estructura`);
-  const add = async (data) => {
-    const resp = await Wapi.sectionate(data,$route.params.wid);
-    console.log(resp);
+
+  const sectionate = async (data) => {
+    wndSectionator.value.block = true;
+    const resp = await Lapi.sectionate(data,$route.params.wid,$route.params.lid);
+    resp.createds.forEach(loc => { sectionsdb.value.push(loc); });
+
+    $q.notify({
+      icon:'done',
+      color:'positive',
+      message:`Seccionamiento completado!`
+    });
+
+    wndSectionator.value.state = false;
   }
 </script>

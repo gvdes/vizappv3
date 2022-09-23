@@ -17,7 +17,7 @@
             <q-item-label class="anek-bld">{{section.path}}</q-item-label>
           </q-item-section>
           <q-item-section>
-            <q-item-label>{{section.name}}</q-item-label>
+            <q-item-label>{{section.name}} <span class="text-grey-6">({{section.alias}})</span></q-item-label>
           </q-item-section>
           <q-item-section side>
             <q-icon name="fas fa-chevron-right" size="10px" color="secondary"/>
@@ -80,15 +80,15 @@
 
   const sectionate = async (data) => {
     wndSectionator.value.block = true;
-
     const resp = await Wapi.sectionate(data,$route.params.wid);
-
     resp.createds.forEach(loc => { sectionsdb.value.push(loc); });
+
     $q.notify({
       icon:'done',
       color:'positive',
       message:`Seccionamiento completado!`
     });
+
     wndSectionator.value.state = false;
   }
 </script>
