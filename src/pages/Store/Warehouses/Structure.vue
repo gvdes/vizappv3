@@ -1,6 +1,5 @@
 <template>
   <div class="q-pa-md">
-    {{piniaWarehouse.$state}}
     <q-card flat bordered>
       <q-card-section horizontal class="items-center">
         <q-card-section class="col" v-if="sectionsdb.length">Buscar</q-card-section>
@@ -35,8 +34,8 @@
     </q-card>
   </div>
 
-  <q-dialog v-model="wndSectionator.state" persistent>
-    <SectionatorLoc />/>
+  <q-dialog v-model="wndSectionator.state" :persistent="wndSectionator.block">
+    <SectionatorLoc :sections="sectionsdb" @add="sectionate"/>
   </q-dialog>
 </template>
 
@@ -46,6 +45,7 @@
   import { useQuasar, LocalStorage, Loading } from 'quasar';
   import { useAccountStore } from 'stores/Account';
   import { useWarehouseStore } from 'stores/Warehouse';
+
   import Wapi from 'src/API/WarehouseApi';
   import SectionatorLoc from 'src/components/Warehouse/SectionatorLoc.vue';
 
@@ -53,9 +53,8 @@
   const $route = useRoute();
   const $router = useRouter();
   const piniaAccount = useAccountStore();
-  const piniaWarehouse = useWarehouseStore();
   const sectionsdb = ref([]);
-  const wndSectionator = ref({state:false});
+  const wndSectionator = ref({state:false,block:false});
 
   onBeforeMount(async() => { init(); });
 
@@ -77,5 +76,19 @@
 
   const open = (lid) => {
     $router.push(`/store/${piniaAccount.join}/almacenes/${$route.params.wid}/seccion/${lid}/estructura`);
+  }
+
+  const sectionate = async (data) => {
+    wndSectionator.value.block = true;
+
+    const resp = await Wapi.sectionate(data,$route.params.wid);
+
+    resp.createds.forEach(loc => { sectionsdb.value.push(loc); });
+    $q.notify({
+      icon:'done',
+      color:'positive',
+      message:`Seccionamiento completado!`
+    });
+    wndSectionator.value.state = false;
   }
 </script>

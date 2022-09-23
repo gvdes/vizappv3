@@ -1,34 +1,33 @@
 <template>
-  <q-page>
-    <div class="bg-white row items-center">
-      <div class="col-sm col-xs-12">
-        <q-btn
-          dense flat no-caps
-          :label="`Almacen ${warehouse ? warehouse.name : ''}`"
-          class="anek-bld text-grey-9"
-          icon="fas fa-chevron-left"
-          @click="$router.replace(`/store/${$route.params.idstore}/almacenes/${$route.params.wid}/estructura`)"
-        />
+  <div class="bg-white row items-center">
+    <div class="col-sm col-xs-12">
+      <q-btn
+        dense flat no-caps
+        :label="`Almacen ${warehouse ? warehouse.name : ''}`"
+        class="anek-bld text-grey-9"
+        icon="fas fa-chevron-left"
+        @click="$router.replace(`/store/${$route.params.idstore}/almacenes/${$route.params.wid}/estructura`)"
+      />
 
-        <template v-for="(path,idx) in fullpath" :key="path.id">
-          <q-icon name="fas fa-chevron-right" size="10px" color="secondary"/>
-          <q-btn :dense="!isMob" flat no-caps :disable="(idx==(fullpath.length-1))" :label="(isMob ? path.alias:path.name)" />
-        </template>
-      </div>
-
-      <q-tabs
-        inline-label align="right"
-        class="text-primary col-sm col-xs-12"
-      >
-        <q-route-tab exact label="estructura" :to="`/store/${$route.params.idstore}/almacenes/${$route.params.wid}/seccion/${$route.params.lid}/estructura`"/>
-        <q-route-tab label="productos" :to="`/store/${$route.params.idstore}/almacenes/${$route.params.wid}/seccion/${$route.params.lid}/productos`"/>
-        <q-route-tab label="resumen" :to="`/store/${$route.params.idstore}/almacenes/${$route.params.wid}/seccion/${$route.params.lid}/resumen`"/>
-      </q-tabs>
+      <template v-for="(path,idx) in fullpath" :key="path.id">
+        <q-icon name="fas fa-chevron-right" size="10px" color="secondary"/>
+        <q-btn :dense="!isMob" flat no-caps :disable="(idx==(fullpath.length-1))" :label="(isMob ? path.alias:path.name)" />
+      </template>
     </div>
-    <q-separator />
 
-    <router-view />
-  </q-page>
+    <q-tabs
+      inline-label align="right"
+      class="text-primary col-sm col-xs-12"
+    >
+      <q-route-tab exact label="estructura" :to="`/store/${$route.params.idstore}/almacenes/${$route.params.wid}/seccion/${$route.params.lid}/estructura`"/>
+      <q-route-tab label="productos" :to="`/store/${$route.params.idstore}/almacenes/${$route.params.wid}/seccion/${$route.params.lid}/productos`"/>
+      <q-route-tab label="resumen" :to="`/store/${$route.params.idstore}/almacenes/${$route.params.wid}/seccion/${$route.params.lid}/resumen`"/>
+    </q-tabs>
+  </div>
+  <q-separator />
+
+  <!-- MOSTRARA ESTRUCTURA || PRODUCTOS || RESUMEN DE LA UBICACION-->
+  <router-view />
 </template>
 
 <script setup>
@@ -60,6 +59,7 @@
     warehouse.value = resp.warehouse;
     location.value = resp.location;
     fullpath.value = resp.fullpath.reverse();
+    piniaWarehouse.setLocation(resp.location);
 
     $q.loading.hide();
 

@@ -1,10 +1,9 @@
 <template>
   <div class="q-pa-md">
-    {{piniaWarehouse.$state}}
     <q-card flat bordered>
       <q-card-section horizontal class="items-center">
         <q-card-section class="col" v-if="sectionsdb.length">Buscar</q-card-section>
-        <q-card-section class="col text-right" ><q-btn color="primary" icon="add" /></q-card-section>
+        <q-card-section class="col text-right" ><q-btn color="primary" icon="add" @click="wndSectionator.state = true" /></q-card-section>
       </q-card-section>
 
       <q-separator />
@@ -31,6 +30,10 @@
       </q-card-section>
     </q-card>
   </div>
+
+  <q-dialog v-model="wndSectionator.state">
+    <SectionatorLoc :sections="sectionsdb" @add="add"/>
+  </q-dialog>
 </template>
 
 <script setup>
@@ -39,7 +42,9 @@
   import { useQuasar, LocalStorage, Loading } from 'quasar';
   import { useAccountStore } from 'stores/Account';
   import { useWarehouseStore } from 'stores/Warehouse';
+  import SectionatorLoc from 'src/components/Warehouse/SectionatorLoc.vue';
   import Lapi from 'src/API/WrhsLocation';
+  import Wapi from 'src/API/WarehouseApi';
 
   const $q = useQuasar();
   const $route = useRoute();
@@ -47,6 +52,7 @@
   const piniaAccount = useAccountStore();
   const piniaWarehouse = useWarehouseStore();
   const sectionsdb = ref([]);
+  const wndSectionator = ref({state:false});
 
   const $emit = defineEmits(['setloc']);
 
@@ -57,7 +63,6 @@
 
     const resp = await Lapi.structure($route.params.wid,$route.params.lid);
     console.log(resp);
-
     sectionsdb.value = resp.sections;
 
     $q.loading.hide();
@@ -65,5 +70,8 @@
   };
 
   const open = (lid) => $router.push(`/store/${piniaAccount.join}/almacenes/${$route.params.wid}/seccion/${lid}/estructura`);
-
+  const add = async (data) => {
+    const resp = await Wapi.sectionate(data,$route.params.wid);
+    console.log(resp);
+  }
 </script>

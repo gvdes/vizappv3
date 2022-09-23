@@ -1,29 +1,32 @@
 <template>
   <q-page>
-    <div class="bg-white row items-center">
-      <div class="col-sm col-xs-12">
-        <q-btn
-          flat dense no-caps
-          label="Almacenes"
-          class="anek-bld text-grey-9"
-          icon="fas fa-chevron-left"
-          @click="$router.replace(`/store/${$route.params.idstore}/almacenes/`)"
-        />
-        <q-icon name="fas fa-chevron-right" size="10px" color="secondary"/>
-        <q-btn flat dense disable :label="warehouse ? warehouse.name : ''"/>
+    <template v-if="showHead">
+      <div class="bg-white row items-center">
+        <div class="col-sm col-xs-12">
+          <q-btn
+            flat dense no-caps
+            label="Almacenes"
+            class="anek-bld text-grey-9"
+            icon="fas fa-chevron-left"
+            @click="$router.replace(`/store/${$route.params.idstore}/almacenes/`)"
+          />
+          <q-icon name="fas fa-chevron-right" size="10px" color="secondary"/>
+          <q-btn flat dense disable :label="warehouse ? warehouse.name : ''"/>
+        </div>
+
+        <q-tabs
+          inline-label align="right"
+          class="text-primary col-md col-xs-12"
+        >
+          <q-route-tab name="structure" exact label="estructura" :to="`/store/${$route.params.idstore}/almacenes/${$route.params.wid}/estructura`"/>
+          <q-route-tab name="products" label="productos" :to="`/store/${$route.params.idstore}/almacenes/${$route.params.wid}/productos`"/>
+          <q-route-tab name="resume" label="resumen" :to="`/store/${$route.params.idstore}/almacenes/${$route.params.wid}/resumen`"/>
+        </q-tabs>
       </div>
+      <q-separator />
+    </template>
 
-      <q-tabs
-        inline-label align="right"
-        class="text-primary col-md col-xs-12"
-      >
-        <q-route-tab name="structure" exact label="estructura" :to="`/store/${$route.params.idstore}/almacenes/${$route.params.wid}/estructura`"/>
-        <q-route-tab name="products" label="productos" :to="`/store/${$route.params.idstore}/almacenes/${$route.params.wid}/productos`"/>
-        <q-route-tab name="resume" label="resumen" :to="`/store/${$route.params.idstore}/almacenes/${$route.params.wid}/resumen`"/>
-      </q-tabs>
-    </div>
-    <q-separator />
-
+    <!-- MOSTRARA ESTRUCTURA || PRODUCTOS || RESUMEN DEL ALMACEN-->
     <router-view />
 
     <q-dialog v-model="wndRestringed.state" persistent no-backdrop-dismiss no-esc-dismiss>
@@ -37,7 +40,7 @@
 </template>
 
 <script setup>
-  import { ref, watch, onBeforeMount, computed } from 'vue';
+  import { ref, watch, onBeforeMount, onDeactivated, computed } from 'vue';
   import { useRoute, useRouter } from 'vue-router';
   import { useQuasar, LocalStorage, Loading } from 'quasar';
   import { useAccountStore } from 'stores/Account';
@@ -58,6 +61,8 @@
     $q.loading.show({message:"Cargando Almacen..."});
 
     const resp = await Wapi.open($route.params.wid);
+    piniaWarehouse.$reset();
+
 
     if(resp.error){
       let ercode = resp.error.status;
@@ -67,8 +72,11 @@
       piniaWarehouse.setWarehouse(resp.warehouse);
       console.log("%cPase por el index del almacen","font-size:1.5em;color:red;");
     }
+
+    $q.loading.hide();
   }
 
   const isMob = computed(() => $q.platform.is.mobile);
+  const showHead = computed(() => ($route.name!="wrhloc"&&$route.name!="wrhlocstructure"&&$route.name!="wrhlocproducts"&&$route.name!="wrhlocresume"));
 
 </script>
