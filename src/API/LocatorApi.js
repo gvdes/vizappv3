@@ -3,18 +3,18 @@ import { useAccountStore } from 'stores/Account';
 const piniaAccount = useAccountStore();
 
 export default{
-  open(wid,lid){
-    let burl = `store/${piniaAccount.join}/warehouses/${wid}/section/${lid}`;
+  location(loc){
+    let burl = `store/${piniaAccount.join}/locator/location/${loc}`;
     return vizapi.get(burl).then( done => done.data ).catch( fail => { return {error:fail.response} });
   },
 
-  structure(wid,lid){
-    let burl = `store/${piniaAccount.join}/warehouses/${wid}/section/${lid}/structure`;
+  product(code){
+    let burl = `store/${piniaAccount.join}/locator/product/${code}`;
     return vizapi.get(burl).then( done => done.data ).catch( fail => { return {error:fail.response} });
   },
 
-  sectionate(data,wid,lid){
-    let burl = `store/${piniaAccount.join}/warehouses/${wid}/section/${lid}/structure`;
+  toggle(data){
+    let burl = `store/${piniaAccount.join}/locator/toggle`;
     return vizapi.post(burl,data).then( done => done.data ).catch( fail => { return {error:fail.response} });
-  },
+  }
 }
