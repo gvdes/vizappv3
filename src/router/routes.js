@@ -35,6 +35,7 @@ const routes = [
           { path:'', name:'wrhs', component: () => import('pages/Store/Warehouses/Index.vue') },
           { path:'pedidos', component: () => import('pages/Store/Warehouses/Orders.vue') },
           { path:'resurtido', component: () => import('pages/Store/Warehouses/Restock.vue') },
+          { path:'resurtido/:rid', component: () => import('pages/Store/Warehouses/RestockOrder.vue') },
           { path:'ubicador', component: () => import('pages/Apps/Locator.vue') },
           {
             path: ':wid',

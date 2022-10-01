@@ -26,6 +26,7 @@ module.exports = configure(function (/* ctx */) {
       'account',
       'kraken',
       'axios',
+      'qdate'
     ],
 
     // https://v2.quasar.dev/quasar-cli-vite/quasar-config-js#css
