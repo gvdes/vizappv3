@@ -18,9 +18,9 @@
           inline-label align="right"
           class="text-primary col-md col-xs-12"
         >
-          <q-route-tab name="structure" exact label="estructura" :to="`/store/${$route.params.idstore}/almacenes/${$route.params.wid}/estructura`"/>
+          <q-route-tab name="resume" label="inicio" :to="`/store/${$route.params.idstore}/almacenes/${$route.params.wid}/inicio`"/>
           <q-route-tab name="products" label="productos" :to="`/store/${$route.params.idstore}/almacenes/${$route.params.wid}/productos`"/>
-          <q-route-tab name="resume" label="resumen" :to="`/store/${$route.params.idstore}/almacenes/${$route.params.wid}/resumen`"/>
+          <q-route-tab name="structure" exact label="estructura" :to="`/store/${$route.params.idstore}/almacenes/${$route.params.wid}/estructura`"/>
         </q-tabs>
       </div>
       <q-separator />

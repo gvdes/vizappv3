@@ -43,9 +43,9 @@ const routes = [
               {
                 path:'', name:'wrh', component: () => import('pages/Store/Warehouses/Warehouse.vue'),
                 children:[
-                  { path: 'estructura', name:'wrhstructure', component: () => import('pages/Store/Warehouses/Structure.vue') },
+                  { path: 'inicio', name:'wrhresume', component: () => import('src/pages/Store/Warehouses/Resume.vue') },
                   { path: 'productos', name:'wrhproducts', component: () => import('pages/Store/Warehouses/Products.vue') },
-                  { path: 'resumen', name:'wrhresume', component: () => import('src/pages/Store/Warehouses/Resume.vue') },
+                  { path: 'estructura', name:'wrhstructure', component: () => import('pages/Store/Warehouses/Structure.vue') },
                   {
                     path:'seccion/:lid', name:'wrhloc', component: () => import('pages/Store/WrhsLocation/Index.vue'),
                     children:[

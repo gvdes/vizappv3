@@ -34,6 +34,7 @@
               </q-form>
             </q-menu>
           </q-btn>
+          <q-btn flat rounded icon="fas fa-heart-pulse" @click="wndMinMax.state = true;"/>
           <q-btn flat rounded icon="support" />
         </div>
       </div>
@@ -61,7 +62,7 @@
         </q-list>
       </q-card>
 
-      <q-card v-if="reqstome.length">
+      <q-card v-if="reqstome.length" class="q-mb-md">
         <q-card-section>Mis pedidos</q-card-section>
         <q-list separator>
           <q-item clickable v-ripple v-for="(order) in reqstome" :key="order.id" @click="$router.push(`/store/${piniaAccount.join}/almacenes/resurtido/${order.id}`)">
@@ -76,22 +77,35 @@
           </q-item>
         </q-list>
       </q-card>
+
+      <q-dialog persisten no-esc-dismiss no-backdrop-dismiss v-model="wndMinMax.state">
+        <div class="bg-white">
+          <div class="row q-pa-md items-center justify-between">
+            <span>Productos agotados o por agotarse</span>
+            <q-btn dense flat unelevated color="primary" icon="close" v-close-popup />
+          </div>
+          <q-separator />
+          <HealthStockViewer :stores="storesdb" @startorder="setOrderAuto"/>
+        </div>
+      </q-dialog>
     </div>
   </q-page>
 </template>
 
 <script setup>
-  import { ref, watch, onBeforeMount, computed } from 'vue';
+  import { ref, onBeforeMount, computed } from 'vue';
   import { useRoute, useRouter } from 'vue-router';
   import { useQuasar } from 'quasar';
   import { useAccountStore } from 'stores/Account';
   import RestockApi from 'src/API/RestockApi';
+  import HealthStockViewer from 'src/components/Warehouse/HealthStockViewer.vue';
   import dayjs from 'dayjs';
 
   const $q = useQuasar();
   const $route = useRoute();
   const $router = useRouter();
   const piniaAccount = useAccountStore();
+  const wndMinMax = ref({ state:false });
 
   const views = [
     { id:"day", label:"Hoy" },
@@ -103,10 +117,11 @@
     init:dayjs(Date.now()).startOf('day'),
     end:dayjs(Date.now()).endOf('day')
   });
+
   const states = ref([]);
   const ordersdb = ref([]);
-  const storesdb = ref(null);
-  const neworder = ref({ to:null });
+  const storesdb = ref([]);
+  const neworder = ref({ to:null, type:1 });
   const view = ref(views[0]);
   const rangeDates = ref({ from: null, to: null });
 
@@ -135,16 +150,22 @@
     $q.loading.hide();
   }
 
+  const setOrderAuto = (data) => {
+    console.log(data);
+    console.log("Iniciando pedido automatico");
+    neworder.value = data;
+
+    create();
+  }
+
   const create = async () => {
     $q.loading.show({message:"Creando, porfavor espera"});
 
-    let data = { origin:neworder.value.to.id };
-    console.log(data);
+    let data = { origin:neworder.value.to.id, type:neworder.value.type };
     const resp = await RestockApi.create(data);
-
     console.log(resp);
-    ordersdb.value.push(resp.order);
-    $router.push(`/store/${piniaAccount.join}/almacenes/resurtido/${resp.order.id}`)
+    // ordersdb.value.push(resp.order);
+    // $router.push(`/store/${piniaAccount.join}/alma cenes/resurtido/${resp.order.id}`)
     $q.loading.hide();
   }
 

@@ -35,12 +35,13 @@
     "Que gusto verte!",
     "Excelente dia!",
     "Que sea un gran dia!",
-    "Paciencia crack... paciencia.",
+    "Paciencia crack, paciencia.",
     "Como va todo?",
     "Empecemos...",
     "Manos a la obra!",
     "Exito!",
-    "Me la pelas! xD"
+    "Me la pelas! xD",
+    "Vacaciones??... pff...",
   ]);
 
   onBeforeMount(() => {

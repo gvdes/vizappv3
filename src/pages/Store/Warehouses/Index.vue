@@ -14,6 +14,17 @@
     </div>
 
     <div class="q-pa-md">
+      <q-card class="q-mb-md" flat bordered>
+        <q-card-section class="col-xs-12">
+          <ProductFinder @itemtapped="finderFound" with-locations />
+        </q-card-section>
+
+        <q-separator />
+        <q-card-section v-if="pfinder.product">
+          <CardProduct :item="pfinder.product"/>
+        </q-card-section>
+      </q-card>
+
       <q-card flat bordered class="q-mb-md">
         <q-list v-if="warehousesdb.length" class="q-py-md">
           <q-item clickable v-ripple v-for="(warehouse) in warehousesdb" :key="warehouse.id" @click="open(warehouse.id)">
@@ -36,24 +47,6 @@
           No hay almacenes aqui
         </q-card-section>
       </q-card>
-
-      <q-card flat bordered>
-        <q-card-section>Buscar <small class="text-grey-6 anek-lg">(producto o seccion)</small></q-card-section>
-
-        <q-card-section>
-          <q-form>
-            <q-input rounded outlined v-model="finder.query" label="..." dense input-class="anek-bld text-uppercase text-h6">
-              <template v-slot:prepend>
-                <q-icon name="search" />
-              </template>
-            </q-input>
-          </q-form>
-        </q-card-section>
-
-        <q-card-section v-if="finder.results">
-          Lorem ipsum dolor sit amet
-        </q-card-section>
-      </q-card>
     </div>
   </q-page>
 </template>
@@ -64,22 +57,26 @@
   import { useQuasar, LocalStorage, Loading } from 'quasar';
   import { useAccountStore } from 'stores/Account';
   import Wapi from 'src/API/WarehouseApi';
+  import ProductFinder from 'src/components/ProductFinder.vue';
+  import CardProduct from 'src/components/CardProduct.vue';
+
+  /** R E F E R E N C E S */
 
   const $q = useQuasar();
   const $router = useRouter();
   const piniaAccount = useAccountStore();
   const warehousesdb = ref([]);
   const types = ref([]);
-
   const iptsearch = ref(null);
+  const pfinder = ref({ product:null });
 
-  const finder = ref({
-    query:"",
-    results:null
-  });
-
+  /** H O O K S  */
   onBeforeMount( async () => { init(); });
 
+  /** C O M P U T E D S */
+  const isMobile = computed(() => $q.platform.is.mobile);
+
+  /** M E T H O D S  */
   const init = async () => {
     $q.loading.show({message:"Cargando Almacenes..."});
 
@@ -98,9 +95,13 @@
 
   const open = (id) => {
     console.log(id);
-    $router.push(`/store/${piniaAccount.join}/almacenes/${id}/estructura`);
+    $router.push(`/store/${piniaAccount.join}/almacenes/${id}/inicio`);
   }
 
-  const isMobile = computed(() => $q.platform.is.mobile);
+  const finderFound = (item) => {
+    console.log("a product was getted");
+    console.log(item);
+    pfinder.value.product = item;
+  }
 
 </script>

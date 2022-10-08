@@ -12,5 +12,10 @@ export default{
   create(data){
     let burl = `store/${piniaAccount.join}/restock`;
     return vizapi.post(burl,data).then( done => done.data ).catch( fail => { return {error:fail.response} });
+  },
+
+  outofstock(){
+    let burl = `store/${piniaAccount.join}/restock/outofstock`;
+    return vizapi.get(burl).then( done => done.data ).catch( fail => { return {error:fail.response} });
   }
 }

@@ -186,7 +186,7 @@
                 <q-item-label class="text-dark anek-bld">{{stock.warehouse.alias}}</q-item-label>
                 <q-item-label caption>{{stock.warehouse.name}}</q-item-label>
               </q-item-section>
-              <q-item-section avatar class="text-h6 anek-bld">{{stock.current}}</q-item-section>
+              <q-item-section avatar class="text-h6 anek-bld">{{stock._current}}</q-item-section>
             </q-item>
           </q-list>
         </q-card-section>
@@ -235,8 +235,8 @@
   const isMobile = computed(() => $q.platform.is.mobile);
   const locandpro = computed(() => (product.value.data&&location.value.section));
   const linkExist = computed(() => locandpro.value ? (location.value.products.find( p => p.id==product.value.data.id ) ? true : false) : false )
-  const glstock = computed(() => { return stocks => stocks.reduce( ( carry, w) => carry+w.current, 0) } );
-  // const glstock = computed(() => { return stocks => stocks.filter( w => w._type <= 2).reduce( ( carry, w) => carry+w.current, 0) } );
+  const glstock = computed(() => { return stocks => stocks.reduce( ( carry, w) => carry+w._current, 0) } );
+  // const glstock = computed(() => { return stocks => stocks.filter( w => w._type <= 2).reduce( ( carry, w) => carry+w._current, 0) } );
 
   const validateLocation = async () => {
     if(location.value.target){
