@@ -40,7 +40,7 @@
 </template>
 
 <script setup>
-  import { ref, watch, onBeforeMount, onDeactivated, computed } from 'vue';
+  import { ref, watch, onBeforeMount, computed } from 'vue';
   import { useRoute, useRouter } from 'vue-router';
   import { useQuasar, LocalStorage, Loading } from 'quasar';
   import { useAccountStore } from 'stores/Account';

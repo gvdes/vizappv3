@@ -17,5 +17,15 @@ export default{
   outofstock(){
     let burl = `store/${piniaAccount.join}/restock/outofstock`;
     return vizapi.get(burl).then( done => done.data ).catch( fail => { return {error:fail.response} });
+  },
+
+  orderOpen(rid){
+    let burl = `store/${piniaAccount.join}/restock/${rid}`;
+    return vizapi.get(burl).then( done => done.data ).catch( fail => { return {error:fail.response} });
+  },
+
+  preview(rid){
+    let burl = `store/${piniaAccount.join}/restock/preview/${rid}`;
+    return vizapi.get(burl).then( done => done.data ).catch( fail => { return {error:fail.response} });
   }
 }

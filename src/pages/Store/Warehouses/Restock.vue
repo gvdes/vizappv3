@@ -163,9 +163,8 @@
 
     let data = { origin:neworder.value.to.id, type:neworder.value.type };
     const resp = await RestockApi.create(data);
-    console.log(resp);
     // ordersdb.value.push(resp.order);
-    // $router.push(`/store/${piniaAccount.join}/alma cenes/resurtido/${resp.order.id}`)
+    $router.push(`/store/${piniaAccount.join}/alma cenes/resurtido/${resp.order.id}`)
     $q.loading.hide();
   }
 

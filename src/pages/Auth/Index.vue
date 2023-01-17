@@ -66,7 +66,7 @@
       <q-card class="q-pa-sm">
         <q-card-section>
           <div class="anek-lg text-h4">Hola <span class="text-primary anek-md">{{account.name}}</span></div>
-          <span class="text-h6 anek-lg">Bienvenid{{lg}} a Grupo Vizcarra</span>
+          <span class="text-h6 anek-lg">Bienvenid{{lg}} a VizApp</span>
         </q-card-section>
         <q-card-section class="text-center">
           <q-icon name="fas fa-heart fa-beat" size="20px" color="red" style="--fa-animation-duration: 1.5s;"/><br/>Gracias por estar aqui.<br/> <small>espera...</small>
@@ -127,15 +127,17 @@
     }else{
       console.log(resp);
       account.value = resp.account;
-      piniaAccount.setJoin(account.value._store);// llenat el join a la tienda (por default la tienda default del usuario logueado)
-      piniaAccount.init(account.value, resp.token);
+      // piniaAccount.setJoin(account.value._store); // llena el join a la tienda (por default la tienda default del usuario logueado)
+      // piniaAccount.init(account.value, resp.token);
 
       if(account.value._state==1){
-        wndWelcome.value.state = true;
-        setTimeout(() => { $router.replace('/passconfig'); }, 2000);
+        console.log("Contraseña nueva!!");
+        // wndWelcome.value.state = true;
+        // setTimeout(() => { $router.replace('/passconfig'); }, 2000);
       }else{
-        $q.loading.show({ message:`Hola ${piniaAccount.account.nick}...` });
-        setTimeout(() => $router.replace(`/store/${piniaAccount.join}`), 100);
+        console.log("Iniciando Sesion...");
+        $q.loading.show({ message:`Hola <b>${account.value.nick}</b> ...`, html:true });
+        // setTimeout(() => $router.replace(`/store/${piniaAccount.join}`), 100);
       }
     }
   };
