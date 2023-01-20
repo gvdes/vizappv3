@@ -7,8 +7,25 @@
   >
     <!-- QScrollArea is optional -->
     <q-scroll-area class="fit">
-      <div class="bg-grey-1">
-        <q-btn color="primary" flat icon="fas fa-power-off" class="full-width" @click="dialog = !dialog"/>
+      <div class="bg-grey-1 bg-grey-2">
+        <q-card flat class="transparent">
+          <q-card-section horizontal class="bg-primary text-white">
+            <q-card-section class="row items-center q-pr-none">
+              <q-btn flat round @click="$router.push('/profile')">
+                <q-avatar size="50px">
+                  <q-img :src="piniaAccount.avatar"/>
+                </q-avatar>
+              </q-btn>
+            </q-card-section>
+            <q-card-section class="col">
+              <div class="text-bold text-h6">{{ account.nick }}</div>
+              <div>{{ account.name }} {{ account.surnames }}</div>
+              <div>{{ rol.name }}</div>
+              <div class="text-indigo-3 text-bold">ID: {{ account.id }}</div>
+            </q-card-section>
+          </q-card-section>
+          <q-btn color="primary" flat icon="fas fa-power-off" class="full-width" @click="dialog = !dialog"/>
+        </q-card>
       </div>
       <q-separator/>
       <treeModulesApp />
@@ -52,7 +69,9 @@
     $router.replace('/login');
   };
 
-  const account = computed( () =>  piniaAccount.account );
+  const account = computed( () => piniaAccount.account );
+  const rol = computed( () => piniaAccount.rol );
+  const accverified = computed( () => piniaAccount.verified );
 
   defineExpose({toggle});
 </script>

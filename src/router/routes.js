@@ -24,6 +24,14 @@ const routes = [
   },
 
   {
+    path: '/profile',
+    component: () => import('layouts/ProfileLYT.vue'),
+    // children: [
+    //   { path: '', component: () => import('pages/Zent/Index.vue') }
+    // ]
+  },
+
+  {
     path: '/store/:idstore',
     component: () => import('layouts/StoreLYT.vue'),
     children: [

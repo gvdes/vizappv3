@@ -11,7 +11,7 @@
           </q-toolbar>
 
           <q-card-section v-if="acc._state==1" class="transparent">
-            <span class="text-h6 anek-lg">Bienvenide <span class="text-primary anek-bld">{{ acc.name }}</span></span> <br />Para iniciar debes configurar una contraseña
+            <span class="text-h6 anek-lg"><span class="text-primary anek-bld">{{ acc.name }}</span></span>, por favor configura una contraseña nueva:
           </q-card-section>
           <!-- <q-card-section >Para iniciar, debes configurar una contraseña...</q-card-section>
           <q-card-section v-else>Nueva contraseña</q-card-section> -->

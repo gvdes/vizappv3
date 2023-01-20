@@ -25,7 +25,8 @@ export const useAccountStore = defineStore('account', {
     unjoinStores(){ return this.stores ? this.stores.filter( s => s.id!=this.join ) : [];},
     submodulesOf(){ return id => { return this.modules ? this.modules.filter( m => m.module.root==id ) : [] } },
     aim(){ return moduleid => { return this.permissions ? this.permissions.find( a => a._module==moduleid ) : null } },// retorna el permiso correspondiente al modulo en busqueda
-    avatar(){ return this.account.avatar ? `src/assets/avatares/${this.account.avatar}` : "src/assets/avatares/flat8.png"; }
+    avatar(){ return this.account.avatar ? `src/assets/avatares/${this.account.avatar}` : "src/assets/avatares/flat8.png"; },
+    verified(){ return (this.account.email_confirm&&this.account.phone_confirm) ?? false }
   },
 
   actions: {
@@ -69,6 +70,6 @@ export const useAccountStore = defineStore('account', {
 
     setJoin(data){ this.join = data; },
 
-    pinup(){ LocalStorage.set("account", this.$state); }
+    pinup(){ LocalStorage.set("account", this.$state); },
   }
 })
