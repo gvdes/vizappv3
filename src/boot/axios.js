@@ -1,12 +1,7 @@
 import { boot } from 'quasar/wrappers'
+import { Notify } from 'quasar'
 import axios from 'axios'
 
-// Be careful when using SSR for cross-request state pollution
-// due to creating a Singleton instance here;
-// If any client changes this (global) instance, it might be a
-// good idea to move this instance creation inside of the
-// "export default () => {}" function below (which runs individually
-// for each client)
 const vizapi = axios.create({
   baseURL: 'http://192.168.12.183/kraken/public/api'
   // baseURL: 'http://192.168.12.46/vizapi/public/api'
@@ -14,32 +9,26 @@ const vizapi = axios.create({
 });
 
 vizapi.interceptors.response.use( response => {
+  console.log("%cREQUEST DONE!!","color: #32ff7e; font-size:.8em; padding:5px 10px; border:1px solid #3ae374; margin:5px 0; font-weight:bold; background: #004D40;");
   return response;
-}, error => {
-
+}, error => { // Cualquier código de estado que este fuera del rango de 2xx causa la ejecución del error
   if(error.response){// hay conexion al servidor pero el status de repsuesta no es 200 status de respuesta
     if(error.response.status==511){
       // vaciar localstorage y redireccionar al inicio de sesion
       alert(error.response.data);
     }
-  }else{// este error salta cuando el servidro esta muerto
-    console.log("%cNememes el servidor no anda jalando!","background:red;padding:5px;font-size:2em;color:white;");
-    alert("Error: Sin conexion al servidor");
+  }else{// este error salta unicamente cuando el servidor esta muerto (response es null en el error del request)
+    console.log("%cERROR NETWORK","color:#e17055; padding:5px 10px; border:1px solid #d63031; margin:5px 0; font-weight:bold;");
+    Notify.create({
+      message: 'No se pudo establecer conexion al servidor',
+      color:"negative",
+      icon:"fas fa-cloud-bolt",
+      timeout:10000,
+      position:"center"
+    });
   }
 
-  return Promise.reject(error);
+  return Promise.reject({error});
 });
-
-// export default boot(({ app }) => {
-//   // for use inside Vue files (Options API) through this.$axios and this.$api
-
-//   app.config.globalProperties.$axios = axios
-//   // ^ ^ ^ this will allow you to use this.$axios (for Vue Options API form)
-//   //       so you won't necessarily have to import axios in each vue file
-
-//   app.config.globalProperties.$api = vizapi
-//   // ^ ^ ^ this will allow you to use this.$api (for Vue Options API form)
-//   //       so you can easily perform requests against your app's API
-// })
 
 export { vizapi }

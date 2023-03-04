@@ -1,32 +1,40 @@
 // app global css in SCSS form
 
-@font-face {
-  font-family: space_mono;
-  src: url('../assets/fonts/Space_Mono/regular.ttf');
-}
+/** SPACE_MONO FONT */
+@font-face { font-family:space_mono; src: url('../assets/fonts/Space_Mono/regular.ttf'); }
 
 /** EXO FONT */
-@font-face {
-  font-family: exo;
-  src: url('../assets/fonts/Exo/regular.ttf');
-}
+@font-face { font-family:exo; src: url('../assets/fonts/Exo/regular.ttf'); }
 
 /** ANEK FONT */
-@font-face { font-family: anek; src: url('../assets/fonts/Anek/regular.ttf'); }
-@font-face { font-family: "anek-md"; src: url('../assets/fonts/Anek/medium.ttf'); }
-@font-face { font-family: "anek-bold"; src: url('../assets/fonts/Anek/bold.ttf'); }
-@font-face { font-family: "anek-xbold"; src: url('../assets/fonts/Anek/xbold.ttf'); }
-@font-face { font-family: "anek-light"; src: url('../assets/fonts/Anek/light.ttf'); }
-@font-face { font-family: "anek-thin"; src: url('../assets/fonts/Anek/thin.ttf'); }
+@font-face { font-family:anek;          src: url('../assets/fonts/Anek/regular.ttf'); }
+@font-face { font-family:"anek-md";     src: url('../assets/fonts/Anek/medium.ttf'); }
+@font-face { font-family:"anek-semibold";   src: url('../assets/fonts/Anek/semibold.ttf'); }
+@font-face { font-family:"anek-bold";   src: url('../assets/fonts/Anek/bold.ttf'); }
+@font-face { font-family:"anek-xbold";  src: url('../assets/fonts/Anek/xbold.ttf'); }
+@font-face { font-family:"anek-light";  src: url('../assets/fonts/Anek/light.ttf'); }
+@font-face { font-family:"anek-xlight";  src: url('../assets/fonts/Anek/xlight.ttf'); }
+@font-face { font-family:"anek-thin";   src: url('../assets/fonts/Anek/thin.ttf'); }
 
 
 .space_mono{ font-family: space_mono; }
 .exo{ font-family: exo; }
-.anek{ font-family: anek; }
-.anek-md{ font-family: "anek-md"; }
-.anek-bld{ font-family: "anek-bold"; }
-.anek-xbld{ font-family: "anek-xbold"; }
-.anek-lg{ font-family: "anek-light"; }
-.anek-thin{ font-family: "anek-thin"; }
+.vfont{ font-family: anek; }
+.font-med{ font-family: "anek-md"; }
+.font-semibold{ font-family: "anek-semibold"; }
+.font-bold{ font-family: "anek-bold"; }
+.font-xbold{ font-family: "anek-xbold"; }
+.font-light{ font-family: "anek-light"; }
+.font-thin{ font-family: "anek-thin"; }
+
+.font-sm{ font-size: .9em; }
+.font-xsm{ font-size: .8em; }
+.font-xxsm{ font-size: .7em; }
+.font-xxxsm{ font-size: .6em; }
+
+.text-number{ font-family: space_mono; }
 
 .seeme{border:1px dashed black;}
+.dropzone{ background: $grey-2; border: 4px dashed $grey-5; }
+
+html,*{ font-family: anek; }

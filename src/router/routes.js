@@ -11,15 +11,26 @@ const routes = [
   },
 
   {
-    path: '/passconfig',
-    component: () => import('layouts/SetPassLYT.vue'),
+    path: '/welcome',
+    component: () => import('layouts/WelcomeLYT.vue'),
   },
 
   {
-    path: '/zent',
+    path: '/cluster',
     component: () => import('layouts/ZentLYT.vue'),
     children: [
       { path: '', component: () => import('pages/Zent/Index.vue') }
+    ]
+  },
+
+  {
+    path: '/multimedia',
+    component: () => import('layouts/VmediaLYT.vue'),
+    children: [
+      { path: '', component: () => import('pages/VMedia/Index.vue') },
+      { path: 'product', component: () => import('pages/VMedia/Product.vue') },
+      { path: 'channel', component: () => import('pages/VMedia/Channel.vue') },
+      { path: 'radio', component: () => import('pages/VMedia/Radio.vue') },
     ]
   },
 

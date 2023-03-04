@@ -2,7 +2,7 @@
   <div>
     <template v-if="espmodules.length">
       <q-list>
-        <q-item clickable v-ripple v-for="(module) in espmodules" :key="module._module">
+        <q-item clickable v-ripple v-for="(module) in espmodules" :key="module._module" @click="goto(module)">
           <q-item-section avatar>
             <q-icon :name="module.details.icon" color="secondary"/>
           </q-item-section>
@@ -32,8 +32,14 @@
 
   const $q = useQuasar();
   const piniaAccount = useAccountStore();
+  const $router = useRouter();
 
-  const espmodules = computed(() => piniaAccount.esp_modules.map( m => m.module) );
+  const espmodules = computed(() => piniaAccount.esp_modules.map( m => m.module).filter( m => m.root==0&&m.deep==0) );
   const stdmodules = computed(() => piniaAccount.std_modules.map( m => m.module).filter( m => m.root==0&&m.deep==0) );
 
+  const goto = (module)=>{
+    console.log(module.path);
+    // let store = piniaAccount.join;
+    $router.push(`/${module.path}`);
+  }
 </script>

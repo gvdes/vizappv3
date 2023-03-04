@@ -2,17 +2,15 @@ import { vizapi } from "src/boot/axios";
 
 export default{
   trySignin(data){
-    return vizapi.post('signin',data).then( done => {
-      let data = done.data;
-      return data;
-    }).catch( fail => { return { error:fail } });
+    return vizapi.post('signin',data)
+      .then( done => done.data )
+      .catch( fail => fail);
   },
 
-  setPass(data){
-    return vizapi.post('kraken/setpass',data).then( done => {
-      let data = done.data;
-      return data;
-    }).catch( fail => { return { error:fail } });
+  firstLogin(data){
+    return vizapi.post('kraken/firstlogin',data)
+      .then( done => done.data)
+      .catch( fail => fail );
   },
 
   // join(data){

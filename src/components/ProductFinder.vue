@@ -23,7 +23,7 @@
         :type="keyboard"
         @filter="autocomplete"
         @update:model-value="itemTapped"
-        input-debounce="500"
+        input-debounce="600"
         ref="iptsearch"
         option-value="id"
       >
@@ -83,6 +83,7 @@
     warehouse:{ type:Number, default:0 },
     withLocations:{ type:Boolean, default:false },
     withPrices:{ type:Boolean, default:false },
+    withMedia:{ type:Boolean, default:false },
   });
 
   const $emit = defineEmits(["itemtapped"]);
@@ -92,6 +93,7 @@
   const warehouse = ref(props.warehouse);
   const locations = ref(props.withLocations);
   const prices = ref(props.withPrices);
+  const media = ref(props.withMedia);
 
   /**
    * M E T H O D S
@@ -111,7 +113,7 @@
   const search = async (evt) => {
     if(target.value.length>1){
       // console.log(evt);
-      const resp = await PFinder.atc(target.value,warehouse.value,locations.value,prices.value);
+      const resp = await PFinder.atc(target.value,warehouse.value,locations.value,prices.value,media.value);
       console.log(resp);
     }else{ console.log("nememes... escribe algo!!"); }
   }
@@ -119,8 +121,8 @@
   const autocomplete = async (val, update, abort) => {
     let key = val.toUpperCase().trim();
     if (key.length < 4) { abort(); return } else{
-      console.log("Buscando... "+key);
-      const resp = await PFinder.atc(key,warehouse.value,locations.value,prices.value);
+      // console.log("Buscando... "+key);
+      const resp = await PFinder.atc(key,warehouse.value,locations.value,prices.value,media.value);
       console.log(resp);
       update(() => options.value = resp.items );
     }

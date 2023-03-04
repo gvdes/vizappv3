@@ -5,7 +5,6 @@ import { vizapi } from "src/boot/axios";
 export const useAccountStore = defineStore('account', {
   state: () => ({
     account: undefined,
-    rol:undefined,
     stores: undefined,
     modules: undefined,
     permissions: undefined,
@@ -68,8 +67,10 @@ export const useAccountStore = defineStore('account', {
       vizapi.defaults.headers.common['Authorization'] = `Bearer ${data}`;
     },
 
-    setJoin(data){ this.join = data; },
+    setAccount(data){ this.account=data; },
 
-    pinup(){ LocalStorage.set("account", this.$state); },
+    setJoin(data){ this.join=data; },
+
+    persist(){ LocalStorage.set("auth", this.$state); },
   }
 })

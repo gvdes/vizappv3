@@ -8,9 +8,10 @@
       <div>
         <div class="text-center q-pb-md"><q-icon name="fab fa-atlassian fa-rotate-180" color="primary" size="50px"/></div>
         <q-card flat>
-          <div v-if="errorForm" class="q-pa-md bg-negative row items-center text-grey-2">
-            <q-icon size="sm" :name="errorsBank[errorForm].i" color="white"/>
-            <span class="q-pl-md">{{errorsBank[errorForm].m}}</span>
+          <div v-if="failReq.state" class="q-pa-md bg-negative row items-center text-grey-2">
+            <q-icon size="sm" :name="errorsBank[failReq.code].i" color="white"/>
+            <span class="q-pl-md">{{errorsBank[failReq.code].m}}</span>
+            <!-- <pre>{{ failReq.response ? failReq.response.status : failReq }}</pre> -->
           </div>
 
           <q-card-section class="text-h5 text-grey-7 anek-md">Acceso</q-card-section>
@@ -61,21 +62,6 @@
         </div>
       </div>
     </transition>
-
-    <q-dialog v-model="wndWelcome.state" no-backdrop-dismiss no-esc-dismiss>
-      <q-card class="q-pa-sm">
-        <q-card-section>
-          <div class="anek-lg text-h4">Hola <span class="text-primary anek-md">{{account.name}}</span></div>
-          <span class="text-h6 anek-lg">Bienvenido a VizApp!</span>
-        </q-card-section>
-        <q-card-section class="text-center">
-          <q-icon name="fas fa-heart fa-beat" size="20px" color="red" style="--fa-animation-duration: 1.5s;"/>
-        </q-card-section>
-        <q-card-section class="text-center">
-          porfavor espera...
-        </q-card-section>
-      </q-card>
-    </q-dialog>
   </q-page>
 </template>
 
@@ -100,47 +86,43 @@
   const iptpass = ref(null);
   const nick = ref({ v:"" });
   const pass = ref({ v:"", h:true });
-  const errorForm = ref(null);
   const btnLogin = ref({ l:false, d:false });
   const tries = ref(0);
-  const wndWelcome = ref({ state:false });
-  const account = ref(null);
+  const failReq = ref({state:false, code:0});
 
   const trySignin = async () => {
-    errorForm.value = null;
-    console.log("Loging...");
+    failReq.value.state = false;
     btnLogin.value.l = true;
     btnLogin.value.d = true;
 
-    let params = {nick:nick.value.v, pass:pass.value.v};
+    let params = { nick:nick.value.v, pass:pass.value.v };
     const resp = await AuhtApi.trySignin(params);
 
     if(resp.error){
-      // console.log(resp);
-      let erstate = resp.error.response ? resp.error.response.status : 1000;
+      failReq.value.code =  resp.error.response ? resp.error.response.status : 1000;
+      failReq.value.state = true;
 
-      erstate == 404 ? tries.value++ : null;
+      failReq.value.code == 404 ? tries.value++ : null;
 
-      errorForm.value = erstate;
       btnLogin.value.l = false;
       btnLogin.value.d = false;
 
       iptnick.value.select();
       iptnick.value.focus();
     }else{
-      console.log(resp);
-      account.value = resp.account;
-      piniaAccount.setJoin(account.value._store); // llena el join a la tienda (por default la tienda default del usuario logueado)
-      piniaAccount.init(account.value, resp.token);// almacena los datos devueltos por el servidor en el inicio de sesion
+      let acc = resp.account;
 
-      if(account.value._state==1){// si la cuenta es nueva, obliga al cambio de contraseña
-        console.log("Contraseña nueva!!");
-        wndWelcome.value.state = true;
-        setTimeout(() => { $router.replace('/passconfig'); }, 3500);
-      }else{
-        console.log("Iniciando Sesion...");
-        $q.loading.show({ message:`Hola <b>${account.value.nick}</b> ...`, html:true });
-        setTimeout(() => $router.replace(`/store/${piniaAccount.join}`), 1000);
+      piniaAccount.setAccount(acc);
+      piniaAccount.setToken(resp.token);
+      piniaAccount.setJoin(acc.store.id);
+      piniaAccount.persist();
+
+      if(acc._state==1){// si la cuenta es nueva, obliga al cambio de contraseña
+        console.log("Cuenta nueva!!");
+        $router.replace('/welcome');
+      }else {
+        console.log("Nueva sesion...");
+        $router.replace(`/store/${piniaAccount.join}`);
       }
     }
   };

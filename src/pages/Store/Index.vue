@@ -8,7 +8,7 @@
         {{szs.lt}}<br/>
         {{szs.gt}}<br/>
       </div> -->
-      <div class="anek-bld text-h3 text-grey-7 text-center">
+      <div class="text-h3 text-grey-7 text-center">
         Hola <span class="text-primary">{{piniaAccount.account.name}}</span>
       </div>
 
