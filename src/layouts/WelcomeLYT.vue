@@ -96,8 +96,6 @@
   const valLength = computed(() => (pass.value&&pass.value.length>4) );
   const valPass = computed(() => valLength.value&&validpass.test(pass.value) );
   const valSamepass = computed(() => valLength.value&&(pass.value==passconfirm.value) );
-  const nextStep = computed(() => valLength.value&&valPass.value&&valSamepass.value);
-  const acc = computed(() => piniaAccount.account );
 
   const toggleInputs = () => {
 
@@ -122,7 +120,6 @@
 
     if(resp.error){
       console.log(resp.error);
-      let erstate = resp.error.response ? resp.error.response.status : 1000;
       console.log(resp.error.response.data);
     }else{
       piniaAccount.setAccount(resp.user);
