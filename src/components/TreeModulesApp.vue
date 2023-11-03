@@ -1,45 +1,34 @@
 <template>
-  <div>
-    <template v-if="espmodules.length">
-      <q-list>
-        <q-item clickable v-ripple v-for="(module) in espmodules" :key="module._module" @click="goto(module)">
-          <q-item-section avatar>
-            <q-icon :name="module.details.icon" color="secondary"/>
-          </q-item-section>
-          <q-item-section>
-            <q-item-label> {{module.name}} </q-item-label>
-            <q-item-label caption lines="2">{{ module.details.sdesc }}</q-item-label>
-          </q-item-section>
-        </q-item>
-      </q-list>
+  <div class="text-grey-9">
 
-      <q-separator />
+    <template v-if="clustermodules.length">
+      <q-list>
+        <q-item-label header>Cluster</q-item-label>
+        <BranchModule v-for="(module) in clustermodules" :key="module.id" :module="module" />
+      </q-list>
     </template>
 
-    <q-list v-if="stdmodules.length" >
-      <branchModule v-for="(module) in stdmodules" :key="module.id" :module="module"/>
-    </q-list>
+    <q-separator />
+
+    <template v-if="bofmodules.length">
+      <q-list>
+        <q-item-label header>Sucursal</q-item-label>
+        <BranchModule v-for="(module) in bofmodules" :key="module.id" :module="module" />
+      </q-list>
+    </template>
   </div>
 </template>
 
 <script setup>
 
-  import { ref, watch, onBeforeMount, computed } from 'vue';
-  import { useRoute, useRouter } from 'vue-router';
+  import { computed } from 'vue';
   import { useQuasar } from 'quasar';
   import { useAccountStore } from 'stores/Account';
-  import branchModule from 'src/components/BranchModule.vue';
+  import BranchModule from 'src/components/Branch.vue';
 
   const $q = useQuasar();
   const piniaAccount = useAccountStore();
-  const $router = useRouter();
 
-  const espmodules = computed(() => piniaAccount.esp_modules.map( m => m.module).filter( m => m.root==0&&m.deep==0) );
-  const stdmodules = computed(() => piniaAccount.std_modules.map( m => m.module).filter( m => m.root==0&&m.deep==0) );
-
-  const goto = (module)=>{
-    console.log(module.path);
-    // let store = piniaAccount.join;
-    $router.push(`/${module.path}`);
-  }
+  const clustermodules = computed(() => piniaAccount.modauths.map( m => m.module).filter( m => m.root=="CLU"&&m.deep==0) );
+  const bofmodules = computed(() => piniaAccount.modauths.map( m => m.module).filter( m => m.root=="BOF"&&m.deep==0) );
 </script>

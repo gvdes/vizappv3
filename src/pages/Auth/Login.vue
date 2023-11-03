@@ -11,7 +11,6 @@
           <div v-if="failReq.state" class="q-pa-md bg-negative row items-center text-grey-2">
             <q-icon size="sm" :name="errorsBank[failReq.code].i" color="white"/>
             <span class="q-pl-md">{{errorsBank[failReq.code].m}}</span>
-            <!-- <pre>{{ failReq.response ? failReq.response.status : failReq }}</pre> -->
           </div>
 
           <q-card-section class="text-h5 text-grey-7 anek-md">Acceso</q-card-section>
@@ -97,6 +96,7 @@
 
     let params = { nick:nick.value.v, pass:pass.value.v };
     const resp = await AuhtApi.trySignin(params);
+    console.log(resp);
 
     if(resp.error){
       failReq.value.code =  resp.error.response ? resp.error.response.status : 1000;
@@ -111,22 +111,24 @@
       iptnick.value.focus();
     }else{
       let acc = resp.account;
+      console.log(acc);
 
       piniaAccount.setAccount(acc);
       piniaAccount.setToken(resp.token);
       piniaAccount.setJoin(acc.store.id);
+      piniaAccount.setStores(acc.stores);
+      piniaAccount.setModAuths(acc.modules);
       piniaAccount.persist();
 
       if(acc._state==1){// si la cuenta es nueva, obliga al cambio de contraseña
-        console.log("Cuenta nueva!!");
+        console.log("%c¡¡ Cuenta nueva !!","color: #00d8d6; font-size:.8em; padding:5px 10px; border:1px solid #00d8d6; margin:5px 0; font-weight:bold; background: #1e272e;");
         $router.replace('/welcome');
       }else {
-        console.log("Nueva sesion...");
+        console.log("Nueva sesion...","color: #706fd3; font-size:.8em; padding:5px 10px; border:1px solid #706fd3; margin:5px 0; font-weight:bold; background: #1e272e;");
         $router.replace(`/store/${piniaAccount.join}`);
       }
     }
   };
 
   const canTrySign = computed(() => nick.value.v.length>3&&pass.value.v.length>4);
-  const lg = computed(() => piniaAccount.lg);
 </script>

@@ -3,9 +3,7 @@
     v-model="state"
     side="left"
     class="bg-white"
-    bordered
   >
-    <!-- QScrollArea is optional -->
     <q-scroll-area class="fit">
       <div class="bg-grey-1 bg-grey-2">
         <q-card flat class="transparent">
@@ -43,12 +41,11 @@
         </q-card-actions>
       </q-card>
     </q-dialog>
-
   </q-drawer>
 </template>
 
 <script setup>
-  import { ref, watch, onBeforeMount, computed } from 'vue';
+  import { ref, computed } from 'vue';
   import { useRoute, useRouter } from 'vue-router';
   import { useQuasar, LocalStorage } from 'quasar';
   import { useAccountStore } from 'stores/Account';
@@ -61,17 +58,20 @@
   const state = ref(false);
   const dialog = ref(false);
 
-  const toggle = () => { state.value=!state.value };
-  const sessionDestroy = () => {
-    LocalStorage.clear();
-    // desconectar socket
-    // guardar registro en MySQL del cierre de sesion
-    $router.replace('/login');
-  };
+  /** C O M P U T E D S */
 
   const account = computed( () => piniaAccount.account );
   const rol = computed( () => piniaAccount.rol );
   const accverified = computed( () => piniaAccount.verified );
+
+  /** M E T H O D S */
+
+  const toggle = () => { state.value=!state.value };
+
+  const sessionDestroy = () => {
+    LocalStorage.clear();
+    $router.replace('/login');
+  };
 
   defineExpose({toggle});
 </script>

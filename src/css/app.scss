@@ -1,40 +1,46 @@
-// app global css in SCSS form
+.seeme{ border:1px solid red; }
 
-/** SPACE_MONO FONT */
-@font-face { font-family:space_mono; src: url('../assets/fonts/Space_Mono/regular.ttf'); }
+.bg-bluedeepdark{ background-color: $bluedeepdark !important; }
+.bg-bluedark{ background-color: $bluedark !important; }
+.bg-bluegrey{ background-color: $bluegrey !important; }
+.bg-bluelight{ background-color: $bluelight !important; }
 
-/** EXO FONT */
-@font-face { font-family:exo; src: url('../assets/fonts/Exo/regular.ttf'); }
+@font-face { font-family: 'TFontRG';  src: url("../assets/fonts/Chocolate/ChocolatesRegular.otf"); }
+@font-face { font-family: 'TFontMD';  src: url("../assets/fonts/Chocolate/ChocolatesMedium.otf"); }
+@font-face { font-family: 'TFontLG';  src: url("../assets/fonts/Chocolate/ChocolatesLight.otf"); }
+@font-face { font-family: 'TFontXLG';  src: url("../assets/fonts/Chocolate/ChocolatesExtraLight.otf"); }
+@font-face { font-family: 'TFontSBO';  src: url("../assets/fonts/Chocolate/ChocolatesSemiBold.otf"); }
+@font-face { font-family: 'TFontBO';  src: url("../assets/fonts/Chocolate/ChocolatesBold.otf"); }
+@font-face { font-family: 'TFontXBO';  src: url("../assets/fonts/Chocolate/ChocolatesExtraBold.otf"); }
 
-/** ANEK FONT */
-@font-face { font-family:anek;          src: url('../assets/fonts/Anek/regular.ttf'); }
-@font-face { font-family:"anek-md";     src: url('../assets/fonts/Anek/medium.ttf'); }
-@font-face { font-family:"anek-semibold";   src: url('../assets/fonts/Anek/semibold.ttf'); }
-@font-face { font-family:"anek-bold";   src: url('../assets/fonts/Anek/bold.ttf'); }
-@font-face { font-family:"anek-xbold";  src: url('../assets/fonts/Anek/xbold.ttf'); }
-@font-face { font-family:"anek-light";  src: url('../assets/fonts/Anek/light.ttf'); }
-@font-face { font-family:"anek-xlight";  src: url('../assets/fonts/Anek/xlight.ttf'); }
-@font-face { font-family:"anek-thin";   src: url('../assets/fonts/Anek/thin.ttf'); }
+.fw-reg{ font-family: "FontTRG"; }
+.fw-med{ font-family: "FontTMD"; }
+.fw-light{ font-family: "TFontLG"; }
+.fw-xlight{ font-family: "TFontXLG"; }
+.fw-sbold{ font-family: "TFontSBO"; }
+.fw-bold{ font-family: "TFontBO"; }
+.fw-xbold{ font-family: "TFontXBO"; }
 
+.fc-deepbluedark{ color: $bluedeepdark; }
+.fc-bluedark{ color: $bluedark; }
+.fc-bluegrey{ color: $bluegrey; }
+.fc-bluelight{ color: $bluelight; }
+.fc-primary{ color: $primaryv1; }
+.fc-secondary{ color: $secondaryv1; }
+.fc-accent{ color: $accentv1; }
+.fc-positive{ color: $positivev1; }
+.fc-negative{ color: $negativev1; }
+.fc-warning{ color: $warningv1; }
+.fc-info{ color: $infov1; }
 
-.space_mono{ font-family: space_mono; }
-.exo{ font-family: exo; }
-.vfont{ font-family: anek; }
-.font-med{ font-family: "anek-md"; }
-.font-semibold{ font-family: "anek-semibold"; }
-.font-bold{ font-family: "anek-bold"; }
-.font-xbold{ font-family: "anek-xbold"; }
-.font-light{ font-family: "anek-light"; }
-.font-thin{ font-family: "anek-thin"; }
+.fs-inc1{ font-size: 1.25em; }
+.fs-inc2{ font-size: 1.50em; }
+.fs-inc3{ font-size: 1.75em; }
+.fs-inc4{ font-size: 2em; }
 
-.font-sm{ font-size: .9em; }
-.font-xsm{ font-size: .8em; }
-.font-xxsm{ font-size: .7em; }
-.font-xxxsm{ font-size: .6em; }
+.fs-dec1{ font-size: .9em; }
+.fs-dec2{ font-size: .8em; }
+.fs-dec3{ font-size: .7em; }
+.fs-dec4{ font-size: .6em; }
 
-.text-number{ font-family: space_mono; }
-
-.seeme{border:1px dashed black;}
-.dropzone{ background: $grey-2; border: 4px dashed $grey-5; }
-
-html,*{ font-family: anek; }
+*, html{ font-family: "TFontMD"; }

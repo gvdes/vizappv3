@@ -6,21 +6,13 @@ const routes = [
     path: '/login',
     component: () => import('layouts/AuthLYT.vue'),
     children: [
-      { path: '', component: () => import('pages/Auth/Index.vue') }
+      { path: '', component: () => import('pages/Auth/Login.vue') }
     ]
   },
 
   {
     path: '/welcome',
     component: () => import('layouts/WelcomeLYT.vue'),
-  },
-
-  {
-    path: '/cluster',
-    component: () => import('layouts/ZentLYT.vue'),
-    children: [
-      { path: '', component: () => import('pages/Zent/Index.vue') }
-    ]
   },
 
   {
@@ -32,6 +24,11 @@ const routes = [
       { path: 'channel', component: () => import('pages/VMedia/Channel.vue') },
       { path: 'radio', component: () => import('pages/VMedia/Radio.vue') },
     ]
+  },
+
+  {
+    path: '/aa87',
+    component: () => import('layouts/AA87_LYT.vue'),
   },
 
   {
@@ -79,6 +76,16 @@ const routes = [
           }
         ],
       },
+    ]
+  },
+
+  {
+    path: '/cluster',
+    component: () => import('layouts/ClusterLYT.vue'),
+    children:[
+      { path:'', component: () => import('pages/Cluster/Index.vue') },
+      { path:'team', component: () => import('pages/Cluster/Users/Index.vue'), },
+      { path:'team/builder', component: () => import('pages/Cluster/Users/Builder.vue') },
     ]
   },
 

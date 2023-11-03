@@ -1,9 +1,11 @@
 <template>
   <q-layout view="hHh Lpr fFf"> <!-- Be sure to play with the Layout demo on docs -->
 
-    <AppMainToolbar @toggleNavigatorStore="toggleNavigatorStore"/>
+    <q-header reveal bordered class="transparent">
+      <AppMainToolbar @toggleNavigatorStore="toggleNavigatorStore" />
+    </q-header>
 
-    <StoreNavigator ref="main_menu"/>
+    <AppNavigator ref="main_menu" />
 
     <!-- (Optional) The Footer -->
     <!-- <q-footer class="transparent text-dark">
@@ -20,7 +22,7 @@
         <q-card class="bg-red text-white">
           <q-card-section class="row items-center">
             <q-avatar icon="fas fa-ban" />
-            <span class="q-ml-sm">No tienes acceso a esta sucursal</span>
+            <span class="q-ml-sm">Acceso restringido!</span>
           </q-card-section>
         </q-card>
       </q-dialog>
@@ -35,8 +37,9 @@
   import { useQuasar } from 'quasar';
   import { useAccountStore } from 'stores/Account';
   import AppMainToolbar from 'src/components/AppMainToolbar.vue';
-  import StoreNavigator from 'src/components/StoreNavigator.vue';
+  import AppNavigator from 'src/components/AppNavigator.vue';
   import Store from 'src/API/StoreApi';
+  import Auth from 'src/API/Auth';
 
   const $route = useRoute();
   const $router = useRouter();
@@ -48,6 +51,8 @@
 
   onBeforeMount( async () => { init(); });
 
+  watch(() => $route.params, (toParams, previousParams) => { init(); });
+
   const init = async()=>{
     access.value=false;
     $q.loading.show({ message:"Espera..." });
@@ -56,14 +61,16 @@
     let data = { store:$route.params.idstore };
     const resp = await Store.index(data);
 
+    console.log(resp);
+
     if(resp.error){
       let ercode = resp.error.status;
-      wndRestringed.value.state = true;
       access.value=false;
+      wndRestringed.value.state=true;
     }else{
-      console.log("Kraken response: "+resp);
-      piniaAccount.fresh(null,$route.params.idstore,null);
       wndRestringed.value.state = false;
+      // console.log("Kraken response: ");
+      // console.log(resp);
       access.value = true;
     }
 
@@ -72,6 +79,4 @@
 
   // conectado al componente de navegacion del menu principal
   const toggleNavigatorStore = () => main_menu.value.toggle();
-
-  watch(() => $route.params, (toParams, previousParams) => { init(); });
 </script>

@@ -1,13 +1,6 @@
 <template>
   <q-page class="flex flex-center">
-    <div>
-      <!-- <div>
-        XSMALL: {{szs.xs}}<br/>
-        Size: {{szs.name}} ({{szs.width}} x {{szs.height}})<br/>
-        {{szs.sizes}}<br/>
-        {{szs.lt}}<br/>
-        {{szs.gt}}<br/>
-      </div> -->
+    <div class="seeme">
       <div class="text-h3 text-grey-7 text-center">
         Hola <span class="text-primary">{{piniaAccount.account.name}}</span>
       </div>
@@ -17,7 +10,6 @@
       <div class="q-py-lg text-center">
         <q-img :src="piniaAccount.avatar" style="width: 170px;"/>
       </div>
-
     </div>
   </q-page>
 </template>
@@ -50,5 +42,4 @@
 
   const greeting = computed( () => greetings.value[Math.floor(Math.random()*greetings.value.length)] );
   const szs = computed(() => $q.screen);
-
 </script>

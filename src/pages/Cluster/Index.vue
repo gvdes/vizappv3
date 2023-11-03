@@ -1,11 +1,9 @@
 <template>
   <q-page padding>
-    For Zent page
+    <h5>This is the Cluster!!</h5>
   </q-page>
 </template>
 
 <script>
-export default {
-  // name: 'PageName',
-}
+
 </script>

@@ -1,5 +1,5 @@
 <template>
-  <q-header bordered class="text-dark bg-white">
+  <div class="text-dark bg-white">
     <div class="q-pa-sm row items-center">
       <div class="col text-left row items-center">
         <q-btn flat round dense icon="menu" @click="toggleMenu"/>
@@ -25,7 +25,7 @@
 
       <div class="col text-right"></div>
     </div>
-  </q-header>
+  </div>
 
   <q-dialog v-model="wndStores.false" persistent>
     <q-card>

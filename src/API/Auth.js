@@ -4,7 +4,7 @@ export default{
   trySignin(data){
     return vizapi.post('signin',data)
       .then( done => done.data )
-      .catch( fail => fail);
+      .catch( fail => fail );
   },
 
   firstLogin(data){

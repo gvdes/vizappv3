@@ -12,11 +12,14 @@ export default boot(({ router }) => {
 
     if(auth && auth.account){ //Existe una session activa y es semivalida (existe el atributo account)
       piniaAccount.setAccount(auth.account);
-      piniaAccount.setToken(auth.token)
-      piniaAccount.persist();
+      piniaAccount.setToken(auth.token);
+      piniaAccount.setJoin(auth.join);
+      piniaAccount.setStores(auth.stores);
+      piniaAccount.setModAuths(auth.modauths);
+
 
       if(auth.account._state==1){// La cuenta es nueva (state==1): es oblogatorio la configuracion de cuenta
-        if(to.path!="/welcome"){// siempre que se quiera ir a cualquier ruta que no sea /accountconfirm, se redireccionara a /accountconfirm porque no hay sesion activa
+        if(to.path!="/welcome"){// siempre que se quiera ir a cualquier ruta que no sea /welcome, se redireccionara a /accountconfirm porque no hay sesion activa
           next('/welcome');
         }else if(to.path=="/welcome"){// si y solo si se quiere ir a accountconfirm...
           next();

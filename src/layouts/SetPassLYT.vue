@@ -100,7 +100,7 @@
       piniaAccount.fresh(resp);
 
       $q.notify({
-        message:"Contraseña modificada",
+        message:"Excelente!",
         color:"positive",
         icon:"done",
         position:'center'
