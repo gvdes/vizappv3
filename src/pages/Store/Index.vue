@@ -1,6 +1,6 @@
 <template>
   <q-page class="flex flex-center">
-    <div class="seeme">
+    <div>
       <div class="text-h3 text-grey-7 text-center">
         Hola <span class="text-primary">{{piniaAccount.account.name}}</span>
       </div>

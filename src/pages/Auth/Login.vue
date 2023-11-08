@@ -124,7 +124,7 @@
         console.log("%c¡¡ Cuenta nueva !!","color: #00d8d6; font-size:.8em; padding:5px 10px; border:1px solid #00d8d6; margin:5px 0; font-weight:bold; background: #1e272e;");
         $router.replace('/welcome');
       }else {
-        console.log("Nueva sesion...","color: #706fd3; font-size:.8em; padding:5px 10px; border:1px solid #706fd3; margin:5px 0; font-weight:bold; background: #1e272e;");
+        console.log("%cNueva sesion...","color: #706fd3; font-size:.8em; padding:5px 10px; border:1px solid #706fd3; margin:5px 0; font-weight:bold; background: #1e272e;");
         $router.replace(`/store/${piniaAccount.join}`);
       }
     }

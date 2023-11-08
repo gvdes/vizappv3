@@ -1,6 +1,5 @@
 <template>
   <div class="text-grey-9">
-
     <template v-if="clustermodules.length">
       <q-list>
         <q-item-label header>Cluster</q-item-label>
