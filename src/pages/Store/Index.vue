@@ -10,6 +10,11 @@
       <div class="q-py-lg text-center">
         <q-img :src="piniaAccount.avatar" style="width: 170px;"/>
       </div>
+      <div class="text-left">
+        <small><pre>
+          {{ piniaAccount.joinedStore }}
+        </pre></small>
+      </div>
     </div>
   </q-page>
 </template>

@@ -27,10 +27,12 @@
   import { ref, watch } from 'vue';
   import { useRoute } from 'vue-router';
   import { useQuasar } from 'quasar';
+  import { useAccountStore } from 'stores/Account'
   import AppMainToolbar from 'src/components/AppMainToolbar.vue';
   import AppNavigator from 'src/components/AppNavigator.vue';
   import Store from 'src/API/StoreApi';
 
+  const piniaAccount = useAccountStore();
   const $q = useQuasar();
   const $route = useRoute();
   const access = ref(false); // muestra la pagina (interfaz) solo hasta que la api responde
@@ -58,6 +60,8 @@
       wndRestringed.value.state = false;
       console.log("Kraken response: ");
       access.value = true;
+      piniaAccount.setStore($route.params.idstore);
+      piniaAccount.persist()
     }
 
     $q.loading.hide();
