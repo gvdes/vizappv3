@@ -2,18 +2,13 @@
   <q-page class="flex flex-center">
     <div>
       <div class="text-h3 text-grey-8 text-center">
-        Hola <span class="text-primary">{{piniaAccount.account.name}}</span>
+        Hola <span class="text-primary">{{ piniaAccount.account.name }}</span>
       </div>
 
       <div class="text-center anek-lg text-h5 text-grey-6">{{ greeting }}</div>
 
       <div class="q-py-lg text-center">
         <q-img :src="piniaAccount.avatar" style="width: 170px;"/>
-      </div>
-      <div class="text-left">
-        <small><pre>
-          {{ piniaAccount.joinedStore }}
-        </pre></small>
       </div>
     </div>
   </q-page>
