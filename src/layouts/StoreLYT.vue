@@ -69,8 +69,8 @@
       wndRestringed.value.state=true;
     }else{
       wndRestringed.value.state = false;
-      // console.log("Kraken response: ");
-      // console.log(resp);
+      console.log("Kraken response: ");
+      console.log(resp);
       access.value = true;
     }
 

@@ -31,19 +31,19 @@ export const useAccountStore = defineStore('account', {
 
     setToken(data){
       this.token = data;
-      vizapi.defaults.headers.common['Authorization'] = `Bearer ${data}`;
+      vizapi.defaults.headers.common['Authorization'] = `Bearer ${data}`; // agrega el token a los encabezados de axios para las peticiones de axios (vizapi)
     },
 
     setAccount(data){ this.account=data; },
 
-    setJoin(data){ this.join=data; },
+    setStore(data){ this.join=data; },
 
     setStores(data){ this.stores=data; },
 
     setModAuths(data){ this.modauths=data; },
 
-    setCluMdlTitle(data){ this.clumdlname=data; },
+    setCluMdlTitle(data){ this.clumdlname=data; }, // setea el nombre del modulo en el que esta el usuario
 
-    persist(){ LocalStorage.set("auth", this.$state); },
+    persist(){ LocalStorage.set("auth", this.$state); }, // persiste los datos en LS
   }
 })

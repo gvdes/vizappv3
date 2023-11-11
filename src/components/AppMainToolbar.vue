@@ -27,7 +27,7 @@
     </div>
   </div>
 
-  <q-dialog v-model="wndStores.false" persistent>
+  <!-- <q-dialog v-model="wndStores.state" persistent>
     <q-card>
       <q-card-section class="row items-center">
         <q-avatar icon="signal_wifi_off" color="primary" text-color="white" />
@@ -38,7 +38,7 @@
         <q-btn flat label="Turn on Wifi" color="primary" v-close-popup />
       </q-card-actions>
     </q-card>
-  </q-dialog>
+  </q-dialog> -->
 </template>
 
 <script setup>
@@ -56,7 +56,7 @@
   const stores = computed(() => piniaAccount.unjoinStores );
   const joinedStore = computed(() => piniaAccount.joinedStore );
 
-  const wndStores = ref({ state:false });
+  // const wndStores = ref({ state:false });
 
   const toggleMenu = () => $emit('toggleNavigatorStore');
   const joinAt = (sid) => $router.replace(`/store/${sid}`);
