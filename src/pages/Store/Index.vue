@@ -1,11 +1,11 @@
 <template>
   <q-page class="flex flex-center">
     <div>
-      <div class="text-h3 text-grey-7 text-center">
+      <div class="text-h3 text-grey-8 text-center">
         Hola <span class="text-primary">{{piniaAccount.account.name}}</span>
       </div>
 
-      <div class="text-center anek-lg text-h5">{{ greeting }}</div>
+      <div class="text-center anek-lg text-h5 text-grey-6">{{ greeting }}</div>
 
       <div class="q-py-lg text-center">
         <q-img :src="piniaAccount.avatar" style="width: 170px;"/>
@@ -15,12 +15,9 @@
 </template>
 
 <script setup>
-  import { ref, watch, onBeforeMount, computed } from 'vue';
-  import { useRoute, useRouter } from 'vue-router';
-  import { useQuasar } from 'quasar';
+  import { ref, computed } from 'vue';
   import { useAccountStore } from 'stores/Account';
 
-  const $q = useQuasar();
   const piniaAccount = useAccountStore();
 
   const greetings = ref([
@@ -36,10 +33,5 @@
     "Vacaciones??... pff...",
   ]);
 
-  onBeforeMount(() => {
-    console.log("Cargando interfaz");
-  });
-
   const greeting = computed( () => greetings.value[Math.floor(Math.random()*greetings.value.length)] );
-  const szs = computed(() => $q.screen);
 </script>
