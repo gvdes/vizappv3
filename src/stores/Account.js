@@ -17,14 +17,16 @@ export const useAccountStore = defineStore('account', {
     lg(){ //letter gender
       let letters = { M:"o", F:"a", I:"e" };
       return this.account ? letters[this.account.gender] : letters[I];
-    },// letter gender
+    },
     rol(){ return this.account.rol },
     joinedStore(){ return (this.account&&this.stores) ? this.stores.find( s => this.join == s.id ) : null; },
     unjoinStores(){ return this.stores ? this.stores.filter( s => s.id!=this.join ) : [];},
     submodules(){ return id => { return this.modauths.filter( m => m.module.root==id); } },
     aim(){ return moduleid => { return this.permissions ? this.permissions.find( a => a._module==moduleid ) : null } },// retorna el permiso correspondiente al modulo en busqueda
     avatar(){ return this.account.avatar ? `src/assets/avatares/${this.account.avatar}` : "src/assets/avatares/flat8.png"; },
-    verified(){ return (this.account.email_confirm&&this.account.phone_confirm) ?? false }
+    verified(){ return (this.account.email_confirm&&this.account.phone_confirm) ?? false },
+    clu_modules() { return this.modauths.map(m => m.module ).filter( m => m.root="CLU" && m.deep==0 ) },
+    bof_modules() { return this.modauths.map(m => m.module ).filter( m => m.root="BOF" && m.deep==0 ) }
   },
 
   actions: {
