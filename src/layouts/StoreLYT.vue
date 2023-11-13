@@ -40,6 +40,7 @@
   import AppNavigator from 'src/components/AppNavigator.vue';
   import Store from 'src/API/StoreApi';
   import Auth from 'src/API/Auth';
+import { route } from 'quasar/wrappers';
 
   const $route = useRoute();
   const $router = useRouter();
@@ -53,7 +54,11 @@
 
   watch(() => $route.params, (toParams, previousParams) => { init(); });
 
+  console.log("justo abajo bro");
+  console.log($route.params);
+
   const init = async()=>{
+
     access.value=false;
     $q.loading.show({ message:"Espera..." });
     console.log(`Comprobando acceso a store ${$route.params.idstore}...`);

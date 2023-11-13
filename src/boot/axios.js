@@ -3,7 +3,7 @@ import { Notify } from 'quasar'
 import axios from 'axios'
 
 const vizapi = axios.create({
-  baseURL: 'http://192.168.68.58:3220/kraken/public/api'
+  baseURL: 'http://192.168.10.232:1620/kraken/public/api'
   // baseURL: 'http://192.168.12.46/vizapi/public/api'
   // baseURL: 'http://192.168.1.68:80/arceus/public/api'
 });
@@ -23,7 +23,7 @@ vizapi.interceptors.response.use( response => {
       message: 'No se pudo establecer conexion al servidor',
       color:"negative",
       icon:"fas fa-cloud-bolt",
-      timeout:10000,
+      timeout:60000,
       position:"center"
     });
   }

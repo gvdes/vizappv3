@@ -15,6 +15,8 @@
                 <q-item v-for="store in stores" :key="store.id" clickable v-ripple @click="joinAt(store.id)">
                   <q-item-section avatar class="anek-bld">{{ store.alias }}</q-item-section>
                   <q-item-section>{{ store.name }}</q-item-section>
+
+                  {{ joinedStore }}
                 </q-item>
               </q-list>
             </q-menu>
@@ -27,7 +29,7 @@
     </div>
   </div>
 
-  <q-dialog v-model="wndStores.false" persistent>
+  <!-- <q-dialog v-model="wndStores.false" persistent>
     <q-card>
       <q-card-section class="row items-center">
         <q-avatar icon="signal_wifi_off" color="primary" text-color="white" />
@@ -38,7 +40,7 @@
         <q-btn flat label="Turn on Wifi" color="primary" v-close-popup />
       </q-card-actions>
     </q-card>
-  </q-dialog>
+  </q-dialog> -->
 </template>
 
 <script setup>
@@ -53,10 +55,14 @@
   const piniaAccount = useAccountStore();
   const $emit = defineEmits(['toggleNavigatorStore','joinAt']);
 
+  console.log("aqui abajo buey ")
+  console.log(piniaAccount.unjoinq);
+  console.log("aqui arriba buey  ")
+
   const stores = computed(() => piniaAccount.unjoinStores );
   const joinedStore = computed(() => piniaAccount.joinedStore );
 
-  const wndStores = ref({ state:false });
+  // const wndStores = ref({ state:false });
 
   const toggleMenu = () => $emit('toggleNavigatorStore');
   const joinAt = (sid) => $router.replace(`/store/${sid}`);

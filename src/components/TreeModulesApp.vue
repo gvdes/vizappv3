@@ -27,7 +27,6 @@
 
   const $q = useQuasar();
   const piniaAccount = useAccountStore();
-
   const clustermodules = computed(() => piniaAccount.modauths.map( m => m.module).filter( m => m.root=="CLU"&&m.deep==0) );
   const bofmodules = computed(() => piniaAccount.modauths.map( m => m.module).filter( m => m.root=="BOF"&&m.deep==0) );
 </script>
