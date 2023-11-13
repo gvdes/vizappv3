@@ -123,7 +123,7 @@
         $router.replace('/welcome');
       }else {
         console.log(`%cNueva sesion iniciada en ${piniaAccount.join}...`,"color: #706fd3; font-size:.9em; padding:5px 10px; border:1px solid #706fd3; margin:5px 0; font-weight:bold; background: #1e272e;");
-        $router.replace(`/store/${piniaAccount.join}`);
+        $router.replace(`/store/${piniaAccount.join}/`);
       }
     }
   };

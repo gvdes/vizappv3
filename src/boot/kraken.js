@@ -27,7 +27,7 @@ export default boot(({ router }) => {
           next();
         }
       }else{// ya hay sesion activa y ya se ha confirmado la cuenta y no se ha solicitado cambio de la misma
-        (to.path=="/login"||to.path=="/welcome") ? next(`/store/${auth.join}`) : next();
+        (to.path=="/login"||to.path=="/welcome") ? next(`/store/${auth.join}/`) : next();
       }
     }else{// No hay sesion activa, siempre redireccionara a /login
       console.warn("router: No account exist in LS, please start!");

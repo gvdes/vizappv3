@@ -32,21 +32,13 @@ const routes = [
   },
 
   {
-    path: '/profile',
-    component: () => import('layouts/ProfileLYT.vue'),
-    // children: [
-    //   { path: '', component: () => import('pages/Zent/Index.vue') }
-    // ]
-  },
-
-  {
     path: '/store/:idstore',
     component: () => import('layouts/StoreLYT.vue'),
     children: [
       { path: '', component: () => import('pages/Store/Index.vue') },
       { path: 'usuarios', component: () => import('pages/Store/Users/Index.vue') },
       {
-        path: 'almacenes',
+        path: 'warehouses',
         children:[
           { path:'', name:'wrhs', component: () => import('pages/Store/Warehouses/Index.vue') },
           { path:'pedidos', component: () => import('pages/Store/Warehouses/Orders.vue') },

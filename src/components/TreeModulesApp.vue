@@ -1,18 +1,16 @@
 <template>
   <div class="text-grey-9">
-    <template v-if="clustermodules.length">
+    <template v-if="bof_modules.length">
       <q-list>
-        <q-item-label header>Cluster</q-item-label>
-        <BranchModule v-for="(module) in clustermodules" :key="module.id" :module="module" />
+        <q-item-label header>Sucursal ({{ bof_modules.length }})</q-item-label>
+        <BranchModule v-for="(module) in bof_modules" :key="module.id" :module="module" />
       </q-list>
     </template>
-
     <q-separator />
-
-    <template v-if="bofmodules.length">
+    <template v-if="clu_modules.length">
       <q-list>
-        <q-item-label header>Sucursal</q-item-label>
-        <BranchModule v-for="(module) in bofmodules" :key="module.id" :module="module" />
+        <q-item-label header>Cluster ({{ clu_modules.length }})</q-item-label>
+        <BranchModule v-for="(module) in clu_modules" :key="module.id" :module="module" />
       </q-list>
     </template>
   </div>
@@ -21,13 +19,14 @@
 <script setup>
 
   import { computed } from 'vue';
-  import { useQuasar } from 'quasar';
   import { useAccountStore } from 'stores/Account';
+  import { useRoute, useRouter } from 'vue-router';
   import BranchModule from 'src/components/Branch.vue';
 
-  const $q = useQuasar();
   const piniaAccount = useAccountStore();
+  const $route = useRoute();
+  const $router = useRouter();
 
-  const clustermodules = computed(() => piniaAccount.clu_modules );
-  const bofmodules = computed(() => piniaAccount.bof_modules );
+  const clu_modules = computed(() => piniaAccount.clu_modules );
+  const bof_modules = computed(() => piniaAccount.bof_modules );
 </script>

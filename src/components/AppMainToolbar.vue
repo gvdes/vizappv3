@@ -43,5 +43,5 @@
   const labelStore = computed(() => $q.screen.xs ? piniaAccount.joinedStore.alias : piniaAccount.joinedStore.name )
 
   const toggleMenu = () => $emit('toggleNavigatorStore');
-  const switchStore = sid => $router.replace(`/store/${sid}`);
+  const switchStore = sid => $router.replace(`/store/${sid}/`);
 </script>

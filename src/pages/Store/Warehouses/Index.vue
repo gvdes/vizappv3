@@ -71,7 +71,6 @@
   const pfinder = ref({ product:null });
 
   /** H O O K S  */
-  onBeforeMount( async () => { init(); });
 
   /** C O M P U T E D S */
   const isMobile = computed(() => $q.platform.is.mobile);
@@ -103,5 +102,7 @@
     console.log(item);
     pfinder.value.product = item;
   }
+
+  init();
 
 </script>
