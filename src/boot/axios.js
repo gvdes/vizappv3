@@ -3,7 +3,7 @@ import { Notify } from 'quasar'
 import axios from 'axios'
 
 const vizapi = axios.create({
-  baseURL: 'http://127.0.0.1:3220/kraken/public/api'
+  baseURL: 'http://127.0.0.1:1920/kraken/public/api'
   // baseURL: 'http://192.168.12.46/vizapi/public/api'
   // baseURL: 'http://192.168.1.68:80/arceus/public/api'
 });
