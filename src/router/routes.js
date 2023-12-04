@@ -44,7 +44,13 @@ const routes = [
     component: () => import('layouts/StoreLYT.vue'),
     children: [
       { path: '', component: () => import('pages/Store/Index.vue') },
-      { path: 'usuarios', component: () => import('pages/Store/Users/Index.vue') },
+      { path: 'usuarios',
+        children: [
+          { path:'', name:'users', component: () => import('pages/Store/Users/Index.vue')},
+          { path:'create', name:'create', component: () => import('pages/Store/Users/Create.vue')},
+          { path:'branch', name:'branches', component: () => import('pages/Store/Users/Branches.vue')},
+        ]
+      },
       {
         path: 'almacenes',
         children:[
@@ -86,6 +92,20 @@ const routes = [
       { path:'', component: () => import('pages/Cluster/Index.vue') },
       { path:'team', component: () => import('pages/Cluster/Users/Index.vue'), },
       { path:'team/builder', component: () => import('pages/Cluster/Users/Builder.vue') },
+    ]
+  },
+
+  {
+    path: '/profile',
+    component: () => import('layouts/ProfileLYT.vue'),
+    children:[
+      { path:'', component: () => import('pages/Profile/Index.vue') },
+      { path:'status', component: () => import('pages/Profile/Status.vue') },
+      { path:'changepass', component: () => import('pages/Profile/Cpass.vue') },
+      { path:'assist', component: () => import('pages/Profile/Assist.vue') },
+      { path:'sales', component: () => import('pages/Profile/Sales.vue') },
+      { path:'historywork', component: () => import('pages/Profile/History.vue') },
+
     ]
   },
 
