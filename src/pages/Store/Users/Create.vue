@@ -109,54 +109,190 @@
               </q-tab-panel>
 
               <q-tab-panel name="documents">
-                <div class="text-h5 q-mb-s text-center">Documentos</div>
-                <div class="q-pa-md row between">
+                <q-card class="my-card">
+                  <q-card-section class="my-card text-primary bg-white">
+                    <div class="text-h4">
+                      <q-icon name="person" class="q-mr-xs" />
+                      Doumentos
+                    </div>
+                  </q-card-section>
+                  <q-card-section>
+                    <div class="q-pa-md row between">
+
+                      <q-file filled bottom-slots v-model="files.solicitud" label="Solicitud de empleo" counter
+                        style="width: 300px" class="col">
+                        <template v-slot:prepend>
+                          <q-icon name="cloud_upload" @click.stop.prevent />
+                        </template>
+                        <template v-slot:append>
+                          <q-icon name="close" @click.stop.prevent="files.solicitud = null" class="cursor-pointer" />
+                        </template>
+                        <template v-slot:hint>
+                          Solicitud de empleo
+                        </template>
+                      </q-file>
+                      <q-separator spaced inset vertical dark />
+
+                      <q-file filled bottom-slots v-model="files.identificacion" label="Identificacion" counter
+                        style="width: 300px" class="col">
+                        <template v-slot:prepend>
+                          <q-icon name="cloud_upload" @click.stop.prevent />
+                        </template>
+                        <template v-slot:append>
+                          <q-icon name="close" @click.stop.prevent="files.identificacion = null" class="cursor-pointer" />
+                        </template>
+                        <template v-slot:hint>
+                          Identificacion
+                        </template>
+                      </q-file>
+
+                      <q-separator spaced inset vertical dark />
+
+                      <q-file filled bottom-slots v-model="files.acta" label="Acta de nacimiento" counter
+                        style="width: 300px" class="col">
+                        <template v-slot:prepend>
+                          <q-icon name="cloud_upload" @click.stop.prevent />
+                        </template>
+                        <template v-slot:append>
+                          <q-icon name="close" @click.stop.prevent="files.acta = null" class="cursor-pointer" />
+                        </template>
+                        <template v-slot:hint>
+                          Acta de nacimiento
+                        </template>
+                      </q-file>
+
+                    </div>
+                    <div class="q-pa-md row between">
+
+
+                      <q-file filled bottom-slots v-model="files.comprobantedom" label="Comprobante de domicilio" counter
+                        style="width: 300px" class="col">
+                        <template v-slot:prepend>
+                          <q-icon name="cloud_upload" @click.stop.prevent />
+                        </template>
+                        <template v-slot:append>
+                          <q-icon name="close" @click.stop.prevent="files.comprobantedom = null" class="cursor-pointer" />
+                        </template>
+                        <template v-slot:hint>
+                          Comprobante de domicilio
+                        </template>
+                      </q-file>
+
+                      <q-separator spaced inset vertical dark />
+
+                      <q-file filled bottom-slots v-model="files.comprobanteest" label="Comprobante de estudios" counter
+                        style="width: 300px" class="col">
+                        <template v-slot:prepend>
+                          <q-icon name="cloud_upload" @click.stop.prevent />
+                        </template>
+                        <template v-slot:append>
+                          <q-icon name="close" @click.stop.prevent="files.comprobanteest = null" class="cursor-pointer" />
+                        </template>
+                        <template v-slot:hint>
+                          Comprobante de estudios
+                        </template>
+                      </q-file>
+
+                      <q-separator spaced inset vertical dark />
+
+                      <q-file filled bottom-slots v-model="files.rfc" label="RFC" counter style="width: 300px"
+                        class="col">
+                        <template v-slot:prepend>
+                          <q-icon name="cloud_upload" @click.stop.prevent />
+                        </template>
+                        <template v-slot:append>
+                          <q-icon name="close" @click.stop.prevent="files.rfc = null" class="cursor-pointer" />
+                        </template>
+                        <template v-slot:hint>
+                          RFC
+                        </template>
+                      </q-file>
+
+
+                    </div>
+
+                    <div class="q-pa-md row between">
+
+                      <q-file filled bottom-slots v-model="files.seguro" label="Seguro" counter style="width: 300px"
+                        class="col">
+                        <template v-slot:prepend>
+                          <q-icon name="cloud_upload" @click.stop.prevent />
+                        </template>
+                        <template v-slot:append>
+                          <q-icon name="close" @click.stop.prevent="files.seguro = null" class="cursor-pointer" />
+                        </template>
+                        <template v-slot:hint>
+                          Seguro
+                        </template>
+                      </q-file>
+                      <q-separator spaced inset vertical dark />
+
+                      <q-file filled bottom-slots v-model="files.cartasreco" label="Cartas de recomendacion" counter
+                        style="width: 300px" class="col">
+                        <template v-slot:prepend>
+                          <q-icon name="cloud_upload" @click.stop.prevent />
+                        </template>
+                        <template v-slot:append>
+                          <q-icon name="close" @click.stop.prevent="files.cartasreco = null" class="cursor-pointer" />
+                        </template>
+                        <template v-slot:hint>
+                          Cartas de recomendacion
+                        </template>
+                      </q-file>
+
+                      <q-separator spaced inset vertical dark />
+
+                      <q-file filled bottom-slots v-model="files.contanciasit" label="Constancia Fiscal" counter
+                        style="width: 300px" class="col">
+                        <template v-slot:prepend>
+                          <q-icon name="cloud_upload" @click.stop.prevent />
+                        </template>
+                        <template v-slot:append>
+                          <q-icon name="close" @click.stop.prevent="files.contanciasit = null" class="cursor-pointer" />
+                        </template>
+                        <template v-slot:hint>
+                          Constancia Fiscal
+                        </template>
+                      </q-file>
+
+                    </div>
+
+                    <div class="q-pa-md row between">
+
+                      <q-file filled bottom-slots v-model="files.fotografia" label="Fotografia" counter
+                        style="width: 300px" class="col">
+                        <template v-slot:prepend>
+                          <q-icon name="cloud_upload" @click.stop.prevent />
+                        </template>
+                        <template v-slot:append>
+                          <q-icon name="close" @click.stop.prevent="files.fotografia = null" class="cursor-pointer" />
+                        </template>
+                        <template v-slot:hint>
+                          Fotografia
+                        </template>
+                      </q-file>
+                      <q-separator spaced inset vertical dark />
+
+                      <q-file filled bottom-slots v-model="files.CURP" label="CURP" counter style="width: 300px"
+                        class="col">
+                        <template v-slot:prepend>
+                          <q-icon name="cloud_upload" @click.stop.prevent />
+                        </template>
+                        <template v-slot:append>
+                          <q-icon name="close" @click.stop.prevent="files.CURP = null" class="cursor-pointer" />
+                        </template>
+                        <template v-slot:hint>
+                          CURP
+                        </template>
+                      </q-file>
+
+
+                    </div>
+                  </q-card-section>
+                </q-card>
 
 
 
-                  <q-file filled bottom-slots v-model="files.solicitud" label="Solicitud de empleo" counter
-                    style="width: 300px" class="col">
-                    <template v-slot:prepend>
-                      <q-icon name="cloud_upload" @click.stop.prevent />
-                    </template>
-                    <template v-slot:append>
-                      <q-icon name="close" @click.stop.prevent="files.solicitud = null" class="cursor-pointer" />
-                    </template>
-                    <template v-slot:hint>
-                      Solicitud de empleo
-                    </template>
-                  </q-file>
-                  <q-separator spaced inset vertical dark />
-
-                  <q-file filled bottom-slots v-model="files.identificacion" label="Identificacion" counter
-                    style="width: 300px" class="col">
-                    <template v-slot:prepend>
-                      <q-icon name="cloud_upload" @click.stop.prevent />
-                    </template>
-                    <template v-slot:append>
-                      <q-icon name="close" @click.stop.prevent="files.identificacion = null" class="cursor-pointer" />
-                    </template>
-                    <template v-slot:hint>
-                      Identificacion
-                    </template>
-                  </q-file>
-
-                  <q-separator spaced inset vertical dark />
-
-                  <q-file filled bottom-slots v-model="files.identificacion" label="Identificacion" counter
-                    style="width: 300px" class="col">
-                    <template v-slot:prepend>
-                      <q-icon name="cloud_upload" @click.stop.prevent />
-                    </template>
-                    <template v-slot:append>
-                      <q-icon name="close" @click.stop.prevent="files.identificacion = null" class="cursor-pointer" />
-                    </template>
-                    <template v-slot:hint>
-                      Identificacion
-                    </template>
-                  </q-file>
-
-                </div>
               </q-tab-panel>
 
               <q-tab-panel name="envuser">
@@ -240,7 +376,8 @@ const files = ref({
   seguro: null,
   cartasreco: null,
   contanciasit: null,
-  CUPR: null
+  CUPR: null,
+  fotografia: null
 });
 
 const tab = ref('person');
