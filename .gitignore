@@ -28,4 +28,4 @@ yarn-error.log*
 *.njsproj
 *.sln
 
-/src/boot/_axios.js
+/src/boot/axios.js
