@@ -8,4 +8,8 @@ export default{
     let burl = `cluster/accounts/users?id=${piniaAccount.account.id}`;
     return vizapi.get(burl).then( done => done.data ).catch( fail => { return {error:fail.response} });
   },
+  opts(){
+    let burl = `cluster/accounts/getIndex?id=${piniaAccount.account.id}`;
+    return vizapi.get(burl).then( done => done.data ).catch( fail => { return {error:fail.response} });
+  },
 }
