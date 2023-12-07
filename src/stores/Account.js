@@ -11,6 +11,7 @@ export const useAccountStore = defineStore('account', {
     modauths: undefined,
     module: undefined,
     clumdlname: "",
+    apps: undefined
   }),
 
   getters: {
@@ -42,7 +43,10 @@ export const useAccountStore = defineStore('account', {
 
     setModAuths(data){ this.modauths=data; },
 
+    // setea el nombre del modulo del cluster (en el AppMainToolbar)
     setCluMdlTitle(data){ this.clumdlname=data; },
+
+    setApps(data){ this.apps=data },
 
     persist(){ LocalStorage.set("auth", this.$state); },
   }

@@ -4,30 +4,36 @@
     side="left"
     class="bg-white"
   >
-    <q-scroll-area class="fit">
-      <div class="bg-grey-1 bg-grey-2">
-        <q-card flat class="transparent">
-          <q-card-section horizontal class="bg-primary text-white">
-            <q-card-section class="row items-center q-pr-none">
-              <q-btn flat round @click="$router.push('/profile')">
-                <q-avatar size="50px">
-                  <q-img :src="piniaAccount.avatar"/>
-                </q-avatar>
-              </q-btn>
-            </q-card-section>
-            <q-card-section class="col">
-              <div class="text-bold text-h6">{{ account.nick }}</div>
-              <div>{{ account.name }} {{ account.surnames }}</div>
-              <div>{{ rol.name }}</div>
-              <div class="text-indigo-3 text-bold">ID: {{ account.id }}</div>
-            </q-card-section>
+    <div class="bg-grey-1 bg-grey-2">
+      <q-card flat class="transparent">
+        <q-card-section horizontal class="bg-primary text-white">
+          <q-card-section class="row items-center q-pr-none">
+            <q-btn flat round @click="$router.push('/profile')">
+              <q-avatar size="50px">
+                <q-img :src="piniaAccount.avatar"/>
+              </q-avatar>
+            </q-btn>
           </q-card-section>
-          <q-btn color="primary" flat icon="fas fa-power-off" class="full-width" @click="dialog = !dialog"/>
-        </q-card>
-      </div>
-      <q-separator/>
+          <q-card-section class="col">
+            <div class="text-bold text-h6">{{ account.nick }}</div>
+            <div>{{ account.name }} {{ account.surnames }}</div>
+            <div>{{ rol.name }}</div>
+            <div class="text-indigo-3 text-bold">ID: {{ account.id }}</div>
+          </q-card-section>
+        </q-card-section>
+        <q-btn color="primary" flat icon="fas fa-power-off" class="full-width" @click="dialog = !dialog"/>
+      </q-card>
+    </div>
+
+    <q-separator/>
+    <q-scroll-area style="height:500px">
       <treeModulesApp />
     </q-scroll-area>
+    <q-separator />
+
+    <div class="q-pa-md">
+      <div v-for="app in apps" :key="app.id">{{ app.name }}</div>
+    </div>
 
     <q-dialog v-model="dialog">
       <q-card>
@@ -46,12 +52,12 @@
 
 <script setup>
   import { ref, computed } from 'vue';
-  import { useRoute, useRouter } from 'vue-router';
+  import { useRouter } from 'vue-router';
   import { useQuasar, LocalStorage } from 'quasar';
   import { useAccountStore } from 'stores/Account';
   import treeModulesApp from 'src/components/TreeModulesApp.vue';
 
-  const $q = useQuasar();
+  // const $q = useQuasar();
   const $router = useRouter();
   const piniaAccount = useAccountStore();
 
@@ -62,7 +68,8 @@
 
   const account = computed( () => piniaAccount.account );
   const rol = computed( () => piniaAccount.rol );
-  const accverified = computed( () => piniaAccount.verified );
+  // const accverified = computed( () => piniaAccount.verified );
+  const apps = computed(() => piniaAccount.apps.map( app => app.app) )
 
   /** M E T H O D S */
 

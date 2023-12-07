@@ -16,7 +16,7 @@ export default boot(({ router }) => {
       piniaAccount.setJoin(auth.join);
       piniaAccount.setStores(auth.stores);
       piniaAccount.setModAuths(auth.modauths);
-
+      piniaAccount.setApps(auth.apps);
 
       if(auth.account._state==1){// La cuenta es nueva (state==1): es oblogatorio la configuracion de cuenta
         if(to.path!="/welcome"){// siempre que se quiera ir a cualquier ruta que no sea /welcome, se redireccionara a /accountconfirm porque no hay sesion activa

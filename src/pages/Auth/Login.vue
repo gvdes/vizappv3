@@ -118,6 +118,7 @@
       piniaAccount.setJoin(acc.store.id);
       piniaAccount.setStores(acc.stores);
       piniaAccount.setModAuths(acc.modules);
+      piniaAccount.setApps(acc.apps);
       piniaAccount.persist();
 
       if(acc._state==1){// si la cuenta es nueva, obliga al cambio de contraseña
