@@ -1,93 +1,92 @@
 <template>
-  <q-page padding class="bg-grey-3">
-    <q-header class="bg-white text-dark" bordered>
-      <ClusterToolbar @toggleNavigatorStore="toggleNavigatorStore" />
-      <q-separator />
-      <div class="row q-pa-sm items-center justify-between">
-        <div><q-btn color="primary" icon="refresh" @click="init" dense flat/></div>
-        <div></div>
-        <div class="row items-center">
-          <q-input rounded outlined dense v-model="taccounts.filter" type="text" label="Buscar" debounce="100" />
-          <q-btn color="primary" icon="add" @click="wndCreate=true"/>
+  <q-page padding>
+    <div class="bg-white">
+      <div class="q-pa-sm row items-center text-center text-h6">
+        <div class="col anek-bld text-grey-9 q-pl-sm">Usuarios</div>
+        <div>
+          <q-btn flat rounded icon="autorenew" @click="init" />
         </div>
       </div>
-    </q-header>
+    </div>
+    <q-separator spaced inset vertical dark />
+    <div class="q-pa-md row items-start q-gutter-s" >
+      <div v-for="(use, index) in users" :key="index">
+      <q-list>
+        <q-item clickable v-ripple>
+          <q-item-section>
+            <q-card class="mycard" bordered style="width: 380px; max-width: 70vw; height: 150px;">
+              <q-card-section>
+                <div class="text-h6">{{ use.name }} {{ use.surnames }} <q-avatar size="25px"> <q-img
+                      :src="`src/assets/avatares/${use.avatar}`" /></q-avatar> <q-badge color="primary">
+                    {{ use.nick }}
+                  </q-badge> </div>
+                <q-separator />
+                <div>
+                  Sucursal: {{ use.store.name }}
+                </div>
+                <q-separator />
+                <div>
+                  Area: {{ use.rol.area.name }}
+                </div>
+                <q-separator />
+                <div>
+                  Puesto: {{ use.rol.name }}
+                </div>
 
-    <AppNavigator ref="main_menu" />
+              </q-card-section>
+            </q-card>
+          </q-item-section>
+        </q-item>
+      </q-list>
 
-    <q-table flat
-      row-key="name"
-      :rows="accountsdb"
-      :columns="taccounts.cols"
-      :pagination="taccounts.pagination"
-      :filter="taccounts.filter"
-    >
-    </q-table>
+    </div>
+    </div>
 
-    <q-dialog v-model="wndCreate">
-      <UserCreator :stores="storesdb" :roles="rolesdb"/>
-    </q-dialog>
+    <q-page-sticky position="bottom-right" :offset="[18, 18]">
+      <q-fab color="primary" icon="add" position="bottom-right" direction="up">
+        <q-fab-action color="purple" @click="addUser" icon="person_add" />
+        <q-fab-action color="blue" @click="exportUsers" icon="upgrade" />
+      </q-fab>
+    </q-page-sticky>
 
-    <!-- <pre>{{ accountsdb }}</pre>
-    <pre>{{ storesdb }}</pre> -->
 
   </q-page>
 </template>
 
+
 <script setup>
-  import { ref, computed } from 'vue';
-  import AccDB from 'src/API/Accounts';
-  import { useQuasar, dom } from 'quasar';
-  import ClusterToolbar from 'src/components/ClusterToolbar.vue';
-  import AppNavigator from 'src/components/AppNavigator.vue';
-  import { useAccountStore } from 'stores/Account'
-  import UserCreator from 'src/components/Users/Creator.vue';
+import { ref, onMounted, computed } from 'vue';
+import { useRouter } from 'vue-router';
+import { useQuasar } from 'quasar';
+import { useAccountStore } from 'stores/Account';
+import uapi from 'src/API/UserApi';
+const $q = useQuasar();
+const $router = useRouter();
+const piniaAccount = useAccountStore();
 
-  const main_menu = ref(null);
+const users = ref(null);
 
-  const piniaAccount = useAccountStore();
-  const wndCreate = ref(false);
-  const $q = useQuasar();
-  const accountsdb = ref([]);
-  const storesdb = ref([]);
-  const rolesdb = ref([]);
-  const taccounts = ref({
-    cols:[
-      { "name":"id", label:"ID", field:"id" },
-      { "name":"names", label:"Nombre", field:row => `${row.name} ${row.surnames} ` },
-      { "name":"nick", label:"nick", field:"nick"},
-      { "name":"rol", label:"rol", field:row=>row.rol.name},
-      { "name":"mainstore", label:"Sucursal", field:row=>row.store.alias},
-      { "name":"state", label:"Estado", field:row=>row.state.name},
-    ],
-    pagination:{
-      sortBy: 'desc',
-      descending: false,
-      page: 1,
-      rowsPerPage: 50
-      // rowsNumber: xx if getting data from a server
-    },
-    filter:""
-  });
 
-  const toggleNavigatorStore = () => main_menu.value.toggle();
-
-  const init = async() => {
-    $q.loading.show();
-
-    const response = await AccDB.list();
-
-    if(response.error){
-
-    }else{
-      $q.loading.hide();
-      accountsdb.value = response.accounts;
-      storesdb.value = response.stores;
-      rolesdb.value = response.roles;
-    }
-
+const init = async () => {
+  const resp = await uapi.index();
+  if (resp.error) {
+    console.log(resp);
+  } else {
+    users.value = resp;
   }
+};
 
-  piniaAccount.setCluMdlTitle("Usuarios");
-  init();
+const addUser = () => {
+  let store = piniaAccount.join;
+  console.log("Redirecciona al formulario");
+  $router.replace(`/store/${store}/usuarios/create`);
+}
+
+const exportUsers = () => {
+  console.log("para exportarlos");
+}
+
+
+onMounted(() => { init(); });
+const isMob = computed(() => $q.platform.is.mobile);
 </script>
