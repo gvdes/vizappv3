@@ -46,7 +46,7 @@ const routes = [
         ]
       },
       {
-        path: 'warehouses',
+        path: 'almacenes',
         children: [
           { path: '', name: 'wrhs', component: () => import('pages/Store/Warehouses/Index.vue') },
           { path: 'pedidos', component: () => import('pages/Store/Warehouses/Orders.vue') },
