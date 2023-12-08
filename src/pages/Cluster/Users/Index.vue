@@ -43,9 +43,10 @@
     </div>
 
     <q-page-sticky position="bottom-right" :offset="[18, 18]">
-      <q-fab color="primary" icon="add" position="bottom-right" direction="up">
-        <q-fab-action color="purple" @click="addUser" icon="person_add" />
-        <q-fab-action color="blue" @click="exportUsers" icon="upgrade" />
+      <q-fab color="primary" icon="settings" position="bottom-right" direction="left">
+        <q-fab-action color="purple" @click="addUser" icon="person_add" label="Agregar" />
+        <q-fab-action color="blue" @click="exportUsers" icon="upgrade" label="Exportar" />
+        <q-fab-action color="primary" @click="branches" icon="store" label="Sucursal" />
       </q-fab>
     </q-page-sticky>
 
@@ -80,6 +81,12 @@ const addUser = () => {
   let store = piniaAccount.join;
   console.log("Redirecciona al formulario");
   $router.replace(`/store/${store}/usuarios/create`);
+}
+
+const branches = () => {
+  let store = piniaAccount.join;
+  console.log("Redirecciona a branches");
+  $router.replace(`/store/${store}/usuarios/branch`);
 }
 
 const exportUsers = () => {
