@@ -11,6 +11,7 @@ export const useAccountStore = defineStore('account', {
     modauths: undefined,
     module: undefined,
     clumdlname: "",
+    apps:undefined
   }),
 
   getters: {
@@ -45,6 +46,8 @@ export const useAccountStore = defineStore('account', {
     setModAuths(data){ this.modauths=data; },
 
     setCluMdlTitle(data){ this.clumdlname=data; }, // setea el nombre del modulo en el que esta el usuario
+
+    setApps(data){ this.apps=data; },
 
     persist(){ LocalStorage.set("auth", this.$state); }, // persiste los datos en LS
   }

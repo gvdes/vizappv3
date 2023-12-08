@@ -18,6 +18,7 @@ export default boot(({ router }) => {
       piniaAccount.setStore(auth.join);
       piniaAccount.setStores(auth.stores);
       piniaAccount.setModAuths(auth.modauths);
+      piniaAccount.setApps(auth.apps);
 
       if(auth.account._state==1){// La cuenta es nueva (state==1): es oblogatorio la configuracion de cuenta
         console.warn("router: this account is new, set a new pass (mandatory!)... ");

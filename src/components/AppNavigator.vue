@@ -30,6 +30,10 @@
     <q-scroll-area style="height: 500px;">
       <treeModulesApp />
     </q-scroll-area>
+
+    <q-separator/>
+
+    <div class="q-pa-md">Acceso a apps: {{ apps.length }}</div>
   </q-drawer>
 
   <q-dialog v-model="dialog">
@@ -65,6 +69,7 @@
   const account = computed( () => piniaAccount.account );
   const rol = computed( () => piniaAccount.rol );
   const accverified = computed( () => piniaAccount.verified );
+  const apps = computed( () => piniaAccount.apps.map( a => a.app) );
 
   /** M E T H O D S */
 
