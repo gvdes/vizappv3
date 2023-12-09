@@ -34,7 +34,7 @@
                     <div class="row q-my-md">
 
                       <q-input rounded outlined v-model="personaldata.dayofbirth.val" label="Fecha Nacimiento" class="col"
-                        mask="####-##-##">
+                        mask="####-##-##" :error="!valifecha" error-message="anio-mes-dia alguno esta mal :(">
                         <template v-slot:prepend>
                           <q-btn color="primary" icon="event" @click="date = !date" flat round />
                         </template>
@@ -447,7 +447,8 @@
 
 
                 <div>
-                  <q-btn  unelevated rounded class="full-width" label="Enviar" type="submit" color="primary" :loading="loading"/>
+                  <q-btn unelevated rounded class="full-width" label="Enviar" type="submit" color="primary"
+                    :loading="loading" />
                 </div>
               </q-tab-panel>
 
@@ -456,12 +457,13 @@
         </q-splitter>
       </div>
     </q-form>
+
   </q-page>
 </template>
 
 <script setup>
 import { ref, onMounted, computed } from 'vue';
-import { useQuasar} from 'quasar';
+import { useQuasar } from 'quasar';
 import AppNavigator from 'src/components/AppNavigator.vue';
 import uapi from 'src/API/UserApi';
 import addPersonImage from "src/assets/avatares/pikachu.png";
@@ -535,14 +537,15 @@ const nickvalid = computed(() => {
   let nkmil = users.value.filter((e) => e.nick == personaldata.value.nick);
   return nkmil.length >= 1 ? true : false;
 });
+const valifecha = computed(() => validafecha(personaldata.value.dayofbirth.val))
 const pos = computed(() => roles.value.puesto.val ? roles.value.puesto.val.name : '')
 const area = computed(() => roles.value.areas.val ? roles.value.areas.val.name : '')
 const work = computed(() => workpoints.value.valfav ? workpoints.value.valfav.label : '')
 const appis = computed(() => {
   let exapp = apps.value.val ? apps.value.val : [];
-  return apps.value.opts.filter((e) => exapp.includes(e.value)).map((e) => e.label).toString()
+  return apps.value.opts.filter((e) => exapp.includes(e.value)).map((e) => e.label).join(', ')
 })
-const formsvalid = computed(() => personaldata.value.name && personaldata.value.surnames && personaldata.value.dayofbirth && personaldata.value.email && personaldata.value.celphone && personaldata.value.gender.val && personaldata.value.nick && roles.value.areas.val && roles.value.puesto.val && workpoints.value.valfav && (nickvalid.value == false) && (celvalid.value == false) && (isValid.value == false))
+const formsvalid = computed(() => personaldata.value.name && personaldata.value.surnames && personaldata.value.dayofbirth && personaldata.value.email && personaldata.value.celphone && personaldata.value.gender.val && personaldata.value.nick && roles.value.areas.val && roles.value.puesto.val && workpoints.value.valfav && (nickvalid.value == false) && (celvalid.value == false) && (isValid.value == false) && (valifecha.value) )
 onMounted(() => { init(); });
 
 const init = async () => {
@@ -581,7 +584,7 @@ const onSubmit = async () => {
   }
   console.log(adduser);
   const addp = await uapi.adduser(adduser);
-  if (addp.erro) {
+  if (addp.error) {
     console.log(addp)
   } else {
     console.log(addp)
@@ -605,6 +608,41 @@ const onSubmit = async () => {
     })
   }
 };
+
+const validafecha = (fecha) => {
+  if (fecha == null || fecha.length < 10) {
+    return true
+  } else {
+    const formatoFecha = /^\d{4}-\d{2}-\d{2}$/;
+
+    if (!formatoFecha.test(fecha)) {
+      return false; // Formato de fecha incorrecto
+    }
+
+    const [year, month, day] = fecha.split('-');
+    const parsedYear = parseInt(year, 10);
+    const parsedMonth = parseInt(month, 10);
+    const parsedDay = parseInt(day, 10);
+
+    if (parsedYear < 1000 || parsedYear > 9999) {
+      return false; // Año inválido
+    }
+
+    if (parsedMonth < 1 || parsedMonth > 12) {
+      return false; // Mes inválido
+    }
+
+    const lastDayOfMonth = new Date(parsedYear, parsedMonth, 0).getDate();
+    if (parsedDay < 1 || parsedDay > lastDayOfMonth) {
+      return false; // Día inválido
+    }
+
+    return true; // Fecha válida
+  }
+
+}
+
+
 
 const isMob = computed(() => $q.platform.is.mobile);
 

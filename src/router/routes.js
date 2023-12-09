@@ -36,15 +36,6 @@ const routes = [
     component: () => import('layouts/StoreLYT.vue'),
     children: [
       { path: '', component: () => import('pages/Store/Index.vue') },
-
-      {
-        path: 'usuarios',
-        children: [
-          { path: '', name: 'users', component: () => import('pages/Cluster/Users/Index.vue') },
-          { path: 'create', name: 'create', component: () => import('pages/Cluster/Users/Create.vue') },
-          { path: 'branch', name: 'branches', component: () => import('pages/Cluster/Users/Branches.vue') },
-        ]
-      },
       {
         path: 'almacenes',
         children: [
@@ -84,8 +75,14 @@ const routes = [
     component: () => import('layouts/ClusterLYT.vue'),
     children: [
       { path: '', component: () => import('pages/Cluster/Index.vue') },
-      { path: 'team', component: () => import('pages/Cluster/Users/Index.vue'), },
-      { path: 'team/builder', component: () => import('pages/Cluster/Users/Builder.vue') },
+      {
+        path: 'usuarios',
+        children: [
+          { path: '', name: 'users', component: () => import('pages/Cluster/Users/Index.vue') },
+          { path: 'create', name: 'create', component: () => import('pages/Cluster/Users/Create.vue') },
+          { path: 'branch', name: 'branches', component: () => import('pages/Cluster/Users/Branches.vue') },
+        ]
+      },
     ]
   },
 

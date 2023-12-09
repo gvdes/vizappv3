@@ -1,28 +1,106 @@
 <template>
-  <q-page padding >
-    {{ users }}
+  <q-page padding>
+    <div class="bg-white">
+      <div class="q-pa-sm row items-center text-center text-h6">
+        <div class="col anek-bld text-grey-9 q-pl-sm">Usuarios X Sucursal</div>
+        <div>
+          <q-btn flat rounded icon="autorenew" @click="init" />
+          <q-btn  rounded flat  :icon="expanded ? 'keyboard_arrow_up' : 'keyboard_arrow_down'"
+            @click="expanded = !expanded" />
+        </div>
+      </div>
+    </div>
+    <q-separator spaced inset vertical dark />
+    <div v-if="users" class="row items-start">
+      <div v-for="(store, index) in branch" :key="index" @drop="onDrop($event, store.id)" @dragenter.prevent
+        @dragover.prevent class="col-4 q-pa-xl">
+        <q-card class="my-card">
+          <q-card-section class="text-white bg-blue-8">
+            <div class="text-h5 text-center" >
+              <q-icon name="store" size="30px" />
+              {{ store.name.toUpperCase()}} ({{ getlist(store.id).length }})
+            </div>
+          </q-card-section>
+        </q-card>
+        <q-slide-transition>
+          <div v-show="expanded">
+            <div v-for="item in getlist(store.id)" :key="item.id" :draggable="true" @dragstart="startDrag($event, item)">
+              <q-card class="my-card">
+                <q-card-section class="row between">
+
+                  <div class=" col">{{ item.name }} {{ item.surnames }}
+                  </div>
+                    <div class="col">
+                      <q-badge class="bg-blue-8">
+                      {{ item.rol.name }}
+                  </q-badge>
+                    </div>
+
+                  <q-separator />
+                </q-card-section>
+              </q-card>
+            </div>
+          </div>
+        </q-slide-transition>
+      </div>
+
+    </div>
 
   </q-page>
 </template>
 
 <script setup>
-import { ref, onMounted, computed } from 'vue';
-import { useRouter } from 'vue-router';
+import { ref } from 'vue';
 import { useQuasar } from 'quasar';
-import { useAccountStore } from 'stores/Account';
 import uapi from 'src/API/UserApi';
 const $q = useQuasar();
-const $router = useRouter();
-const piniaAccount = useAccountStore();
 
 const users = ref(null)
+const branch = ref(null)
+const expanded = ref(false)
+const getlist = (list) => {
+  return users.value.filter((e) => e._store == list)
+}
+
+
+const startDrag = (e, i) => {
+  console.log(i)
+  e.dataTransfer.dropEffect = 'move'
+  e.dataTransfer.effectAllowed = 'move'
+  e.dataTransfer.setData('itemID', i.id)
+}
+
+const onDrop = async (e, l) => {
+  const itemID = e.dataTransfer.getData('itemID');
+  const item = users.value.find((user) => user.id == itemID)
+
+  console.log(item._store);
+  console.log(item.id);
+  let mod = {
+    user:item.id,
+    store:l
+  }
+  const resp = await uapi.changework(mod);
+  if (resp.error) {
+    console.log(resp.error);
+  } else {
+    console.log(resp)
+    item._store = l
+    $q.notify({
+      type:'positive',
+      message:resp
+    })
+  }
+}
 
 const init = async () => {
   const resp = await uapi.workus();
   if (resp.error) {
     console.log(resp);
   } else {
-    users.value = resp;
+    console.log(resp)
+    users.value = resp.users;
+    branch.value = resp.branches
   }
 };
 

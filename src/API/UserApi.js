@@ -23,4 +23,9 @@ export default{
     let burl = `cluster/accounts/getUserWor?id=${piniaAccount.account.id}`;
     return vizapi.get(burl).then( done => done.data ).catch( fail => { return {error:fail.response} });
   },
+
+  changework(data){
+    let burl = `cluster/accounts/changework?id=${piniaAccount.account.id}`;
+    return vizapi.put(burl,data).then( done => done.data ).catch( fail => { return {error:fail.response} });
+  },
 }

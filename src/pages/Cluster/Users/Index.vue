@@ -78,15 +78,13 @@ const init = async () => {
 };
 
 const addUser = () => {
-  let store = piniaAccount.join;
   console.log("Redirecciona al formulario");
-  $router.replace(`/store/${store}/usuarios/create`);
+  $router.replace(`/cluster/usuarios/create`);
 }
 
 const branches = () => {
-  let store = piniaAccount.join;
   console.log("Redirecciona a branches");
-  $router.replace(`/store/${store}/usuarios/branch`);
+  $router.replace(`/cluster/usuarios/branch`);
 }
 
 const exportUsers = () => {
