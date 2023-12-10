@@ -17,7 +17,7 @@
       <q-select
         rounded outlined use-input dense
         input-class="text-uppercase"
-        label="Buscar"
+        label="Buscar producto"
         v-model="target"
         :options="options"
         :type="keyboard"
