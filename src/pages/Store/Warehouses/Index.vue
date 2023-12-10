@@ -6,7 +6,11 @@
         <div class="col anek-bld text-grey-9 q-pl-sm">ALMACENES</div>
         <div>
           <q-btn flat rounded icon="autorenew" @click="init" />
-          <q-btn flat rounded icon="add" />
+          <q-btn flat rounded icon="add" v-if="canCreate">
+            <q-menu square ref="creator">
+              <WrhCreator @created="created" />
+            </q-menu>
+          </q-btn>
           <q-btn flat rounded icon="support" />
         </div>
       </div>
@@ -20,6 +24,7 @@
         </q-card-section>
 
         <q-separator />
+
         <q-card-section v-if="pfinder.product">
           <CardProduct :item="pfinder.product"/>
         </q-card-section>
@@ -59,6 +64,7 @@
   import Wapi from 'src/API/WarehouseApi';
   import ProductFinder from 'src/components/ProductFinder.vue';
   import CardProduct from 'src/components/CardProduct.vue';
+  import WrhCreator from 'src/components/Warehouse/WrhCreator.vue';
 
   /** R E F E R E N C E S */
 
@@ -69,11 +75,13 @@
   const types = ref([]);
   const iptsearch = ref(null);
   const pfinder = ref({ product:null });
+  const creator = ref(null)
 
   /** H O O K S  */
 
   /** C O M P U T E D S */
   const isMobile = computed(() => $q.platform.is.mobile);
+  const canCreate = computed(() => ( [1,2,11].includes(piniaAccount.rol.id)) )
 
   /** M E T H O D S  */
   const init = async () => {
@@ -101,6 +109,19 @@
     console.log("a product was getted");
     console.log(item);
     pfinder.value.product = item;
+  }
+
+  const created = wrh => {
+    warehousesdb.value.unshift(wrh);
+
+    $q.notify({
+      message:`Nuevo almacen creado!`,
+      color:"positive",
+      icon:"done",
+      position:"center"
+    });
+
+    creator.value.hide();
   }
 
   init();

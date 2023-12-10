@@ -8,6 +8,11 @@ export default{
     return vizapi.get(burl).then( done => done.data ).catch( fail => { return {error:fail.response} });
   },
 
+  create(data){
+    let burl = `store/${piniaAccount.join}/warehouses`;
+    return vizapi.post(burl,data).then( done => done.data ).catch( fail => { return {error:fail.error.response} });
+  },
+
   open(wid){
     let burl = `store/${piniaAccount.join}/warehouses/${wid}`;
     return vizapi.get(burl).then( done => done.data ).catch( fail => { return {error:fail.response} });
