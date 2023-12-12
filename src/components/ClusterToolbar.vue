@@ -3,7 +3,7 @@
     <div class="q-pa-sm row items-center">
       <div class="col row items-center">
         <q-btn flat round dense icon="menu" @click="toggleMenu"/>
-        <div class="text-h6"><strong class="text-grey-6">Viz</strong>App </div>
+        <div class="text-h6" @click="$router.push('/')"><strong class="text-grey-6">Viz</strong>App </div>
       </div>
 
       <div class="col text-center anek-bld">
