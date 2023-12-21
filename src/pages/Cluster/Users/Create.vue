@@ -3,6 +3,14 @@
 
     <AppNavigator ref="main_menu" />
 
+    <div class="bg-white">
+      <div class="q-pa-sm row items-center text-center text-h6">
+        <div @click="$router.push('/cluster/usuarios')"> <q-icon size="30px" name="arrow_back" /></div>
+        <div class="col anek-bld text-grey-9 q-pl-sm">Creacion de Usuarios</div>
+      </div>
+    </div>
+
+    <q-separator spaced inset vertical dark />
     <q-form @submit="onSubmit" class="q-gutter-md">
       <div>
         <q-splitter v-model="splitterModel">
@@ -50,13 +58,14 @@ import { ref, onMounted, computed } from 'vue';
 import { useQuasar } from 'quasar';
 import AppNavigator from 'src/components/AppNavigator.vue';
 import uapi from 'src/API/UserApi';
+import { useAccountStore } from 'stores/Account';
 import addPersonImage from "src/assets/avatares/pikachu.png";
 import dataper from 'src/components/Users/Create/PersonalData.vue';
 import datawork from 'src/components/Users/Create/WorkerData.vue';
 import datadoc from 'src/components/Users/Create/DocumentsData.vue';
 import datapre from 'src/components/Users/Create/PreviewData.vue';
 
-
+const piniaAccount = useAccountStore();
 const $q = useQuasar();
 
 const users = ref([]);
@@ -140,6 +149,9 @@ const appis = computed(() => {
 })
 const formsvalid = computed(() => personaldata.value.name && personaldata.value.surnames && personaldata.value.dayofbirth && personaldata.value.email && personaldata.value.celphone && personaldata.value.gender.val && personaldata.value.nick && roles.value.areas.val && roles.value.puesto.val && workpoints.value.valfav && (nickvalid.value == false) && (celvalid.value == false) && (isValid.value == false) && (valifecha.value))
 onMounted(() => { init(); });
+const account = computed(() => piniaAccount.account);
+
+
 
 const init = async () => {
   const resp = await uapi.opts();
@@ -158,6 +170,7 @@ const onSubmit = async () => {
   console.log('Se creara el usuario');
   loading.value = true;
   let adduser = {
+    user:account.value.id,
     name: personaldata.value.name,
     surnames: personaldata.value.surnames,
     dob: personaldata.value.dayofbirth.val,
