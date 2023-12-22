@@ -14,7 +14,7 @@
     </div>
     <q-separator spaced inset vertical dark />
 
-    <listuser :users="users" />
+    <listuser :users="users" :roles="filter.position.optsdb" :areas="filter.area.opts" :branches="filter.branches.opts"/>
 
     <q-dialog v-model="filter.state">
       <q-card style="width: 700px; max-width: 80vw;">
