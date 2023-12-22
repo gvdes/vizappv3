@@ -106,14 +106,14 @@
 
 <script setup>
 defineProps({
-  addPersonImage:{type:String},
-  personaldata:{type:Object},
-  area:{type:String},
-  pos:{type:String},
-  work:{type:String},
-  appis:{type:String},
-  files:{type:Array},
-  loading:{type:Boolean}
+  addPersonImage: { type: String },
+  personaldata: { type: Object },
+  area: { type: String },
+  pos: { type: String },
+  work: { type: String },
+  appis: { type: String },
+  files: { type: Array },
+  loading: { type: Boolean }
 })
 
 </script>

@@ -2,45 +2,54 @@
   <q-page padding>
     <div class="bg-white">
       <div class="q-pa-sm row items-center text-center text-h6">
+        <q-btn flat rounded icon="filter_alt" @click="filter.state = !filter.state" />
+        <q-input v-model="search" type="text" label="Buscar"> <template v-slot:prepend><q-icon
+              name="search" /></template></q-input>
         <div class="col anek-bld text-grey-9 q-pl-sm">Usuarios</div>
         <div>
           <q-btn flat rounded icon="autorenew" @click="init" />
+          <q-btn flat rounded color="negative" icon="archive" @click="archived.state = !archived.state" />
         </div>
       </div>
     </div>
     <q-separator spaced inset vertical dark />
-    <div class="q-pa-md row items-start q-gutter-s" >
-      <div v-for="(use, index) in users" :key="index">
-      <q-list>
-        <q-item clickable v-ripple>
-          <q-item-section>
-            <q-card class="mycard" bordered style="width: 380px; max-width: 70vw; height: 150px;">
-              <q-card-section>
-                <div class="text-h6">{{ use.name }} {{ use.surnames }} <q-avatar size="25px"> <q-img
-                      :src="`src/assets/avatares/${use.avatar}`" /></q-avatar> <q-badge color="primary">
-                    {{ use.nick }}
-                  </q-badge> </div>
-                <q-separator />
-                <div>
-                  Sucursal: {{ use.store.name }}
-                </div>
-                <q-separator />
-                <div>
-                  Area: {{ use.rol.area.name }}
-                </div>
-                <q-separator />
-                <div>
-                  Puesto: {{ use.rol.name }}
-                </div>
 
-              </q-card-section>
-            </q-card>
-          </q-item-section>
-        </q-item>
-      </q-list>
+    <listuser :users="users" :roles="filter.position.optsdb" :areas="filter.area.opts" :branches="filter.branches.opts"/>
 
-    </div>
-    </div>
+    <q-dialog v-model="filter.state">
+      <q-card style="width: 700px; max-width: 80vw;">
+        <q-card-section>
+          <div class="text-h6 text-center"><q-icon name="filter_alt" /> Filtros</div>
+        </q-card-section>
+        {{ filter.area.val }}
+        <q-card-section class=" row items-center">
+          <q-separator spaced inset vertical dark />
+          <q-select dense class="col" v-model="filter.branches.val" :options="filter.branches.opts" label="Sucursal"
+            option-label="name" filled outlined />
+          <q-separator spaced inset vertical dark />
+          <q-select dense class="col" v-model="filter.status.val" :options="filter.status.opts" label="Estado"
+            option-label="name" filled outlined />
+          <q-separator spaced inset vertical dark />
+          <q-select dense class="col" v-model="filter.area.val" :options="filter.area.opts" @update:model-value="posopts"
+            label="Area" option-label="name" filled outlined />
+          <q-separator spaced inset vertical dark />
+          <q-select dense class="col" v-model="filter.position.val" :options="filter.position.opts" label="Puesto"
+            option-label="name" filled outlined />
+          <q-separator spaced inset vertical dark />
+          <q-icon name="close" @click="delfil" />
+        </q-card-section>
+      </q-card>
+    </q-dialog>
+
+    <q-dialog v-model="archived.state">
+      <q-card>
+        <q-card-section>
+          <q-table title="Table Title" :rows="userArchived" row-key="name" />
+        </q-card-section>
+      </q-card>
+    </q-dialog>
+
+
 
     <q-page-sticky position="bottom-right" :offset="[18, 18]">
       <q-fab color="primary" icon="settings" position="bottom-right" direction="left">
@@ -59,21 +68,80 @@
 import { ref, onMounted, computed } from 'vue';
 import { useRouter } from 'vue-router';
 import { useQuasar } from 'quasar';
-import { useAccountStore } from 'stores/Account';
+import listuser from 'src/components/Users/Index/UserList.vue';
 import uapi from 'src/API/UserApi';
 const $q = useQuasar();
 const $router = useRouter();
-const piniaAccount = useAccountStore();
 
-const users = ref(null);
+const usuarios = ref([]);
+const search = ref('');
+const archived = ref({ state: false });
+const filter = ref({
+  state: false,
+  status: { val: null, opts: null },
+  branches: { val: null, opts: null },
+  area: { val: null, opts: null },
+  position: { val: null, optsdb: null, opts: [] },
+});
+
+
+const userArchived = computed(() => usuarios.value.filter((e) => e._state == 4));
+
+const userList = computed(() => {
+  if (
+    filter.value.status.val == null &&
+    filter.value.branches.val == null &&
+    filter.value.area.val == null &&
+    filter.value.position.val == null
+  ) {
+    return usuarios.value.filter((e) => e._state != 4);
+  } else {
+    return usuarios.value.filter((e) => {
+      const statusId = filter.value.status?.val?.id;
+      const branchesId = filter.value.branches?.val?.id;
+      const areasId = filter.value.area?.val?.id;
+      const positionId = filter.value.position?.val?.id;
+
+      const isStatusSelected = statusId != null;
+      const isBranchesSelected = branchesId != null;
+      const isAreasSelected = areasId != null;
+      const isPositionSelected = positionId != null;
+      return (
+        (isStatusSelected || isBranchesSelected || isAreasSelected || isPositionSelected) &&
+        e._state != null &&
+        e._store != null &&
+        e.rol != null &&
+        e.rol.area != null &&
+        (isStatusSelected ? e._state == statusId : true) &&
+        (isBranchesSelected ? e._store == branchesId : true) &&
+        (isAreasSelected ? e.rol.area.id == areasId : true) &&
+        (isPositionSelected ? e.rol.id == positionId : true)
+      );
+    });
+  }
+});
+
+const users = computed(() => userList.value.filter(e => (e.name + e.surnames).toLowerCase().includes(search.value.toLowerCase())))
+
+const posopts = () => {
+  filter.value.position.opts = filter.value.position.optsdb.filter((e) => e._area == filter.value.area.val.id)
+}
+
 
 
 const init = async () => {
+  $q.loading.show({ message: "Cargando Usuarios..." });
   const resp = await uapi.index();
   if (resp.error) {
     console.log(resp);
   } else {
-    users.value = resp;
+    usuarios.value = resp.usuarios
+    console.log(resp.usuarios)
+    filter.value.status.opts = resp.status
+    filter.value.area.opts = resp.area
+    filter.value.position.optsdb = resp.position
+    filter.value.branches.opts = resp.branches
+    $q.loading.hide();
   }
 };
 
@@ -89,6 +157,14 @@ const branches = () => {
 
 const exportUsers = () => {
   console.log("para exportarlos");
+}
+
+
+const delfil = () => {
+  filter.value.status.val = null
+  filter.value.branches.val = null
+  filter.value.area.val = null
+  filter.value.position.val = null
 }
 
 

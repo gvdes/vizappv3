@@ -1,7 +1,9 @@
 <template>
   <q-page padding>
+
     <div class="bg-white">
       <div class="q-pa-sm row items-center text-center text-h6">
+        <div @click="$router.push('/cluster/usuarios')"> <q-icon size="30px" name="arrow_back" /></div>
         <div class="col anek-bld text-grey-9 q-pl-sm">Usuarios X Sucursal</div>
         <div>
           <q-btn flat rounded icon="autorenew" @click="init" />
@@ -94,6 +96,7 @@ const onDrop = async (e, l) => {
 }
 
 const init = async () => {
+  $q.loading.show({message:"Cargando Usuarios..."});
   const resp = await uapi.workus();
   if (resp.error) {
     console.log(resp);
@@ -101,6 +104,7 @@ const init = async () => {
     console.log(resp)
     users.value = resp.users;
     branch.value = resp.branches
+    $q.loading.hide();
   }
 };
 
