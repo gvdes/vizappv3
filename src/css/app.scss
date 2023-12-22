@@ -1,9 +1,9 @@
 .seeme{ border:1px solid red; }
 
-.bg-bluedeepdark{ background-color: $bluedeepdark !important; }
-.bg-bluedark{ background-color: $bluedark !important; }
-.bg-bluegrey{ background-color: $bluegrey !important; }
-.bg-bluelight{ background-color: $bluelight !important; }
+// .bg-bluedeepdark{ background-color: $bluedeepdark !important; }
+// .bg-bluedark{ background-color: $bluedark !important; }
+// .bg-bluegrey{ background-color: $bluegrey !important; }
+// .bg-bluelight{ background-color: $bluelight !important; }
 
 @font-face { font-family: 'TFontRG';  src: url("../assets/fonts/Chocolate/ChocolatesRegular.otf"); }
 @font-face { font-family: 'TFontMD';  src: url("../assets/fonts/Chocolate/ChocolatesMedium.otf"); }
@@ -21,17 +21,17 @@
 .fw-bold{ font-family: "TFontBO"; }
 .fw-xbold{ font-family: "TFontXBO"; }
 
-.fc-deepbluedark{ color: $bluedeepdark; }
-.fc-bluedark{ color: $bluedark; }
-.fc-bluegrey{ color: $bluegrey; }
-.fc-bluelight{ color: $bluelight; }
-.fc-primary{ color: $primaryv1; }
-.fc-secondary{ color: $secondaryv1; }
-.fc-accent{ color: $accentv1; }
-.fc-positive{ color: $positivev1; }
-.fc-negative{ color: $negativev1; }
-.fc-warning{ color: $warningv1; }
-.fc-info{ color: $infov1; }
+// .fc-deepbluedark{ color: $bluedeepdark; }
+// .fc-bluedark{ color: $bluedark; }
+// .fc-bluegrey{ color: $bluegrey; }
+// .fc-bluelight{ color: $bluelight; }
+// .fc-primary{ color: $primaryv1; }
+// .fc-secondary{ color: $secondaryv1; }
+// .fc-accent{ color: $accentv1; }
+// .fc-positive{ color: $positivev1; }
+// .fc-negative{ color: $negativev1; }
+// .fc-warning{ color: $warningv1; }
+// .fc-info{ color: $infov1; }
 
 .fs-inc1{ font-size: 1.25em; }
 .fs-inc2{ font-size: 1.50em; }
