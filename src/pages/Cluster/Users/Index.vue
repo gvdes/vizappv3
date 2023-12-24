@@ -21,7 +21,6 @@
         <q-card-section>
           <div class="text-h6 text-center"><q-icon name="filter_alt" /> Filtros</div>
         </q-card-section>
-        {{ filter.area.val }}
         <q-card-section class=" row items-center">
           <q-separator spaced inset vertical dark />
           <q-select dense class="col" v-model="filter.branches.val" :options="filter.branches.opts" label="Sucursal"
