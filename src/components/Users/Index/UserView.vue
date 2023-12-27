@@ -4,34 +4,31 @@
       <q-card class="my-card">
         <q-card-section>
           <div class="flex justify-center">
-            <q-avatar size="170px"> <q-img :src="`src/assets/avatares/${useEdit.avatar}`" /> </q-avatar>
+            <q-avatar size="170px"> <q-img :src="`src/assets/avatares/${useEdit.body.avatar}`" /> </q-avatar>
           </div>
         </q-card-section>
         <q-card-section>
-          <div class="text-h6 text-center">{{ useEdit.name.toUpperCase() + ' ' + useEdit.surnames.toUpperCase() }}</div>
+          <div class="text-h6 text-center">{{ useEdit.body.name.toUpperCase() + ' ' + useEdit.body.surnames.toUpperCase() }}</div>
           <div class="flex justify-center">
             <q-badge color="primary">
-              {{ useEdit.nick }}
+              {{ useEdit.body.nick }}
             </q-badge>
           </div>
         </q-card-section>
       </q-card>
     </div>
-
     <q-separator spaced />
-
     <div>
       <q-card class="my-card">
         <q-card-section>
           <q-tabs v-model="tab" class="text-primary">
             <q-tab name="personaldata" icon="person" label="Datos Personales" />
             <q-tab name="workerdata" icon="work" label="Datos Laborales" />
-            <q-tab name="documents" icon="folder" label="Documentos" />
+            <!-- <q-tab name="documents" icon="folder" label="Documentos" /> -->
           </q-tabs>
         </q-card-section>
         <q-card-section>
           <q-tab-panels v-model="tab" animated>
-
             <q-tab-panel name="personaldata">
 
               <div v-if="users">
@@ -64,12 +61,9 @@
                 </q-dialog>
               </div>
             </q-tab-panel>
-
-
             <q-tab-panel name="workerdata">
               <div>
-                <q-splitter v-model="splitter" style="height: 300px">
-
+                <q-splitter v-model="splitter" style="height: 305px">
                   <template v-slot:before>
                     <q-tabs v-model="tab2" vertical class="text-primary">
                       <q-tab name="general" icon="settings" label="General" />
@@ -103,72 +97,83 @@
                           <q-btn outline color="primary" label="Id TPVSol" v-else />
                         </div>
                       </q-tab-panel>
-
-
                       <q-tab-panel name="positions">
                         <q-select dense option-label="name" v-model="data.rol.area" :options="filter.area.opts"
                           label="Area" filled />
                         <q-separator spaced inset vertical dark />
                         <q-select dense option-label="name" v-model="data.rol" :options="filpos" label="Puesto" filled />
                       </q-tab-panel>
-
                       <q-tab-panel name="workpoints">
+                        <div class="text-h6">Sucursal Principal</div>
+                        <q-select dense v-model="data.store" :options="filter.branches.opts" option-label="name"
+                          label="Sucursal" filled @update:model-value="changefavoritwork(data.store)" />
                         <div class="text-h6">Sucursales</div>
-                        <q-option-group v-model="filter.branches.val" :options="filter.branches.opts" color="primary" type="toggle" />
-
+                        <q-option-group v-model="filter.branches.val" :options="filter.branches.opts" color="primary"
+                          type="toggle" @update:model-value="changework(filter.branches.val)" />
                       </q-tab-panel>
-
                       <q-tab-panel name="apps">
                         <div class="text-h6">Apps</div>
-                        <q-option-group v-model="filter.apps.val" :options="filter.apps.opts" color="primary" type="toggle" />
-
+                        <q-option-group v-model="filter.apps.val" :options="filter.apps.opts" color="primary"
+                          type="toggle" @update:model-value="changeapps(filter.apps.val)" />
                       </q-tab-panel>
-
-
-
                     </q-tab-panels>
                   </template>
                 </q-splitter>
               </div>
             </q-tab-panel>
-
-
-
-            <q-tab-panel name="documents">
-              <div class="text-h6">Movies</div>
-              Lorem ipsum dolor sit amet consectetur adipisicing elit.
-            </q-tab-panel>
-
-
           </q-tab-panels>
         </q-card-section>
+        <q-card-section>
+        </q-card-section>
         <q-card-actions align="right">
-          <q-btn flat color="negative" label="Restaurar" :disable="validchange" />
-          <q-btn flat color="primary" label="Confimar" :disable="validchange" />
+          <q-btn flat label="Cancelar" v-close-popup :disable="!validchange" />
+          <q-btn flat color="negative" label="Restaurar" @click="restaurar" :disable="validchange" />
+          <q-btn flat color="primary" label="Confimar" @click="editar" :disable="validchange" />
         </q-card-actions>
       </q-card>
     </div>
   </div>
+  <q-dialog v-model="confirm" persistent>
+    <q-card class="my-card">
+      <q-card-section class="row items-center">
+        <q-avatar  icon="warning" color="negative" text-color="white" />
+        <q-separator spaced inset  dark />
+       <div class="text-h6">Estas apunto de editar el usuario de: </div>
+      </q-card-section>
+        <q-card-section>
+          <div class="text-h6 text-center">{{useEdit.body.name.toUpperCase() + ' ' + useEdit.body.surnames.toUpperCase()}}</div>
+        </q-card-section>
+
+      <q-card-actions align="right">
+        <q-btn flat label="Cancelar" color="primary" v-close-popup />
+        <q-btn flat label="Confirmar" color="negative"  @click="actualizacion" />
+      </q-card-actions>
+    </q-card>
+  </q-dialog>
 </template>
 
 <script setup>
 import { ref, computed } from 'vue'
 import { useQuasar } from 'quasar';
 import uapi from 'src/API/UserApi';
+import { useAccountStore } from 'stores/Account';
 const $q = useQuasar();
+const piniaAccount = useAccountStore();
 const props = defineProps({ useEdit: { type: Object } })
+const emit = defineEmits(['recargar']);
 const tab = ref('personaldata')
 const tab2 = ref('general')
 const splitter = ref(25)
-const data = ref(JSON.parse(JSON.stringify(props.useEdit)));
+const data = ref(JSON.parse(JSON.stringify(props.useEdit.body)));
 const filter = ref({
   status: { val: null, opts: null },
   branches: { val: [], opts: null },
   area: { val: null, opts: null },
   position: { val: null, optsdb: null, opts: [] },
-  apps: {val:[], opts:null}
+  apps: { val: [], opts: null }
 });
 const date = ref(false)
+const confirm = ref(false)
 const users = ref(null);
 const gender = ref({
   val: null, opts: [
@@ -178,16 +183,8 @@ const gender = ref({
   ]
 })
 
-
 const valifecha = computed(() => validafecha(data.value.dob))
 const filpos = computed(() => filter.value.position.optsdb.filter((e) => e._area == data.value.rol.area.id))
-const workdis  = () => {
-  let disp = data.value.use_store.filter((e) => e._state == 1)
-  let wdip = disp.map((e) => e._store)
-  wdip.forEach((e) => {
-    filter.value.branches.val.push(e)
-  })
-}
 
 const isValid = computed(() => {
   let arr = users.value.filter((e) => e.id != data.value.id);
@@ -210,12 +207,14 @@ const nickvalid = computed(() => {
 
 const validchange = computed(() => {
   data.value.celphone = parseInt(data.value.celphone);
-  if (JSON.stringify(data.value) == JSON.stringify(props.useEdit)) {
+  if (JSON.stringify(data.value) == JSON.stringify(props.useEdit.body)) {
     return true
   } else {
     return false
   }
 })
+
+const account = computed(() => piniaAccount.account);
 
 const validafecha = (fecha) => {
   if (fecha == null || fecha.length < 10) {
@@ -247,10 +246,58 @@ const validafecha = (fecha) => {
 
     return true; // Fecha válida
   }
+}
+
+const workdis = () => {
+  let disp = data.value.use_store.filter((e) => e._state == 1)
+  let wdip = disp.map((e) => e._store)
+  wdip.forEach((e) => {
+    filter.value.branches.val.push(e)
+  })
+}
+
+const appdis = () => {
+  let disp = data.value.apps
+  let adip = disp.map((e) => e._app)
+  adip.forEach((e) => {
+    filter.value.apps.val.push(e)
+  })
 
 }
 
+const changework = (v) => {
+  console.log(v);
+  v.forEach((e) => {
+    let inx = data.value.use_store.findIndex(((i) => i._store == e))
+    if (inx !== -1) {
+      data.value.use_store[inx]._state = 1
+    }
+  })
+  data.value.use_store = data.value.use_store.filter((e) => {
+    return v.includes(e._store) || (e._state = 2);
+  });
+}
 
+const changeapps = (v) => {
+  data.value.apps
+    .filter((existingApp) => !v.includes(existingApp._app))
+    .map((appToRemove) => appToRemove._app);
+  data.value.apps = data.value.apps.filter((existingApp) => v.includes(existingApp._app));
+  v.forEach((e) => {
+    let inx = data.value.apps.findIndex((i) => i._app == e)
+    if (inx !== -1) {
+
+    } else {
+      let app = { _user: data.value.id, _app: e }
+      data.value.apps.push(app)
+    }
+  })
+}
+const changefavoritwork = (v) => {
+  data.value.use_store.map((e) => e._state = 2)
+  filter.value.branches.val = []
+  filter.value.branches.val.push(v.value)
+}
 
 const init = async () => {
   $q.loading.show({ message: "Cargando Usuario..." });
@@ -265,10 +312,41 @@ const init = async () => {
     filter.value.branches.opts = resp.workpoints
     filter.value.apps.opts = resp.apps
     workdis();
+    appdis();
     $q.loading.hide();
   }
 };
 
-init();
+const restaurar = () => {
+  data.value = JSON.parse(JSON.stringify(props.useEdit.body))
+}
 
+const editar = () => {
+  confirm.value = true
+}
+
+const actualizacion = async () => {
+  data.value.user = account.value.id
+  const notif = $q.notify({
+    type:'ongoing',
+    messagge:'Actualizando Usuario'
+  })
+  const resp = await uapi.updateuser(data.value);
+  if(resp.error){
+    console.log(resp)
+    notif({
+      type:'negative',
+      message:'Error al actualizar'
+    })
+  }else{
+    notif({
+      type:'positive',
+      message:`Asuario ${data.value.name} Actualizado`,
+    })
+    confirm.value = false
+    props.useEdit.state = false
+    emit('recargar')
+  }
+}
+init();
 </script>

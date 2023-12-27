@@ -28,4 +28,8 @@ export default{
     let burl = `cluster/accounts/changework?id=${piniaAccount.account.id}`;
     return vizapi.put(burl,data).then( done => done.data ).catch( fail => { return {error:fail.response} });
   },
+  updateuser(data){
+    let burl = `cluster/accounts/updateuser?id=${piniaAccount.account.id}`;
+    return vizapi.post(burl,data).then( done => done.data ).catch( fail => { return {error:fail.response} });
+  }
 }

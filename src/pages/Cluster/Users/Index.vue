@@ -14,7 +14,8 @@
     </div>
     <q-separator spaced inset vertical dark />
 
-    <listuser :users="users" :roles="filter.position.optsdb" :areas="filter.area.opts" :branches="filter.branches.opts"/>
+    <listuser :users="users" :roles="filter.position.optsdb" :areas="filter.area.opts" :branches="filter.branches.opts"
+      @init="init" />
 
     <q-dialog v-model="filter.state">
       <q-card style="width: 700px; max-width: 80vw;">
@@ -40,12 +41,34 @@
       </q-card>
     </q-dialog>
 
-    <q-dialog v-model="archived.state">
-      <q-card>
+    <q-dialog :maximized="maximizedToggle" v-model="archived.state" transition-show="slide-up" transition-hide="slide-down" persistent>
+      <q-card >
         <q-card-section>
-          <q-table title="Table Title" :rows="userArchived" row-key="name" />
+          <q-bar class="bg-primary text-white">
+
+          <q-space />
+          <q-btn flat rounded icon="filter_alt" @click="filter.state = !filter.state" />
+          <q-btn dense flat icon="minimize" @click="maximizedToggle = false" :disable="!maximizedToggle">
+            <q-tooltip v-if="maximizedToggle" class="bg-white text-primary">Minimizar</q-tooltip>
+          </q-btn>
+          <q-btn dense flat icon="crop_square" @click="maximizedToggle = true" :disable="maximizedToggle">
+            <q-tooltip v-if="!maximizedToggle" class="bg-white text-primary">Maximizar</q-tooltip>
+          </q-btn>
+          <q-btn dense flat icon="close" v-close-popup>
+            <q-tooltip class="bg-white text-primary">Cerrar</q-tooltip>
+          </q-btn>
+        </q-bar>
+
+        </q-card-section>
+        <q-card-section>
+          <q-input v-model="search" type="text" label="Buscar"> <template v-slot:prepend><q-icon
+              name="search" /></template></q-input>
+          <listuser :users="userArchived" :roles="filter.position.optsdb" :areas="filter.area.opts"
+        :branches="filter.branches.opts" @init="init" />
         </q-card-section>
       </q-card>
+
+
     </q-dialog>
 
 
@@ -71,7 +94,7 @@ import listuser from 'src/components/Users/Index/UserList.vue';
 import uapi from 'src/API/UserApi';
 const $q = useQuasar();
 const $router = useRouter();
-
+const maximizedToggle = ref(true)
 const usuarios = ref([]);
 const search = ref('');
 const archived = ref({ state: false });
@@ -84,7 +107,41 @@ const filter = ref({
 });
 
 
-const userArchived = computed(() => usuarios.value.filter((e) => e._state == 4));
+
+
+const userListArchived =  computed(() => {
+  if (
+    filter.value.status.val == null &&
+    filter.value.branches.val == null &&
+    filter.value.area.val == null &&
+    filter.value.position.val == null
+  ) {
+    return usuarios.value.filter((e) => e._state == 4);
+  } else {
+    return usuarios.value.filter((e) => {
+      const statusId = filter.value.status?.val?.id;
+      const branchesId = filter.value.branches?.val?.id;
+      const areasId = filter.value.area?.val?.id;
+      const positionId = filter.value.position?.val?.id;
+
+      const isStatusSelected = statusId != null;
+      const isBranchesSelected = branchesId != null;
+      const isAreasSelected = areasId != null;
+      const isPositionSelected = positionId != null;
+      return (
+        (isStatusSelected || isBranchesSelected || isAreasSelected || isPositionSelected) &&
+        e._state != null &&
+        e._store != null &&
+        e.rol != null &&
+        e.rol.area != null &&
+        (isStatusSelected ? e._state == statusId : true) &&
+        (isBranchesSelected ? e._store == branchesId : true) &&
+        (isAreasSelected ? e.rol.area.id == areasId : true) &&
+        (isPositionSelected ? e.rol.id == positionId : true)
+      );
+    });
+  }
+});
 
 const userList = computed(() => {
   if (
@@ -122,6 +179,8 @@ const userList = computed(() => {
 
 const users = computed(() => userList.value.filter(e => (e.name + e.surnames).toLowerCase().includes(search.value.toLowerCase())))
 
+const userArchived = computed(() => userListArchived.value.filter(e => (e.name + e.surnames).toLowerCase().includes(search.value.toLowerCase())));
+
 const posopts = () => {
   filter.value.position.opts = filter.value.position.optsdb.filter((e) => e._area == filter.value.area.val.id)
 }
@@ -129,6 +188,7 @@ const posopts = () => {
 
 
 const init = async () => {
+
   $q.loading.show({ message: "Cargando Usuarios..." });
   const resp = await uapi.index();
   if (resp.error) {
