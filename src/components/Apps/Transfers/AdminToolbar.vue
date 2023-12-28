@@ -59,7 +59,10 @@
           </template>
         </q-select>
         </q-card-section>
-        <q-card-actions align="right">
+        <q-card-section v-if="keyexists" class="bg-grey-3 text-red fs-inc1">
+          Ya hay un traspaso abierto entre estos almacenes
+        </q-card-section>
+        <q-card-actions v-else align="right">
           <q-btn unelevated color="primary" icon="check" no-caps label="Crear" @click="create" v-if="showBtnSave"/>
         </q-card-actions>
       </q-card>
@@ -68,7 +71,7 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue';
+import { ref, computed, watch } from 'vue';
 import api from 'src/API/AppTransfers';
 
 const wndForm = ref({
@@ -81,12 +84,33 @@ const wndForm = ref({
 
 const warehouses = ref([]);
 const usersav = ref([]);
+
+const $emit = defineEmits(["created"]);
+const $props = defineProps({
+  daykey:"",
+  rowkeys:{type:Array, default:[]}
+});
+
+const daykey = ref($props.daykey)
+const rowkeys = ref($props.rowkeys)
+
 const optsOrigin = computed(() => warehouses.value);
 const optsTarget = computed(() => wndForm.value.wh1 ? warehouses.value.filter( wh => wh.id!=wndForm.value.wh1.id):warehouses.value);
 const transferists = computed(() => wndForm.value.users.map( u => u.id))
-const showBtnSave = computed(() => transferists.value.length && wndForm.value.wh1 && wndForm.value.wh2)
+const prekeys = computed(() => {
+  let diwh1 = wndForm.value.wh1 ? wndForm.value.wh1.id : "";
+  let diwh2 = wndForm.value.wh2 ? wndForm.value.wh2.id : "";
 
-const $emit = defineEmits(["created"]);
+  return [`${diwh1}${diwh2}-${daykey.value}`,`${diwh2}${diwh1}-${daykey.value}`]
+});
+const keyexists = computed(() =>
+                    wndForm.value.bidir ?
+                        (rowkeys.value.includes(prekeys.value[0]) || rowkeys.value.includes(prekeys.value[1])) :
+                        rowkeys.value.includes(prekeys.value[0])
+                  );
+const showBtnSave = computed(() => transferists.value.length && wndForm.value.wh1 && wndForm.value.wh2 && !keyexists.value)
+
+watch(() => $props.rowkeys, list => rowkeys.value = list);
 
 const checkDestiny = () => {
   (wndForm.value.wh2 && (wndForm.value.wh2.id == wndForm.value.wh1.id)) ? wndForm.value.wh2=undefined:null
@@ -107,7 +131,7 @@ const create = async() => {
 
 const clear = () => {
   wndForm.value.wh1=undefined,
-  wndForm.value.wh2.id=undefined,
+  wndForm.value.wh2=undefined,
   wndForm.value.bidir=false;
   wndForm.value.users=[];
   wndForm.value.state=false;
@@ -127,4 +151,5 @@ const init = async() => {
 
 defineExpose({ clear })
 init();
+
 </script>
