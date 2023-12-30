@@ -210,7 +210,11 @@ const validchange = computed(() => {
   if (JSON.stringify(data.value) == JSON.stringify(props.useEdit.body)) {
     return true
   } else {
-    return false
+    if((isValid.value) || (celvalid.value) || (nickvalid.value)){
+      return true
+    }else{
+      return false
+    }
   }
 })
 
