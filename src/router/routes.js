@@ -91,10 +91,10 @@ const routes = [
     children:[
       {
         path:'transfers',
-        component: () => import('layouts/Apps/Transfers.vue'),
+        component: () => import('src/layouts/Apps/TransfersLYT.vue'),
         children:[
           { path:'', name:'transfers_index', component: () => import('src/pages/Apps/Transfers/Index.vue') },
-          { path:':tid', name:'transfers_basket', component: () => import('pages/Apps/Transfers/Basket.vue') },
+          { path:':tid', name:'transfers_basket', component: () => import('pages/Apps/Transfers/Transfer.vue') },
         ]
       }
     ]

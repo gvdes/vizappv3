@@ -3,13 +3,9 @@ import { useAccountStore } from 'stores/Account';
 const piniaAccount = useAccountStore();
 
 export default{
-  atc(key,warehouse,locations,prices,media){
-    console.log("Buscando:", {"Clave":key,"Almacenes":warehouse,"Ubicaciones":locations,"Precios":prices,"Multimedia":media});
-    let burl = `/pfinder/${piniaAccount.join}?key=${key}&warehouse=${warehouse}&locations=${locations}&prices=${prices}&media=${media}`;
+  search(params){
+    let burl = `/pfinder/${piniaAccount.join}?${params}`;
+    console.log("Buscando:", burl);
     return vizapi.get(burl).then( done => done.data ).catch( fail => { return {error:fail.response} });
-  },
-
-  std(){
-
   }
 }

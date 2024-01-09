@@ -5,9 +5,9 @@
       <div class="col">
         <List :transfers="transfersdb" @open="openTransfer" />
       </div>
-      <div class="bg-blue-5">
+      <!-- <div class="bg-blue-5">
         <pre>{{ rowkeys }}</pre>
-      </div>
+      </div> -->
     </div>
     <!-- Traspasoz: {{ transfersdb.length }} -->
   </q-page>

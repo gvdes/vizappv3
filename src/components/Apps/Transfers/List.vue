@@ -19,6 +19,7 @@
     { name:'state', label:'Estado', field: r => r.state.name },
     { name:'whfrom', label:'Almacen Origen', field: r => r.from.name },
     { name:'whto', label:'Almacen Destino', field: r => r.to.name },
+    { name:'basket', label:'Productos', field:'basket_count'},
     { name:'createdby', label:'Creador', field: r => r.created_by.name },
     { name:'transferists', label:'Responsables', field: r => r.transferists.map( u => u.account.nick ).join(', ') },
     { name:'createdat', label:'Creacion', field: r => date.formatDate(r.created_at, 'MMM DD, YYYY (HH:mm)') },
