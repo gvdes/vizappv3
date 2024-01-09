@@ -15,4 +15,12 @@ export default {
     let burl = `apps/${piniaAccount.join}/transfers/adminview`;
     return vizapi.get(burl).then( done => done.data ).catch( fail => fail );
   },
+  open(tid){
+    let burl = `apps/${piniaAccount.join}/transfers/${tid}`;
+    return vizapi.get(burl).then( done => done.data ).catch( fail => fail );
+  },
+  transfer(tid,data){
+    let burl = `apps/${piniaAccount.join}/transfers/${tid}/push`;
+    return vizapi.post(burl,data).then( done => done.data ).catch( fail => fail );
+  }
 }

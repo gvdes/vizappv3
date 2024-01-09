@@ -23,7 +23,7 @@
         :type="keyboard"
         @filter="autocomplete"
         @update:model-value="itemTapped"
-        input-debounce="600"
+        input-debounce="400"
         ref="iptsearch"
         option-value="id"
       >
@@ -41,10 +41,6 @@
 
         <template v-slot:option="scope">
           <q-item v-bind="scope.itemProps">
-            <!-- <q-item-section avatar>
-              <q-avatar color="primary" text-color="white" icon="bluetooth" />
-            </q-item-section> -->
-
             <q-item-section>
               <q-item-label caption>ID: {{scope.opt.id}}</q-item-label>
               <q-item-label class="text-h6 anek-bld">{{scope.opt.code}}</q-item-label>
@@ -67,7 +63,7 @@
 </template>
 
 <script setup>
-  import { ref, nextTick, onBeforeMount, computed } from 'vue';
+  import { ref, nextTick, computed } from 'vue';
   import PFinder from 'src/API/PFinder.js';
 
   /**
@@ -75,25 +71,31 @@
    */
   const iptsearch = ref(null);
   const target = ref("");
-  const showpre = ref(true);
   const options = ref([]);
   const props = defineProps({
-    keyboard:{type: String, default:"text"},
-    mode:{ type: String, default:"atc" },
-    warehouse:{ type:Number, default:0 },
-    withLocations:{ type:Boolean, default:false },
-    withPrices:{ type:Boolean, default:false },
+    keyboard:{type: String, default:"text"}, // define el tipo de teclado que se muestra en pantalla text || number
+    mode:{ type: String, default:"atc" }, // define la busqueda => atc: Autocompletar el producto || std: esperara a que el usuario presione el boton enviar
+    withStock:{ type:Boolean, default:false }, // Define si inculuira o no stocks en la busqueda, el valor true, o un arreglo vacio, buscara en todos los almacenes de la sucursal correspondiente
+    withLocations:{ type:Boolean, default:false }, // Define si inculuira o no ubicaciones en la busqueda, el valor true, o un arreglo vacio, buscara en todos los almacenes de la sucursal correspondiente
+    withPrices:{ type:Boolean, default:false },// Define si inculuira o no los precios del producto en la busqueda, el valor true, o un arreglo vacio, traera todos los precios del producto
     withMedia:{ type:Boolean, default:false },
+    warehouses:{ type:Array, default:[] }
   });
 
   const $emit = defineEmits(["itemtapped"]);
 
   const mode = ref(props.mode);
   const keyboard = ref(props.keyboard);
-  const warehouse = ref(props.warehouse);
+  const withstock = ref(props.withStock);
   const locations = ref(props.withLocations);
+  const warehouses = ref(props.warehouses);
   const prices = ref(props.withPrices);
   const media = ref(props.withMedia);
+
+  /**
+   * C O M P U T E D
+   */
+  const query = computed(() => `stock=${withstock.value}&locations=${locations.value}&warehouses=${warehouses.value}&prices=${prices.value}&media=${media.value}`);
 
   /**
    * M E T H O D S
@@ -112,17 +114,19 @@
 
   const search = async (evt) => {
     if(target.value.length>1){
-      // console.log(evt);
-      const resp = await PFinder.atc(target.value,warehouse.value,locations.value,prices.value,media.value);
+      let q = `key=${target.value}&${query.value}`;
+      console.log('Buscando ', q)
+      const resp = await PFinder.search(q);
       console.log(resp);
     }else{ console.log("nememes... escribe algo!!"); }
   }
 
   const autocomplete = async (val, update, abort) => {
     let key = val.toUpperCase().trim();
-    if (key.length < 4) { abort(); return } else{
-      // console.log("Buscando... "+key);
-      const resp = await PFinder.atc(key,warehouse.value,locations.value,prices.value,media.value);
+    if (key.length < 3) { abort(); return } else{
+      let q = `key=${key}&${query.value}`;
+      console.log('Buscando ', q)
+      const resp = await PFinder.search(q);
       console.log(resp);
       update(() => options.value = resp.items );
     }
@@ -130,10 +134,4 @@
 
   const itemTapped = async (item) => $emit("itemtapped",item);
 
-  // const sendItem = (item) => {
-  //   $emit("itemtapped",item);
-  // }
-
-  /** C O M P U T E D S */
-  //
 </script>
