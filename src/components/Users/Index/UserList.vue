@@ -46,13 +46,14 @@
     </div>
   </div>
 
-  <q-dialog v-model="useEdit.state"  transition-show="rotate" transition-hide="rotate" >
-    <viewUser :useEdit="useEdit.body"/>
+  <q-dialog v-model="useEdit.state"  transition-show="rotate" transition-hide="rotate" persistent>
+    <viewUser :useEdit="useEdit" @recargar="changeval"/>
   </q-dialog>
 </template>
 
 <script setup>
 const props = defineProps({ users: { type: Array }, areas: { type: Array }, roles: { type: Array }, branches: { type: Array } })
+const emit = defineEmits(['init'])
 import viewUser from 'src/components/Users/Index/UserView.vue';
 import { ref, computed } from 'vue';
 const useEdit = ref({
@@ -71,6 +72,10 @@ const editUser = (use) => {
   useEdit.value.state = true;
   useEdit.value.body = use;
   gender.value.val = useEdit.value.body.gender
+}
+
+const changeval = () =>{
+  emit('init')
 }
 
 const color = (e) => {

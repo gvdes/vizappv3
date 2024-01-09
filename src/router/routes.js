@@ -79,8 +79,15 @@ const routes = [
         path: 'usuarios',
         children: [
           { path: '', name: 'users', component: () => import('pages/Cluster/Users/Index.vue') },
-          { path: 'create', name: 'create', component: () => import('pages/Cluster/Users/Create.vue') },
+          { path: 'create', name: 'create_user', component: () => import('pages/Cluster/Users/Create.vue') },
           { path: 'branch', name: 'branches', component: () => import('pages/Cluster/Users/Branches.vue') },
+        ]
+      },
+      {
+        path: 'stores',
+        children: [
+          { path: '', name: 'stores', component: () => import('pages/Cluster/Stores/Index.vue') },
+          { path: 'create', name: 'create_stores', component: () => import('pages/Cluster/Stores/Create.vue') },
         ]
       },
     ]
