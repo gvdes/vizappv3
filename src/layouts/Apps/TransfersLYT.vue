@@ -1,3 +1,7 @@
+<!--
+  Layout para la mini app de Traspasos
+-->
+
 <template>
   <q-layout view="hHh Lpr fFf"> <!-- Be sure to play with the Layout demo on docs -->
 
@@ -5,7 +9,7 @@
     <q-header elevated>
       <q-toolbar class="bg-blue-10">
         <q-icon name="fab fa-atlassian fa-rotate-180" />
-        <q-toolbar-title>
+        <q-toolbar-title class="cursor-pointer" @click="$router.replace('/apps/transfers')">
           VizApp - <span class="text-blue-2">Traspasos</span>
         </q-toolbar-title>
 
@@ -26,6 +30,9 @@
 <script setup>
 import { ref } from 'vue'
 import { useQuasar } from 'quasar'
+import { useRouter } from 'vue-router'
+
+const $router = useRouter();
 
 const access = ref(true)
 
