@@ -1,16 +1,5 @@
 <template>
-
   <q-page >
-    <div class="bg-white">
-      <div class="q-pa-sm row items-center">
-        <div class="col anek-bld text-grey-9 q-pl-sm">UBICADOR</div>
-        <div>
-          <q-btn flat rounded icon="support" />
-        </div>
-      </div>
-      <q-separator/>
-    </div>
-
     <div :class="isMobile ? 'q-py-md':'q-pa-md'">
       <q-card flat bordered>
         <template v-if="locandpro">
@@ -238,6 +227,13 @@
   const glstock = computed(() => { return stocks => stocks.reduce( ( carry, w) => carry+w._current, 0) } );
   // const glstock = computed(() => { return stocks => stocks.filter( w => w._type <= 2).reduce( ( carry, w) => carry+w._current, 0) } );
 
+  const init = async () => {
+    $q.loading.show({ message:'Cargando ubicador...' })
+    // aqui vamo aintentar crear un servicio rest para obtener algo
+    // como un resumen de lo que se ha ubicado, cuando etc.. algo asi
+    $q.loading.hide();
+  }
+
   const validateLocation = async () => {
     if(location.value.target){
       console.log("buscando ubocacion");
@@ -328,4 +324,6 @@
 
     console.log(product);
   }
+
+  init();
 </script>

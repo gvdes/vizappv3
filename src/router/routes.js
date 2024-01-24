@@ -43,7 +43,6 @@ const routes = [
           { path: 'pedidos', component: () => import('pages/Store/Warehouses/Orders.vue') },
           { path: 'resurtido', component: () => import('pages/Store/Warehouses/Restock.vue') },
           { path: 'resurtido/:rid', component: () => import('pages/Store/Warehouses/RestockOrder.vue') },
-          { path: 'ubicador', component: () => import('pages/Apps/Locator.vue') },
           {
             path: ':wid',
             children: [
@@ -102,6 +101,14 @@ const routes = [
         children:[
           { path:'', name:'transfers_index', component: () => import('src/pages/Apps/Transfers/Index.vue') },
           { path:':tid', name:'transfers_basket', component: () => import('pages/Apps/Transfers/Transfer.vue') },
+        ]
+      },
+      {
+        path:'locator',
+        component: () => import('src/layouts/Apps/LocatorLYT.vue'),
+        children:[
+          { path:'', name:'locator_index', component: () => import('src/pages/Apps/Locator/Index.vue') },
+          // { path:':tid', name:'transfers_basket', component: () => import('pages/Apps/Transfers/Transfer.vue') },
         ]
       }
     ]

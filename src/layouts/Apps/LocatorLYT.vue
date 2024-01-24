@@ -1,5 +1,5 @@
 <!--
-  Layout para la mini app de Traspasos
+  Layout para la mini app del Ubicador
 -->
 
 <template>
@@ -10,7 +10,7 @@
       <q-toolbar class="bg-blue-10">
         <q-icon name="fab fa-atlassian fa-rotate-180" />
         <q-toolbar-title>
-          <span class="cursor-pointer" @click="$router.replace('/')">VizApp</span> - <span class="text-blue-2 cursor-pointer" @click="$router.replace('/apps/transfers')">Traspasos</span>
+          <span class="cursor-pointer" @click="$router.push('/')">VizApp</span> - <span class="text-blue-2 cursor-pointer" @click="$router.replace('/apps/locator')">Ubicador</span>
         </q-toolbar-title>
 
         <div class="row items-center">
