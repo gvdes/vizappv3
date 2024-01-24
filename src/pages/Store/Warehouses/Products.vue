@@ -42,7 +42,7 @@
     ],
     filter:"",
     pagination:{
-      rowsPerPage:30
+      rowsPerPage:50
     }
   });
 

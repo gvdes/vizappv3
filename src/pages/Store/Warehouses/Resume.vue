@@ -124,8 +124,6 @@
   const totalRowsShow = computed(() => tableprods.value ? tableprods.value.filteredSortedRows :[]);
   const showedcols = computed(() => isMobile.value ? ["code","shortcode","ipack","current","min","max","locations","unitrestock"] : ["code","shortcode","relateds","ipack","unitrestock","description","current","min","max","locations"]);
 
-  onBeforeMount(() => { init(); });
-
   const init = async () => {
     loadingcards.value = true;
     $q.loading.show({message:"Cargando vista..."});
@@ -155,9 +153,10 @@
   };
 
   const finderFound = (item) => {
-
     console.log("Finder encontro lo + chido");
     console.log(item);
   }
+
+  // init();
 
 </script>

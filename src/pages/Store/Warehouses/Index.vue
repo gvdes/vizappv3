@@ -102,7 +102,7 @@
 
   const open = (id) => {
     console.log(id);
-    $router.push(`/store/${piniaAccount.join}/almacenes/${id}/inicio`);
+    $router.push(`/store/${piniaAccount.join}/almacenes/${id}/`);
   }
 
   const finderFound = (item) => {
