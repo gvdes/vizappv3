@@ -16,5 +16,15 @@ export default{
   toggle(data){
     let burl = `store/${piniaAccount.join}/locator/toggle`;
     return vizapi.post(burl,data).then( done => done.data ).catch( fail => { return {error:fail.response} });
+  },
+
+  unlink(data){
+    let burl = `store/${piniaAccount.join}/locator/unlink`;
+    return vizapi.post(burl,data).then( done => done.data ).catch( fail => { return {error:fail.response} });
+  },
+
+  truncate(data){
+    let burl = `store/${piniaAccount.join}/locator/truncate`;
+    return vizapi.post(burl,data).then( done => done.data ).catch( fail => { return {error:fail.response} });
   }
 }

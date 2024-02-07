@@ -108,7 +108,7 @@ const routes = [
         component: () => import('src/layouts/Apps/LocatorLYT.vue'),
         children:[
           { path:'', name:'locator_index', component: () => import('src/pages/Apps/Locator/Index.vue') },
-          // { path:':tid', name:'transfers_basket', component: () => import('pages/Apps/Transfers/Transfer.vue') },
+          // { path:'', name:'locator_index', component: () => import('src/pages/Apps/Locator/Index.vue') },
         ]
       }
     ]
