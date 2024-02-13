@@ -226,7 +226,7 @@ const ping = async (domain,port) => {
           message: 'Realizando Prueba de Conexion...',
           position:'center'
         })
-  const url = 'http://'+domain +':'+ port +'/Addicted/public/api/resources/ping';
+  const url = 'http://'+domain +':'+ port +'/addicted/public/api/resources/ping';
   try {
     const data =  await axios.get(url,{timeout:2000})
     console.log(data)

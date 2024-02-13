@@ -56,7 +56,7 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, onBeforeMount, onMounted } from 'vue'
 import viewStore from 'src/components/Stores/Index/StoreView.vue';
 const props = defineProps({ stores: { type: Object }, filter:{type: Object}, search:{type:String}})
 
@@ -103,6 +103,7 @@ const liststores = computed(() => {
     })
   }
 })
+
 
 
 </script>

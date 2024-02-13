@@ -47,6 +47,7 @@
 </template>
 
 <script setup>
+import axios from 'axios'
 import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router';
 import { useQuasar } from 'quasar';
@@ -54,6 +55,7 @@ import sapi from 'src/API/StoresApi';
 import liststore from 'src/components/Stores/Index/StoreList.vue';
 const $q = useQuasar();
 const $router = useRouter();
+
 
 const stores = ref([])
 
@@ -70,7 +72,7 @@ const search = ref('')
 
 const init = async () => {
   $q.loading.show({ message: "Cargando Sucursales..." });
-  const resp = await sapi.index(1);
+  const resp = await sapi.index();
   if (resp.error) {
     console.log(resp);
   } else {
@@ -81,7 +83,25 @@ const init = async () => {
     filter.value.price.opts = resp.prices
     $q.loading.hide();
   }
+  stores.value.stores.forEach((e)=> {
+    let ip = e.local_domain+':'+e.local_port
+    ping(ip, e.id);
+  })
 };
+
+const ping = async (domain, e) => {
+  const url = 'http://'+domain+'/addicted/public/api/resources/ping';
+  try {
+    const data =  await axios.get(url,{timeout:24000})
+    // console.log(data)
+    if(data.status == 200){
+      let inx = stores.value.stores.findIndex((i) => i.id == e );
+      stores.value.stores[inx].ping = true
+    }
+  }catch (error) {
+  }
+}
+
 
 const delfil = () => {
   filter.value.conect.val = null;

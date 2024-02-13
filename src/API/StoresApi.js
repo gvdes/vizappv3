@@ -3,8 +3,8 @@ import { useAccountStore } from 'stores/Account';
 const piniaAccount = useAccountStore();
 
 export default{
-  index(data){
-    let burl = `cluster/stores/index?type=${data}`;
+  index(){
+    let burl = `cluster/stores/index`;
     return vizapi.get(burl).then( done => done.data ).catch( fail => { return {error:fail.response} });
   },
   addStore(data){
@@ -14,5 +14,9 @@ export default{
   updateStore(data){
     let burl = `cluster/stores/updateStore`;
     return vizapi.put(burl,data).then( done => done.data ).catch( fail => { return {error:fail.response} });
+  },
+  pings(){
+    let burl = `cluster/stores/pingStore`;
+    return vizapi.get(burl).then( done => done.data ).catch( fail => { return {error:fail.response} });
   }
 }

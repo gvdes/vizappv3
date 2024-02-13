@@ -7,7 +7,7 @@
       </div>
 
       <div class="col text-center anek-bld">
-        <div :class="moduletitle ? 'fs-dec2':'text-uppercase text-bold'" class="self-start text-primary">Cluster</div>
+        <div :class="moduletitle ? 'fs-dec2':'text-uppercase text-bold'" class="self-start text-primary" @click="$router.push('/cluster')">Cluster</div>
         <div>{{ moduletitle }}</div>
       </div>
 

@@ -90,6 +90,12 @@ const routes = [
           { path: 'create', name: 'create_stores', component: () => import('pages/Cluster/Stores/Create.vue') },
         ]
       },
+      {
+        path: 'providers',
+        children: [
+          { path: '', name: 'providers', component: () => import('pages/Cluster/Providers/Index.vue') },
+        ]
+      },
     ]
   },
 
