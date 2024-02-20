@@ -94,6 +94,7 @@ const routes = [
         path: 'providers',
         children: [
           { path: '', name: 'providers', component: () => import('pages/Cluster/Providers/Index.vue') },
+          { path: 'create', name: 'providers', component: () => import('pages/Cluster/Providers/Create.vue') },
         ]
       },
     ]
