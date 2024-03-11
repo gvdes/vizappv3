@@ -2,12 +2,20 @@
   <q-layout view="hHh Lpr fFf"> <!-- Be sure to play with the Layout demo on docs -->
 
     <q-header reveal bordered class="transparent">
-      <AppMainToolbar @toggleNavigatorStore="toggledNavigatorStore" />
+      <AppMainToolbar @toggleNavigatorStore="toggleNavigatorStore" />
     </q-header>
 
     <AppNavigator ref="main_menu" />
 
+    <!-- (Optional) The Footer -->
+    <!-- <q-footer class="transparent text-dark">
+      <div class="q-pa-sm text-center">Oooli</div>
+    </q-footer> -->
+
+    <!-- (Optional) A Drawer; you can add one more with side="right" or change this one's side -->
+
     <q-page-container class="bg-grey-3">
+      <!-- This is where pages get injected -->
       <router-view v-if="access"/>
 
       <q-dialog v-model="wndRestringed.state" persistent no-backdrop-dismiss no-esc-dismiss>
@@ -24,25 +32,33 @@
 </template>
 
 <script setup>
-  import { ref, watch } from 'vue';
-  import { useRoute } from 'vue-router';
+  import { ref, watch, onBeforeMount, computed } from 'vue';
+  import { useRoute, useRouter } from 'vue-router';
   import { useQuasar } from 'quasar';
-  import { useAccountStore } from 'stores/Account'
+  import { useAccountStore } from 'stores/Account';
   import AppMainToolbar from 'src/components/AppMainToolbar.vue';
   import AppNavigator from 'src/components/AppNavigator.vue';
   import Store from 'src/API/StoreApi';
+  import Auth from 'src/API/Auth';
+import { route } from 'quasar/wrappers';
 
-  const piniaAccount = useAccountStore();
-  const $q = useQuasar();
   const $route = useRoute();
-  const access = ref(false); // muestra la pagina (interfaz) solo hasta que la api responde
+  const $router = useRouter();
+  const $q = useQuasar();
+  const piniaAccount = useAccountStore();
+  const access = ref(false);
   const main_menu = ref(null);
   const wndRestringed = ref({state:false});
 
-  // conectado al componente de navegacion del menu principal
-  const toggledNavigatorStore = () => main_menu.value.toggle();
+  onBeforeMount( async () => { init(); });
+
+  watch(() => $route.params, (toParams, previousParams) => { init(); });
+
+  console.log("justo abajo bro");
+  console.log($route.params);
 
   const init = async()=>{
+
     access.value=false;
     $q.loading.show({ message:"Espera..." });
     console.log(`Comprobando acceso a store ${$route.params.idstore}...`);
@@ -58,16 +74,14 @@
       wndRestringed.value.state=true;
     }else{
       wndRestringed.value.state = false;
-      console.log("Kraken response: ");
+      // console.log("Kraken response: ");
+      // console.log(resp);
       access.value = true;
-      piniaAccount.setStore($route.params.idstore);
-      piniaAccount.persist()
     }
 
     $q.loading.hide();
   };
 
-  init();
-
-  watch(() => $route.params, (toParams, previousParams) => { init(); });
+  // conectado al componente de navegacion del menu principal
+  const toggleNavigatorStore = () => main_menu.value.toggle();
 </script>

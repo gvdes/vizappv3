@@ -132,8 +132,7 @@
         position:'center'
       });
 
-      setTimeout(() => $router.replace(`/store/${piniaAccount.join}/`), 1500);
+      setTimeout(() => $router.replace(`/store/${piniaAccount.join}`), 1500);
     }
   };
-  console.log(piniaAccount.joinedStore)
 </script>

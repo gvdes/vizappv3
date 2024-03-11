@@ -32,17 +32,34 @@ const routes = [
   },
 
   {
+    path: '/profile',
+    component: () => import('layouts/ProfileLYT.vue'),
+    // children: [
+    //   { path: '', component: () => import('pages/Zent/Index.vue') }
+    // ]
+  },
+
+  {
     path: '/store/:idstore',
     component: () => import('layouts/StoreLYT.vue'),
     children: [
       { path: '', component: () => import('pages/Store/Index.vue') },
       {
         path: 'almacenes',
+<<<<<<< HEAD
         children: [
           { path: '', name: 'wrhs', component: () => import('pages/Store/Warehouses/Index.vue') },
           { path: 'pedidos', component: () => import('pages/Store/Warehouses/Orders.vue') },
           { path: 'resurtido', component: () => import('pages/Store/Warehouses/Restock.vue') },
           { path: 'resurtido/:rid', component: () => import('pages/Store/Warehouses/RestockOrder.vue') },
+=======
+        children:[
+          { path:'', name:'wrhs', component: () => import('pages/Store/Warehouses/Index.vue') },
+          { path:'pedidos', component: () => import('pages/Store/Warehouses/Orders.vue') },
+          { path:'resurtido', component: () => import('pages/Store/Warehouses/Restock.vue') },
+          { path:'resurtido/:rid', component: () => import('pages/Store/Warehouses/RestockOrder.vue') },
+          { path:'ubicador', component: () => import('pages/Apps/Locator.vue') },
+>>>>>>> 2d9e8c9d51cd79e7c82cd922547ee82fd06e9ba9
           {
             path: ':wid',
             children: [

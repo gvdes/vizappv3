@@ -78,6 +78,7 @@
   const creator = ref(null)
 
   /** H O O K S  */
+  onBeforeMount( async () => { init(); });
 
   /** C O M P U T E D S */
   const isMobile = computed(() => $q.platform.is.mobile);
@@ -111,6 +112,7 @@
     pfinder.value.product = item;
   }
 
+<<<<<<< HEAD
   const created = wrh => {
     warehousesdb.value.unshift(wrh);
 
@@ -126,4 +128,6 @@
 
   init();
 
+=======
+>>>>>>> 2d9e8c9d51cd79e7c82cd922547ee82fd06e9ba9
 </script>

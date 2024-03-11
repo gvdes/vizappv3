@@ -33,25 +33,21 @@
 </template>
 
 <script setup>
-/**
- * Este modulo es recursivo
- */
 
   import { ref, computed } from 'vue';
   import { useAccountStore } from 'stores/Account';
-  import { useRouter,useRoute } from 'vue-router';
+  import { useRouter } from 'vue-router';
 
   const $router = useRouter();
-  const $route = useRoute();
-  const piniaAccount = useAccountStore();
+  const storeAccount = useAccountStore();
   const state = ref(true);
 
   const $props = defineProps({ module:Object });
   const module = $props.module;
-  const submodules = computed(() => piniaAccount.submodules($props.module.id) );
+
+  const submodules = computed(() => storeAccount.submodules($props.module.id).map( m => m.module) );
 
   const goto = () => {
-    console.log(module)
     console.log(`%c${module.path}`,"font-size:1.5em; color:pink;");
     $router.push(module.path);
   }
