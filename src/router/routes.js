@@ -46,23 +46,26 @@ const routes = [
           {
             path: ':wid',
             children: [
-              {
-                path: '', name: 'wrh', component: () => import('pages/Store/Warehouses/Warehouse.vue'),
-                children: [
-                  { path: 'inicio', name: 'wrhresume', component: () => import('src/pages/Store/Warehouses/Resume.vue') },
-                  { path: 'productos', name: 'wrhproducts', component: () => import('pages/Store/Warehouses/Products.vue') },
-                  { path: 'estructura', name: 'wrhstructure', component: () => import('pages/Store/Warehouses/Structure.vue') },
-                  {
-                    path: 'seccion/:lid', name: 'wrhloc', component: () => import('pages/Store/WrhsLocation/Index.vue'),
-                    children: [
-                      { path: 'estructura', name: 'wrhlocstructure', component: () => import('pages/Store/WrhsLocation/Structure.vue') },
-                      { path: 'productos', name: 'wrhlocproducts', component: () => import('pages/Store/WrhsLocation/Products.vue') },
-                      { path: 'resumen', name: 'wrhlocresume', component: () => import('src/pages/Store/WrhsLocation/Resume.vue') }
-                    ]
-                  }
-                ]
-              },
+              { path:'', name: 'wrh', component: () => import('pages/Store/Warehouses/Warehouse.vue') },
+              { path: 'inicio', name: 'wrhresume', component: () => import('src/pages/Store/Warehouses/Resume.vue') },
             ]
+            // children: [
+            //   {
+            //     children: [
+            //       { path: 'inicio', name: 'wrhresume', component: () => import('src/pages/Store/Warehouses/Resume.vue') },
+            //       { path: 'productos', name: 'wrhproducts', component: () => import('pages/Store/Warehouses/Products.vue') },
+            //       { path: 'estructura', name: 'wrhstructure', component: () => import('pages/Store/Warehouses/Structure.vue') },
+            //       {
+            //         path: 'seccion/:lid', name: 'wrhloc', component: () => import('pages/Store/WrhsLocation/Index.vue'),
+            //         children: [
+            //           { path: 'estructura', name: 'wrhlocstructure', component: () => import('pages/Store/WrhsLocation/Structure.vue') },
+            //           { path: 'productos', name: 'wrhlocproducts', component: () => import('pages/Store/WrhsLocation/Products.vue') },
+            //           { path: 'resumen', name: 'wrhlocresume', component: () => import('src/pages/Store/WrhsLocation/Resume.vue') }
+            //         ]
+            //       }
+            //     ]
+            //   },
+            // ]
           }
         ],
       },

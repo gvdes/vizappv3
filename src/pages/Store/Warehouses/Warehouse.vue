@@ -31,10 +31,10 @@
 
     <q-tab-panels v-model="tab" animated class="transparent">
       <q-tab-panel name="products" >
-        <ProductsVisor :products="productsDB" />
+        <ProductsVisor :products="productsDB" :seasons="season_cats"/>
       </q-tab-panel>
       <q-tab-panel name="structure">
-        Structure.
+        <StructureVisor :roots="sectionsRoot" @rootsNews="addRoots"/>
       </q-tab-panel>
     </q-tab-panels>
 
@@ -56,6 +56,7 @@
   import { useWarehouseStore } from 'stores/Warehouse';
   import Wapi from 'src/API/WarehouseApi';
   import ProductsVisor from 'src/components/Warehouse/ProductsVisor.vue';
+  import StructureVisor from 'src/components/Warehouse/StructureVisor.vue';
 
   const $q = useQuasar();
   const $route = useRoute();
@@ -65,11 +66,18 @@
   const wndRestringed = ref({state:false});
   const warehouse = ref(null);
   const productsDB = ref([]);
+  let season_cats = ref([]);
   let sectionsRoot = ref([]);
   let tab = ref(undefined)
 
   const isMob = computed(() => $q.platform.is.mobile);
+  const $screen = computed(() => $q.screen);
   const showHead = computed(() => ($route.name!="wrhloc"&&$route.name!="wrhlocstructure"&&$route.name!="wrhlocproducts"&&$route.name!="wrhlocresume"));
+
+  const addRoots = (locs) => {
+    console.log("Se agregaron nuevos elementos")
+    locs.forEach( l => sectionsRoot.value.push(l))
+  }
 
   const init = async () => {
     $q.loading.show({message:"Cargando Almacen, Productos y Secciones, porfavor espera..."});
@@ -84,7 +92,8 @@
     }else{
       warehouse.value = resp.warehouse;
       piniaWarehouse.setWarehouse(resp.warehouse);
-      productsDB.value = resp.products.rows;
+      productsDB.value = resp.products;
+      season_cats.value = resp.seasons_cats;
       sectionsRoot.value = resp.sections;
       tab.value = "products"
 

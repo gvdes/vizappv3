@@ -6,11 +6,11 @@
         <div class="col anek-bld text-grey-9 q-pl-sm">ALMACENES</div>
         <div>
           <q-btn flat rounded icon="autorenew" @click="init" />
-          <q-btn flat rounded icon="add" v-if="canCreate">
+          <!-- <q-btn flat rounded icon="add" v-if="canCreate">
             <q-menu square ref="creator">
               <WrhCreator @created="created" />
             </q-menu>
-          </q-btn>
+          </q-btn> -->
           <q-btn flat rounded icon="support" />
         </div>
       </div>

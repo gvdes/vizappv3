@@ -1,7 +1,7 @@
 <template>
   <q-card class="my-card">
-     <!--
-      <q-card-section>root:{{root}} deep:{{ deep }} idwrh:{{wrh.id}}</q-card-section>
+
+    <!--<q-card-section>root:{{root}} deep:{{ deep }}</q-card-section>
       <q-card-section>Seccion:{{sectiondb}}</q-card-section>
       <q-card-section>{{ sectionsdb.length }}</q-card-section>
       <q-card-section>{{isnewgroup}}</q-card-section>
@@ -69,7 +69,8 @@
   const piniaWrh = useWarehouseStore();
 
   const props = defineProps({
-    sections:{type:Array,default:[]}
+    sections:{type:Array,default:[]},
+    location:{type:Object,default:{}}
   });
 
   const sectionsdb = props.sections;
@@ -98,8 +99,8 @@
   });
 
   const isnewgroup = computed(() => !group.value.alias);
-  const root = computed(() => piniaWrh.location ? piniaWrh.location.id:0 );
-  const deep = computed(() => piniaWrh.location ? piniaWrh.location.deep:0 );
+  const root = computed(() => props.location ? props.location.id:0 );
+  const deep = computed(() => props.location ? props.location.deep:0 );
 
   const prepath = computed(()=>{
     if(showbtnadd.value){
