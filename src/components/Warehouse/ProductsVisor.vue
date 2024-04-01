@@ -75,23 +75,41 @@
           <q-card-section>
             Productos: {{ productsShow.length }} <span v-if="usingFilters" class="text-grey"> de {{ $props.products.length }}</span>
           </q-card-section>
-
-          <q-card-section>
-            tools
-          </q-card-section>
         </q-card-section>
       </q-card>
 
       <q-table
-        flat bordered ref="tableprods"
+        flat bordered ref="tableProds"
         :rows="productsShow"
         :columns="table.columns"
         row-key="id"
         :pagination="table.pagination"
         :filter="table.filter"
+        :visible-columns="table.viewcols"
       >
         <template v-slot:top>
-          <q-input outlined rounded v-model="table.filter" type="text" label="Buscar" dense debounce="300ms"/>
+          <div class="col row items-center">
+            <q-select
+              v-model="table.viewcols"
+              multiple
+              outlined
+              dense
+              options-dense
+              display-value="Columnas"
+              emit-value
+              map-options
+              :options="optsCols"
+              options-cover
+              style="min-width: 150px"
+            />
+            <q-space />
+            <q-input outlined rounded v-model="table.filter" type="text" label="Buscar" dense debounce="300ms"/>
+            <q-space />
+            <div class="row justify-around items-center q-gutter-xs">
+              <q-btn rounded flat icon="fas fa-file-excel" @click="exportAsCsv" color="primary"/>
+              <q-btn rounded flat icon="fas fa-sitemap" color="primary"/>
+            </div>
+          </div>
         </template>
       </q-table>
     </div>
@@ -101,6 +119,7 @@
 
 <script setup>
   import { ref, computed, reactive, watch } from 'vue';
+  import { exportFile } from 'quasar';
 
   const $props = defineProps({
     products:{type:Array,default:[]},
@@ -113,13 +132,11 @@
     nodes:[]
   });
 
-  let temp = ref([]);
-
   const table = ref({
     columns:[
-      { name:"id", label:"UID", field:"id", },
+      { name:"id", label:"UID", field:"id", optdisab:true},
       { name:"description", label:"Descripcion", align:"left", field: row => row.description },
-      { name:"code", label:"Codigo", field: row => row.code, align:"left", sortable:true },
+      { name:"code", label:"Codigo", field: row => row.code, align:"left", sortable:true, optdisab:true },
       { name:"category", label:"Categoria", field: row => row.category.name, align:"left" },
       { name:"shortcode", label:"Codigo Corto", field: row => row.short_code, align:"left" },
       { name:"locations", label:"Ubicaciones", align:"center", field: row => row.locations.length, sortable:true },
@@ -128,18 +145,23 @@
       { name:"relateds", label:"Relacionados", field: row => row.relateds.length, align:"left", sortable:true },
       { name:"available", label:"Disponible", field:row => row.stock._current, align:"center", classes: row => row.stock._current<= 0 ? 'text-red':'text-blue', sortable:true },
       { name:"current", label:"Actual (real)", field:row => row.stock.available, align:"center", classes: row => row.stock._current<= 0 ? 'text-red':'text-blue', sortable:true },
-      { name:"min", label:"Maximo", field:row => row.stock._max, align:"center" },
-      { name:"min", label:"Minimo", field:row => row.stock._min, align:"center" },
-      { name:"min", label:"Por llegar", field:row => row.stock.in_coming, align:"center" },
-      { name:"min", label:"Reservado", field:row => row.stock.reserved, align:"center" },
+      { name:"stockmax", label:"Maximo", field:row => row.stock._max, align:"center" },
+      { name:"stockmin", label:"Minimo", field:row => row.stock._min, align:"center" },
+      { name:"stockincom", label:"Por llegar", field:row => row.stock.in_coming, align:"center" },
+      { name:"stockres", label:"Reservado", field:row => row.stock.reserved, align:"center" },
       { name:"ipack", label:"PxC", field: row => row.pieces, classes: row => row.pieces ? '':'text-red anek-bld', align:"center" },
       { name:"unitrestock", label:"Un. surtido", align:"center", field: row => row.unitsupply ? row.unitsupply.name:'X', classes: row => row.unitsupply ? '':'text-red anek-bld' },
     ],
     filter:"",
     pagination:{
       rowsPerPage:50
-    }
+    },
+    viewcols:[]
   });
+
+  const tableProds = ref(null);
+
+  const optsCols = ref([]);
 
   const filters = ref({
     gstate:{
@@ -243,8 +265,51 @@
       }));
   }
 
+  const exportAsCsv = () => {
+
+    // obtenemos las columnas como primer fila
+    const _cols = [tableProds.value.columns.map(col => wrapCsvValue(col.label))];
+
+    // obtenemos los valores de las filas como Strings
+    const _rows = tableProds.value.rows.map( row => tableProds.value.columns.map( col => wrapCsvValue(
+      typeof col.field === 'function' ? col.field(row) : row[ col.field === void 0 ? col.name : col.field ],
+      col.format,
+      row
+    )).join(","));
+
+    const content = _cols.concat(_rows).join('\r\n');
+    // console.log(content);
+
+    const statusExport = exportFile( 'reporte_almacen.csv', content, 'text/csv' );
+    if (statusExport !== true) {
+      $q.notify({
+        message: 'El navegador denego la descarga. Activa/concede este permiso',
+        color: 'negative',
+        icon: 'warning'
+      })
+    }
+  }
+
+  const wrapCsvValue = (val, formatFn, row) => {
+    let formatted = formatFn !== void 0 ? formatFn(val, row) : val;
+
+    formatted = formatted === void 0 || formatted === null ? '' : String(formatted);
+
+    formatted = formatted.split('"').join('""');
+    /**
+     * Excel accepts \n and \r in strings, but some other CSV parsers do not
+     * Uncomment the next two lines to escape new lines
+     */
+    // .split('\n').join('\\n')
+    // .split('\r').join('\\r')
+
+    return `"${formatted}"`;
+  }
+
   buildTreeSeason();
   treeSeasons.ticked = idscats.value;
+  table.value.viewcols = table.value.columns.map( c => c.name );
+  optsCols.value = table.value.columns.map( c => ({ label:c.label, value:c.name, disable:c.optdisab??false }));
 
   watch($props.products, (newVal, oldVal) => $props.products = newVal);
   watch($props.seasons, (newVal, oldVal) => {
