@@ -30,21 +30,7 @@
             </q-card-section>
 
             <q-card-section class="col text-right">
-              <q-btn color="primary" icon="fas fa-tag">
-                <q-menu>
-                  <q-list style="min-width: 100px">
-                    <q-item clickable v-close-popup>
-                      <q-item-section>Todas</q-item-section>
-                    </q-item>
-                    <q-separator />
-                    <q-item clickable v-close-popup>
-                      <q-item-section>
-                        <q-item-label>{{ section.location.path }}</q-item-label>
-                      </q-item-section>
-                    </q-item>
-                  </q-list>
-                </q-menu>
-              </q-btn>
+              <q-btn color="primary" icon="fas fa-tag" @click="wndLabeler.state = true"/>
               <q-btn color="primary" icon="add" @click="wndSectionator.state = true"/>
             </q-card-section>
           </q-card-section>
@@ -80,6 +66,10 @@
       <SectionatorLoc :sections="rowsLocs" :location="section.location" @add="sectionate"/>
     </q-dialog>
 
+    <q-dialog v-model="wndLabeler.state">
+      <Labeler :sections="rowsLocs" @doit="pdfCreated" />
+    </q-dialog>
+
   </div>
 </template>
 
@@ -89,6 +79,7 @@
   import Wapi from 'src/API/WarehouseApi';
   import Lapi from 'src/API/WrhsLocation';
   import SectionatorLoc from 'src/components/Warehouse/SectionatorLoc.vue';
+  import Labeler from 'src/components/Warehouse/Labeler.vue';
   import { useQuasar } from 'quasar';
 
   const $q = useQuasar();
@@ -130,6 +121,7 @@
   });
 
   const wndSectionator = ref({state:false,block:false});
+  const wndLabeler = ref({state:false,block:false});
 
   // almacena las ubicaciones que se renderizaran en la tabla principal
   const rowsLocs = computed(() => paths_locs.value.length==0 ? $props.roots : section.value.sections);
@@ -188,6 +180,17 @@
 
     wndSectionator.value.block = false;
     wndSectionator.value.state = false;
+  }
+
+  const pdfCreated = docname => {
+    $q.notify({
+      message:`Se genero el documento <b>${docname}</b> (revise sus descargas)`,
+      icon:"done",
+      color:"positive",
+      html:true
+    });
+
+    wndLabeler.value.state = false;
   }
 
 </script>
