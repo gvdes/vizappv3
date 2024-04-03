@@ -46,5 +46,11 @@ export default{
   report(wid,repid){
     let burl = `store/${piniaAccount.join}/warehouses/${wid}/report/${repid}`;
     return vizapi.get(burl).then( done => done.data ).catch( fail => { return {error:fail.response} });
+  },
+
+  setMminMaxState(wid, data){
+    console.log(wid,data);
+    let burl = `store/${piniaAccount.join}/warehouses/${wid}/setminmaxstate`;
+    return vizapi.post(burl,data).then( done => done.data ).catch( fail => { console.log(fail); return {error:fail.response} });
   }
 }

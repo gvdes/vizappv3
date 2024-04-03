@@ -86,6 +86,7 @@
         :pagination="table.pagination"
         :filter="table.filter"
         :visible-columns="table.viewcols"
+        @row-dblclick="openEditorProduct"
       >
         <template v-slot:top>
           <div class="col row items-center">
@@ -113,7 +114,6 @@
         </template>
       </q-table>
     </div>
-    <!-- Productos: {{ $props.products.length }} -->
   </div>
 </template>
 
@@ -125,6 +125,8 @@
     products:{type:Array,default:[]},
     seasons:{type:Array,default:[]}
   });
+
+  const $emit = defineEmits(["openeditorproduct"]);
 
   let treeSeasons = reactive({
     ticked: [],
@@ -145,8 +147,8 @@
       { name:"relateds", label:"Relacionados", field: row => row.relateds.length, align:"left", sortable:true },
       { name:"available", label:"Disponible", field:row => row.stock._current, align:"center", classes: row => row.stock._current<= 0 ? 'text-red':'text-blue', sortable:true },
       { name:"current", label:"Actual (real)", field:row => row.stock.available, align:"center", classes: row => row.stock._current<= 0 ? 'text-red':'text-blue', sortable:true },
-      { name:"stockmax", label:"Maximo", field:row => row.stock._max, align:"center" },
-      { name:"stockmin", label:"Minimo", field:row => row.stock._min, align:"center" },
+      { name:"stockmin", label:"Minimo", field:row => row.stock._min, align:"center", classes: row => row.stock._min == 0 ? 'text-grey-6':'text-cyan', },
+      { name:"stockmax", label:"Maximo", field:row => row.stock._max, align:"center", classes: row => row.stock._current == 0 ? 'text-grey-6':'text-cyan', },
       { name:"stockincom", label:"Por llegar", field:row => row.stock.in_coming, align:"center" },
       { name:"stockres", label:"Reservado", field:row => row.stock.reserved, align:"center" },
       { name:"ipack", label:"PxC", field: row => row.pieces, classes: row => row.pieces ? '':'text-red anek-bld', align:"center" },
@@ -305,6 +307,8 @@
 
     return `"${formatted}"`;
   }
+
+  const openEditorProduct = (a,row) => { $emit("openeditorproduct", row); }
 
   buildTreeSeason();
   treeSeasons.ticked = idscats.value;

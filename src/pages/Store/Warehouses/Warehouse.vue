@@ -31,7 +31,7 @@
 
     <q-tab-panels v-model="tab" animated class="transparent">
       <q-tab-panel name="products" >
-        <ProductsVisor :products="productsDB" :seasons="season_cats"/>
+        <ProductsVisor :products="productsDB" :seasons="season_cats" @openeditorproduct="openEditorProduct"/>
       </q-tab-panel>
       <q-tab-panel name="structure">
         <StructureVisor :roots="sectionsRoot" @rootsNews="addRoots"/>
@@ -45,6 +45,10 @@
         </q-card-section>
       </q-card>
     </q-dialog>
+
+    <q-dialog v-model="wndProductEdit.state">
+      <EditorProduct :product="wndProductEdit.product" @setMinMaxState="setMinMaxState"/>
+    </q-dialog>
   </q-page>
 </template>
 
@@ -57,6 +61,7 @@
   import Wapi from 'src/API/WarehouseApi';
   import ProductsVisor from 'src/components/Warehouse/ProductsVisor.vue';
   import StructureVisor from 'src/components/Warehouse/StructureVisor.vue';
+  import EditorProduct from 'src/components/Warehouse/EditorProduct.vue';
 
   const $q = useQuasar();
   const $route = useRoute();
@@ -64,11 +69,12 @@
   const piniaWarehouse = useWarehouseStore();
 
   const wndRestringed = ref({state:false});
+  let wndProductEdit = ref({state:false, product:null});
   const warehouse = ref(null);
   const productsDB = ref([]);
   let season_cats = ref([]);
   let sectionsRoot = ref([]);
-  let tab = ref(undefined)
+  let tab = ref(undefined);
 
   const isMob = computed(() => $q.platform.is.mobile);
   const $screen = computed(() => $q.screen);
@@ -101,6 +107,30 @@
     }
 
     $q.loading.hide();
+  }
+
+  const openEditorProduct = (row) => {
+    wndProductEdit.value.product = row;
+    wndProductEdit.value.state = true;
+  }
+
+  const setMinMaxState = async data => {
+    const resp = await Wapi.setMminMaxState($route.params.wid,data);
+
+    wndProductEdit.value.state = false;
+    wndProductEdit.value.product = null;
+
+    let idx = productsDB.value.findIndex( p => p.id == resp.row._product );
+    productsDB.value[idx].stock = resp.row;
+
+    if(resp.row){
+      $q.notify({
+        message:"Cambios aplicados",
+        icon:"done",
+        color:"positive",
+        position:"center"
+      });
+    }
   }
 
   init();
