@@ -100,8 +100,13 @@ const routes = [
 
       {
         path: 'products',
+        component: () => import('layouts/ProductLYT.vue'),
         children: [
           { path: '', name: 'products', component: () => import('pages/Cluster/Products/Index.vue') },
+          { path: 'categories', name: 'categories', component: () => import('pages/Cluster/Products/Categories.vue') },
+          { path: 'prices', name: 'prices', component: () => import('pages/Cluster/Products/Prices.vue') },
+          { path: 'kits', name: 'kits', component: () => import('pages/Cluster/Products/Kits.vue') },
+
         ]
       },
 
