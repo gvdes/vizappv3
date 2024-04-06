@@ -38,7 +38,7 @@
     "Empecemos...",
     "Manos a la obra!",
     "Exito!",
-    "Me la pelas! xD",
+    "Me la repelas! xD",
     "Vacaciones??... pff...",
   ]);
 

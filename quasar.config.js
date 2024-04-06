@@ -25,7 +25,8 @@ module.exports = configure(function (/* ctx */) {
     boot: [
       'kraken',
       'axios',
-      'qdate'
+      'qdate',
+      'socket',
     ],
 
     // https://v2.quasar.dev/quasar-cli-vite/quasar-config-js#css
