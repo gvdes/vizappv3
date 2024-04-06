@@ -20,14 +20,15 @@
     <div class="q-pa-md">
       <q-card class="q-mb-md" flat bordered>
         <q-card-section class="col-xs-12">
-          <ProductFinder @itemtapped="finderFound" with-locations />
+          <ProductFinder @itemtapped="finderFound" with-locations with-stock/>
         </q-card-section>
 
         <q-separator />
 
-        <q-card-section v-if="pfinder.product">
-          <CardProduct :item="pfinder.product"/>
-        </q-card-section>
+        <q-dialog v-model="wndProductVisor.state">
+          <CardProduct :item="wndProductVisor.item" />
+          <!-- <pre>{{ wndProductVisor.item }}</pre> -->
+        </q-dialog>
       </q-card>
 
       <q-card flat bordered class="q-mb-md">
@@ -74,8 +75,8 @@
   const warehousesdb = ref([]);
   const types = ref([]);
   const iptsearch = ref(null);
-  const pfinder = ref({ product:null });
-  const creator = ref(null)
+  const creator = ref(null);
+  const wndProductVisor = ref({ state:false, item:null });
 
   /** H O O K S  */
 
@@ -108,7 +109,8 @@
   const finderFound = (item) => {
     console.log("a product was getted");
     console.log(item);
-    pfinder.value.product = item;
+    wndProductVisor.value.item = item;
+    wndProductVisor.value.state = true;
   }
 
   const created = wrh => {
