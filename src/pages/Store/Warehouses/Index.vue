@@ -27,7 +27,6 @@
 
         <q-dialog v-model="wndProductVisor.state">
           <CardProduct :item="wndProductVisor.item" />
-          <!-- <pre>{{ wndProductVisor.item }}</pre> -->
         </q-dialog>
       </q-card>
 

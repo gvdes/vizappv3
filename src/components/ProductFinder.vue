@@ -115,7 +115,7 @@
   const search = async (evt) => {
     if(target.value.length>1){
       let q = `key=${target.value}&${query.value}`;
-      console.log('Buscando ', q)
+      console.log('Buscando (mode: STD)', q)
       const resp = await PFinder.search(q);
       console.log(resp);
     }else{ console.log("nememes... escribe algo!!"); }
@@ -125,13 +125,13 @@
     let key = val.toUpperCase().trim();
     if (key.length < 3) { abort(); return } else{
       let q = `key=${key}&${query.value}`;
-      console.log('Buscando ', q)
+      console.log('Buscando (mode: ATC)', q)
       const resp = await PFinder.search(q);
       console.log(resp);
       update(() => options.value = resp.items );
     }
   }
 
-  const itemTapped = async (item) => $emit("itemtapped",item);
+  const itemTapped = async (item) => {$emit("itemtapped",item); target.value = ""};
 
 </script>
