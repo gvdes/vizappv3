@@ -45,6 +45,18 @@
           </div>
         </q-slide-transition>
       </div>
+      <q-dialog v-model="drop" persistent>
+        <q-card>
+          <q-card-section class="row items-center">
+            <q-avatar icon="signal_wifi_off" color="primary" text-color="white" />
+            <span class="q-ml-sm">You are currently not connected to any network.</span>
+          </q-card-section>
+          <q-card-actions align="right">
+            <q-btn flat label="Cancel" color="primary" v-close-popup />
+            <q-btn flat label="Turn on Wifi" color="primary" v-close-popup />
+          </q-card-actions>
+        </q-card>
+      </q-dialog>
 
     </div>
 
@@ -63,6 +75,7 @@ const expanded = ref(false)
 const getlist = (list) => {
   return users.value.filter((e) => e._store == list)
 }
+const drop = ref(false);
 
 
 const startDrag = (e, i) => {
@@ -80,20 +93,24 @@ const onDrop = async (e, l) => {
   console.log(item.id);
   let mod = {
     user:item.id,
-    store:l
+    store:l,
   }
-  const resp = await uapi.changework(mod);
-  if (resp.error) {
-    console.log(resp.error);
-  } else {
-    console.log(resp)
-    item._store = l
-    $q.notify({
-      type:'positive',
-      message:resp
-    })
-  }
+  console.log(mod);
+
+  // const resp = await uapi.changework(mod);
+  // if (resp.error) {
+  //   console.log(resp.error);
+  // } else {
+  //   console.log(resp)
+  //   item._store = l
+  //   $q.notify({
+  //     type:'positive',
+  //     message:resp
+  //   })
+  // }
 }
+
+
 
 const init = async () => {
   $q.loading.show({message:"Cargando Usuarios..."});
