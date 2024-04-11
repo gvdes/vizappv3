@@ -107,19 +107,24 @@
             <q-input outlined rounded v-model="table.filter" type="text" label="Buscar" dense debounce="300ms"/>
             <q-space />
             <div class="row justify-around items-center q-gutter-xs">
-              <q-btn rounded flat icon="fas fa-file-excel" @click="exportAsCsv" color="primary"/>
-              <q-btn rounded flat icon="fas fa-sitemap" color="primary"/>
+              <q-btn rounded flat icon="download" color="primary" @click="exportAsCsv"  />
+              <q-btn rounded flat icon="rule" color="primary" @click="openComparator"/>
             </div>
           </div>
         </template>
       </q-table>
     </div>
+
+    <q-dialog v-model="wndCompare.state" :persistent="wndCompare.block">
+      <Comparator :pids="wndCompare.pids"/>
+    </q-dialog>
   </div>
 </template>
 
 <script setup>
   import { ref, computed, reactive, watch } from 'vue';
   import { exportFile } from 'quasar';
+  import Comparator from 'src/components/Warehouse/Comparator.vue'
 
   const $props = defineProps({
     products:{type:Array,default:[]},
@@ -133,6 +138,8 @@
     expanded:[],
     nodes:[]
   });
+
+  const wndCompare = ref({ state:false, pids:[], block:false });
 
   const table = ref({
     columns:[
@@ -244,6 +251,11 @@
 
   const idscats = computed(() => categories.value.concat(seasons.value.map( c => c.category)).map( c => c.id));
 
+  const openComparator = () => {
+    wndCompare.value.pids = tableProds.value.filteredSortedRows.map(p => p.id);
+    wndCompare.value.state = true;
+  }
+
   const resetFilters = () => {
     for (const filter in filters.value) { filters.value[filter].opt = filters.value[filter].opts[0]; }
   }
@@ -296,14 +308,7 @@
     let formatted = formatFn !== void 0 ? formatFn(val, row) : val;
 
     formatted = formatted === void 0 || formatted === null ? '' : String(formatted);
-
     formatted = formatted.split('"').join('""');
-    /**
-     * Excel accepts \n and \r in strings, but some other CSV parsers do not
-     * Uncomment the next two lines to escape new lines
-     */
-    // .split('\n').join('\\n')
-    // .split('\r').join('\\r')
 
     return `"${formatted}"`;
   }
