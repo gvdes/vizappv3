@@ -69,6 +69,14 @@ const routes = [
           }
         ],
       },
+      {
+        path: 'preorders',
+        children: [
+          { path: '', name: 'pvt', component: () => import('pages/Store/Preorders/Index.vue')},
+          { path: 'config', name: 'cfg', component: () => import('pages/Store/Preorders/Config.vue') },
+          { path:':oid', name: 'oid', component: () => import('pages/Store/Preorders/Order.vue') },
+        ],
+      },
     ]
   },
 

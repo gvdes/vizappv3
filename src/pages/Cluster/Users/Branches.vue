@@ -97,17 +97,17 @@ const onDrop = async (e, l) => {
   }
   console.log(mod);
 
-  // const resp = await uapi.changework(mod);
-  // if (resp.error) {
-  //   console.log(resp.error);
-  // } else {
-  //   console.log(resp)
-  //   item._store = l
-  //   $q.notify({
-  //     type:'positive',
-  //     message:resp
-  //   })
-  // }
+  const resp = await uapi.changework(mod);
+  if (resp.error) {
+    console.log(resp.error);
+  } else {
+    console.log(resp)
+    item._store = l
+    $q.notify({
+      type:'positive',
+      message:resp
+    })
+  }
 }
 
 

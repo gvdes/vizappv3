@@ -26,7 +26,10 @@
   import { useAccountStore } from 'stores/Account';
   import MiniApps from 'src/components/MiniApps.vue';
 
+
   const piniaAccount = useAccountStore();
+
+  console.log(piniaAccount);
   const apps = piniaAccount.apps.map( a => a.app )
 
   const greetings = ref([

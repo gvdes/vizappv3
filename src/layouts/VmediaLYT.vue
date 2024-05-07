@@ -43,7 +43,7 @@
 
 <script setup>
   import { ref, watch, onBeforeMount, computed } from 'vue';
-  import StoreNavigator from 'src/components/StoreNavigator.vue';
+  // import StoreNavigator from 'src/components/StoreNavigator.vue';
   import { useRouter } from 'vue-router';
 
   const main_menu = ref(null);
