@@ -57,7 +57,7 @@
 
 <script setup>
 const props = defineProps({
-  tab2: { type: Boolean },
+  tab2: { type: String, defaul:'' },
   roles: { type: Object },
   workpoints: { type: Object },
   apps: { type: Object },
