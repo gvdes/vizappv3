@@ -11,18 +11,8 @@
       <q-input rounded outlined v-model="personaldata.surnames" type="text" label="Apellidos" class="q-my-md" />
       <div class="row q-my-md">
 
-        <q-input rounded outlined v-model="personaldata.dayofbirth.val" label="Fecha Nacimiento" class="col"
-          mask="####-##-##" :error="!valifecha" error-message="anio-mes-dia alguno esta mal :(">
-          <template v-slot:prepend>
-            <q-btn color="primary" icon="event" @click="date = !date" flat round />
-          </template>
-        </q-input>
-
-        <q-dialog v-model="date">
-          <q-date v-model="personaldata.dayofbirth.val" minimal mask="YYYY-MM-DD" />
-        </q-dialog>
-
-        <q-input rounded outlined v-model="personaldata.email" type="text" label="Correo Electronico" class="col"
+        <q-input rounded outlined v-model="personaldata.dayofbirth.val" type="date"   class="col" hint="Fecha de Nacimiento"/>
+                <q-input rounded outlined v-model="personaldata.email" type="text" label="Correo Electronico" class="col"
           error-message="El correo ya esta en uso" :error="isValid" />
         <q-input rounded outlined v-model="personaldata.celphone" type="text" label="Telefono" mask="##-####-####"
           class="col" error-message="El numero de telefono ya esta en uso" :error="celvalid" />
