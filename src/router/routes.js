@@ -73,8 +73,9 @@ const routes = [
         path: 'preorders',
         children: [
           { path: '', name: 'pvt', component: () => import('pages/Store/Preorders/Index.vue')},
-          { path: 'config', name: 'cfg', component: () => import('pages/Store/Preorders/Config.vue') },
-          { path:':oid', name: 'oid', component: () => import('pages/Store/Preorders/Order.vue') },
+          { path:'config', name: 'cfg', component: () => import('pages/Store/Preorders/Config.vue') },
+          { path:'pedidos', name: 'ped', component: () => import('pages/Store/Preorders/ListOrders.vue') },
+          { path:'pedidos/:oid', name: 'oid', component: () => import('pages/Store/Preorders/Order.vue') },
         ],
       },
     ]
@@ -91,6 +92,8 @@ const routes = [
           { path: '', name: 'users', component: () => import('pages/Cluster/Users/Index.vue') },
           { path: 'create', name: 'create_user', component: () => import('pages/Cluster/Users/Create.vue') },
           { path: 'branch', name: 'branches', component: () => import('pages/Cluster/Users/Branches.vue') },
+          { path: 'positions', name: 'positions', component: () => import('pages/Cluster/Users/Positions.vue') },
+
         ]
       },
       {

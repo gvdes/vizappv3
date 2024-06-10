@@ -78,7 +78,8 @@
     withStock:{ type:Boolean, default:false }, // Define si inculuira o no stocks en la busqueda, el valor true, o un arreglo vacio, buscara en todos los almacenes de la sucursal correspondiente
     withLocations:{ type:Boolean, default:false }, // Define si inculuira o no ubicaciones en la busqueda, el valor true, o un arreglo vacio, buscara en todos los almacenes de la sucursal correspondiente
     withPrices:{ type:Boolean, default:false },// Define si inculuira o no los precios del producto en la busqueda, el valor true, o un arreglo vacio, traera todos los precios del producto
-    withMedia:{ type:Boolean, default:false },
+    withMedia:{ type:Boolean, default:false },// define si incluira media
+    withCategories:{ type:Boolean, default:false },// define si incluye categorias
     warehouses:{ type:Array, default:[] }
   });
 
@@ -90,12 +91,13 @@
   const locations = ref(props.withLocations);
   const warehouses = ref(props.warehouses);
   const prices = ref(props.withPrices);
+  const categories = ref(props.withCategories);
   const media = ref(props.withMedia);
 
   /**
    * C O M P U T E D
    */
-  const query = computed(() => `stock=${withstock.value}&locations=${locations.value}&warehouses=${warehouses.value}&prices=${prices.value}&media=${media.value}`);
+  const query = computed(() => `stock=${withstock.value}&locations=${locations.value}&warehouses=${warehouses.value}&prices=${prices.value}&media=${media.value}&categories=${categories.value}`);
 
   /**
    * M E T H O D S

@@ -73,11 +73,19 @@
 
 
 
-    <q-page-sticky position="bottom-right" :offset="[18, 18]">
-      <q-fab color="primary" icon="settings" position="bottom-right" direction="left">
-        <q-fab-action color="purple" @click="addUser" icon="person_add" label="Agregar" />
-        <q-fab-action color="blue" @click="exportUsers" icon="upgrade" label="Exportar" />
-        <q-fab-action color="primary" @click="branches" icon="store" label="Sucursal" />
+
+
+    <q-page-sticky position="bottom-right" :offset="[20, 20]">
+      <q-fab color="primary" text-color="white" icon="keyboard_arrow_left" :direction="isMobile ? 'up' : 'left'">
+        <template v-slot:label="{ opened }">
+          <div :class="{ 'example-fab-animate--hover': opened !== true }">
+            {{ opened !== true ? 'Opciones' : 'Cerrar' }}
+          </div>
+        </template>
+        <div v-for="(modulo, index) in permissions" :key="index">
+          <q-fab-action color="primary" :icon="modulo.module.icon" :to="`${modulo.module.path}`"
+            :label="modulo.module.name" />
+        </div>
       </q-fab>
     </q-page-sticky>
 
@@ -88,10 +96,12 @@
 
 <script setup>
 import { ref, onMounted, computed } from 'vue';
+import { useAccountStore } from 'stores/Account';
 import { useRouter } from 'vue-router';
 import { useQuasar } from 'quasar';
 import listuser from 'src/components/Users/Index/UserList.vue';
 import uapi from 'src/API/UserApi';
+const piniaAccount = useAccountStore();
 const $q = useQuasar();
 const $router = useRouter();
 const maximizedToggle = ref(true)
@@ -105,7 +115,6 @@ const filter = ref({
   area: { val: null, opts: null },
   position: { val: null, optsdb: null, opts: [] },
 });
-
 
 
 
@@ -180,6 +189,9 @@ const userList = computed(() => {
 const users = computed(() => userList.value.filter(e => (e.name + e.surnames).toLowerCase().includes(search.value.toLowerCase())))
 
 const userArchived = computed(() => userListArchived.value.filter(e => (e.name + e.surnames).toLowerCase().includes(search.value.toLowerCase())));
+const isMobile = computed(() => $q.platform.is.mobile);
+const permissions = computed(() => piniaAccount.account.modules.filter((e) => e.module.root == '4f36'))
+
 
 const posopts = () => {
   filter.value.position.opts = filter.value.position.optsdb.filter((e) => e._area == filter.value.area.val.id)
@@ -203,21 +215,6 @@ const init = async () => {
     $q.loading.hide();
   }
 };
-
-const addUser = () => {
-  console.log("Redirecciona al formulario");
-  $router.replace(`/cluster/usuarios/create`);
-}
-
-const branches = () => {
-  console.log("Redirecciona a branches");
-  $router.replace(`/cluster/usuarios/branch`);
-}
-
-const exportUsers = () => {
-  console.log("para exportarlos");
-}
-
 
 const delfil = () => {
   filter.value.status.val = null

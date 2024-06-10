@@ -1,1 +1,0 @@
-#imgcover>button{opacity:0%;transition:all .3s}#imgcover:hover>button{opacity:100%}.media_file{transition:all .5s}.media_file .media_info{transition:all .5s;background:rgba(0,0,0,.4);opacity:0}.media_file .botonera{display:none}.media_file:hover{z-index:1000}.media_file:hover .media_info{background:rgba(0,0,0,.8);opacity:1}.media_file:hover .botonera{display:block}

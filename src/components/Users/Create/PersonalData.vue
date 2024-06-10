@@ -31,12 +31,25 @@
         toggle-color="primary" color="white" text-color="primary" :options="personaldata.gender.opts" />
       <q-input rounded outlined v-model="personaldata.nick" type="text" label="Nick(alias)" class="q-my-md"
         error-message="El nick ya esta en uso" :error="nickvalid" />
+      <!-- {{ personaldata.avatar }}
+        <q-uploader
+        :multiple="false"
+        label="Fotografia"
+        ref="avatar"
+        color="primary"
+        accept="image/*"
+        :factory="envioarch"
+        @added="insertImage"
+        class="full-width"
+      /> -->
+
     </q-card-section>
   </q-card>
 </template>
 
 <script setup>
-defineProps({
+
+const props = defineProps({
   personaldata: { type: Object },
   date: { type: Boolean },
   valifecha: { type: Boolean },
