@@ -122,7 +122,7 @@ const files = ref([
 
 const tab = ref('person');
 
-const tab2 = ref(null);
+const tab2 = ref('Rol');
 
 const splitterModel = ref(20)
 
