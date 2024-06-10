@@ -13,7 +13,7 @@
     <q-card-section class="item-center">
       <div class="row">
         <div class="text-h6 col text-bold text-left">{{ EditProduct.code }}</div>
-        <div class="text-subtitle2 col text-bold text-center">Stock: {{ EditProduct.stocks[0]?._current }}</div>
+        <div class="text-subtitle2 col text-bold text-center">Stock: {{ EditProduct.stocks[0]._current }}</div>
         <div class="text-h6 col text-bold text-right">{{ EditProduct.short_code }}</div>
       </div>
       <div class="text-subtitle2 col">{{ EditProduct.description }}</div>
@@ -71,6 +71,7 @@
           </q-list>
         </div>
       </div>
+
     </q-card-section>
 
 
@@ -102,7 +103,7 @@ const $route = useRoute();
 const $router = useRouter()
 const piniaAccount = useAccountStore();
 
-const emit = defineEmits(['addingProd']);
+const emit = defineEmits(['addingProd','delProd']);
 
 const props = defineProps({
   EditProduct: { type: Object, default: {} },
@@ -140,14 +141,14 @@ const selectPrice = computed(() => {
 
   if (order.client.rate.id <= 3) {
     if (products?.length > 0) {
-      if (insertPro.amount_require >= 3 && insertPro.amount_require <= 11 && unit_measure.val.id == 1) {
+      if (sections.value) {
         return 2
       } else if (insertPro.amount_require >= 12 && insertPro.amount_require < EditProduct.pieces && unit_measure.val.id == 1 || unit_measure.val.id == 2 && insertPro.amount_require < EditProduct.pieces) {
         return 3
       } else if (insertPro.amount_require >= EditProduct.pieces && (unit_measure.val.id == 1 || unit_measure.val.id == 2) || unit_measure.val.id == 3) {
-        return 4
+        return 4 // se toma en cuenta cuando es caja solo para ese modelo
       } else {
-        return 1
+        return 1 // normal
       }
     } else {
       if (insertPro.amount_require >= 3 && insertPro.amount_require <= 11 && unit_measure.val.id == 1) {
@@ -165,7 +166,52 @@ const selectPrice = computed(() => {
   }
 })
 
+const reglasPorSeccion = {
+    "NAVIDAD": [
+        { products: 0, familys: 1, diferentProduct: 6 }
+    ],
+    "MOCHILA": [
+        { products: 0, familys: 1, diferentProduct: 3 }
+    ],
+}
 
+function cumpleCondiciones(productos, regla, productoActual) {
+    let products = 1;
+    let diferentProduct = 1;
+    let familys = 1;
+
+    productos.forEach(producto => {
+        if (producto.product.id === productoActual.id) {
+            products++;
+        }
+        if (producto.product.category.familia.id === productoActual.category.familia.id) {
+            familys++;
+        }
+        if (producto.product.id !== productoActual.id && producto.product.category.familia.id === productoActual.category.familia.id) {
+            diferentProduct++;
+        }
+    });
+
+    if (regla.products && products >= regla.products && familys >= regla.familys) {
+        return true;
+    }
+
+    if (regla.diferentProduct && diferentProduct >= regla.diferentProduct && familys >= regla.familys) {
+        return true;
+    }
+
+    return false;
+}
+
+
+const sections = computed(() => {
+  let regla =  reglasPorSeccion[EditProduct.category.familia.seccion.name]
+  let cum ={}
+  regla.forEach(re => {
+    cum = cumpleCondiciones(products, re, EditProduct)
+  })
+  return  cum
+})
 
 const existProduct = computed(() => {
   let inx = products.findIndex(e => e.product.id == EditProduct.id)
@@ -200,7 +246,15 @@ const modifyProduct = () => {
 
 const removeProduct = () => {
 
+  const addPr = pvtpi.removeProduct(insertPro);
+  if (addPr.error) {
+    console.log(addPr)
+  } else {
+    emit('delProd',insertPro)
+  }
 }
+
+
 
 const reset = () => {
     insertPro._order = null,
@@ -213,7 +267,7 @@ const reset = () => {
     insertPro._state= null,
     insertPro.notes= null,
     insertPro._supply_by= null
-  }
+}
 
 
 

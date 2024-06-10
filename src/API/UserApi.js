@@ -47,5 +47,9 @@ export default{
   addPuesto(data){
     let burl = `cluster/accounts/addPuesto`;
     return vizapi.post(burl,data).then( done => done.data ).catch( fail => { return {error:fail.response} });
+  },
+  modifyPuesto(data){
+    let burl = `cluster/accounts/modifyPuesto`;
+    return vizapi.post(burl,data).then( done => done.data ).catch( fail => { return {error:fail.response} });
   }
 }

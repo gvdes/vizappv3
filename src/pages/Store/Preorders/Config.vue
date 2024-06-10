@@ -1,11 +1,17 @@
 <template>
   <q-page padding>
-    <!-- content -->
+    <q-card class="my-card">
+      <q-card-section>
+        <q-list bordered>
+          <q-item >
+            <q-item-section>Modulos</q-item-section>
+          </q-item>
+        </q-list>
+      </q-card-section>
+    </q-card>
   </q-page>
 </template>
 
-<script>
-export default {
-  // name: 'PageName',
-}
+<script setup>
+
 </script>

@@ -117,7 +117,7 @@
 
     <q-dialog v-model="wndProduct" position="bottom" :style="`${isMobile ? '' : 'width: 300px'}`" persistent>
       <addProduct :EditProduct="EditProduct" :order="order" :products="products" :unit_measure="unit_measure"
-        :insertPro="insertPro" @addingProd="addingProd">
+        :insertPro="insertPro" @addingProd="addingProd" @delProd="delProd">
       </addProduct>
     </q-dialog>
 
@@ -171,8 +171,6 @@ const insertPro = ref({
   notes: null,
   _supply_by: null
 })
-
-
 
 
 const isMobile = computed(() => $q.platform.is.mobile);
@@ -234,6 +232,12 @@ const productEdit = (item) => {
 
 const addingProd = (item) => {
   item.then(i => products.value.push(i));
+  wndProduct.value = false;
+}
+
+const delProd = (item) => {
+  let inx = products.value.findIndex(e => e.product.id == item._product)
+  products.value.splice(inx,1);
   wndProduct.value = false;
 }
 onBeforeMount(() => { init() })

@@ -1,7 +1,9 @@
 <template>
   <q-page padding>
     <div class="bg-white">
+
       <div class="q-pa-sm row items-center text-center text-h6">
+        <div @click="$router.push('/cluster/usuarios')"> <q-icon size="30px" name="arrow_back" /></div>
         <div class="col anek-bld text-grey-9 q-pl-sm">Areas / Puestos</div>
         <div>
           <q-btn flat rounded icon="autorenew" @click="init" />
@@ -11,9 +13,6 @@
       </div>
     </div>
     <q-separator spaced inset vertical dark />
-
-
-
     <q-table :rows="areas" row-key="name" grid :filter="table.filter" :pagination="table.pagination"
       :columns="table.columns" v-if="areas.length > 0">
 
@@ -45,7 +44,7 @@
                 <q-separator />
                 <q-card-section class="text-subtitle2" v-for="(roles, index) in props.row.roles" :key="index">
                   <q-list dense>
-                    <q-item clickable v-ripple @click="mosPer(roles)">
+                    <q-item clickable v-ripple @click="mosPer(roles, props.row)">
                       <q-item-section>
                         <q-item-label overline> {{ roles.name }}</q-item-label>
                         <q-item-label caption>Jerarquia {{ roles.hierarchy }}</q-item-label>
@@ -69,7 +68,6 @@
           <q-form @submit="addingArea" @reset="wndArea.val = ''" class="q-gutter-md">
             <q-input v-model="wndArea.val" type="text" label="Nombre de nueva Area" filled :error="eArea"
               error-message="El area ya existe :0" />
-
             <div class="flex justify-center">
               <q-btn type="reset" color="negative" flat class="q-ml-sm" icon="close" v-close-popup />
               <q-btn type="submit" color="positive" flat icon="check" :disable="eArea" />
@@ -81,80 +79,9 @@
 
 
     <q-dialog v-model="add" persistent>
-      <q-card class="my-card" style="width: 500px; max-width: 80vw;">
-        <q-card-section>
-          <div class="text-h6 text-center"> {{ area.name }} </div>
-          <q-separator spaced inset vertical dark />
-          <div class="text-subtitle2 text-center">Agregar Puesto al Area:</div>
-        </q-card-section>
-        <q-tabs v-model="tab" class="text-primary">
-          <q-tab name="info" icon="info" label="Informacion" />
-          <q-tab name="permissions" icon="settings" label="Permisos" />
-        </q-tabs>
-        <q-tab-panels v-model="tab" animated>
-          <q-tab-panel name="info">
-            <q-card-section>
-              <q-input v-model="addPuesto.name" type="text" label="Nombre" filled />
-              <q-separator spaced inset vertical dark />
-              <q-input v-model="addPuesto.description" type="text" label="Descripcion" filled />
-              <q-separator spaced inset vertical dark />
-              <q-select v-model="addPuesto.type_rol.val" :options="addPuesto.type_rol.opts" label="Tipo de puesto"
-                filled option-label="name" />
-              <q-separator spaced inset vertical dark />
-              <div class="row" v-if="area.roles.length > 0">
-                <q-select v-model="addPuesto.hierarchy.valP" :options="area?.roles" label="Puesto" filled class="col"
-                  option-label="name">
-                  <template v-slot:option="scope">
-                    <q-item v-bind="scope.itemProps">
-                      <q-item-section>
-                        <q-item-label>{{ scope.opt.name }}</q-item-label>
-                        <q-item-label caption class="text-overline">Jerarquia {{ scope.opt.hierarchy }}</q-item-label>
-                      </q-item-section>
-                    </q-item>
-                  </template>
-                </q-select>
-                <q-separator spaced inset vertical dark />
-                <q-select v-model="addPuesto.hierarchy.valR" :options="optionHierarchy" label="Rango" filled class="col"
-                  :disable="addPuesto.hierarchy.valP ? false : true" />
-              </div>
-            </q-card-section>
-          </q-tab-panel>
-          <q-tab-panel name="permissions">
-            <q-input dense v-model="search" type="text" label="Buscar" />
-            <div class="row items-center">
-              <div class="col col text-bold text-overline">Modulos</div>
-              <div class="col">
-                <div class="row">
-                  <div class="col text-bold text-overline">C. Total</div>
-                  <div class="col text-bold text-overline">Edicion</div>
-                  <div class="col text-bold text-overline">Vista</div>
-                </div>
-              </div>
-            </div>
-            <q-separator />
-            <q-tree :nodes="modulesP" node-key="id" label-key="name" :filter="search" children-key="children">
-              <template v-slot:default-header="prop">
-                <div class="row items-center" style="width: 228px;">
-                  <q-icon :name="prop.node.icon || 'list'" color="primary" size="15px" class="q-mr-xs" />
-                  <div class="text-weight-bold  text-left ">{{ prop.node.name }}</div>
-                </div>
-                <div class="row  flex justify-center" v-for="(permission, index) in permissions" :key="index">
-                  <q-radio class="col q-mr-xl" dense v-model="prop.node._permission" :val="permission"
-                    :color="permission.id == 1 ? 'positive' : permission.id == 2 ? 'warning' : 'negative'"
-                    keep-color />
-                </div>
-              </template>
-            </q-tree>
-          </q-tab-panel>
-        </q-tab-panels>
-
-        <q-card-actions align="center">
-          <q-btn flat icon="close" color="negative" type="reset" v-close-popup />
-          <q-btn flat icon="check" type="submit" color="positive" @click="adding" />
-        </q-card-actions>
-
-
-      </q-card>
+      <ViewPosition :addPuesto="addPuesto" :modulesC="modulesC" :area="area" :permissions="permissions"
+        @termino="termino" @reset="reset">
+      </ViewPosition>
     </q-dialog>
 
   </q-page>
@@ -165,19 +92,19 @@ import { ref, onMounted, computed } from 'vue';
 import { useAccountStore } from 'stores/Account';
 import { useRouter } from 'vue-router';
 import { useQuasar } from 'quasar';
-import listuser from 'src/components/Users/Index/UserList.vue';
 import uapi from 'src/API/UserApi';
+import ViewPosition from 'src/components/Position/viewPosition.vue';
 const piniaAccount = useAccountStore();
 const $q = useQuasar();
 const $router = useRouter();
 
 const areas = ref([])
 const shape = ref(1)
-const search = ref('')
-const tab = ref('info')
+
 const area = ref([])
 const permissions = ref([])
 const modules = ref([])
+const modulesC = ref(null)
 const wndArea = ref({
   state: false,
   val: ''
@@ -199,18 +126,20 @@ const table = ref({
   ]
 })
 
-const optionHierarchy = computed(() => {
-  if (addPuesto.value.hierarchy.valP) {
-    return addPuesto.value.hierarchy.valP.hierarchy <= 1 ? ['Igual', 'Menor'] : ['Menor', 'Igual', 'Mayor']
-  }
-  return ['Menor', 'Igual', 'Mayor']
-})
-
-const eArea = computed(() => areas.value.findIndex(e => e.name.toLowerCase() == wndArea.value.val.toLowerCase()) >= 0 ? true : false)
 const modulesP = computed(() => {
-  modules.value.map(a => a._permission = 0)
+  function updatePermissions(modules) {
+    modules.forEach(module => {
+      module._permission = 0;
+      if (module.children && module.children.length > 0) {
+        updatePermissions(module.children);
+      }
+    })
+  }
+  updatePermissions(modules.value)
   return modules.value
 });
+
+const eArea = computed(() => areas.value.findIndex(e => e.name.toLowerCase() == wndArea.value.val.toLowerCase()) >= 0 ? true : false)
 
 
 const init = async () => {
@@ -228,61 +157,32 @@ const init = async () => {
 }
 
 const reset = () => {
+
   addPuesto.value = {
     name: '',
     description: '',
     type_rol: { val: null, opts: [{ id: 1, name: 'Administrativo' }, { id: 2, name: 'Operativo' },] },
     hierarchy: { valR: null, valP: null, val: null }
   }
+  add.value = false
+  function updatePermissions(modules) {
+    modules.forEach(module => {
+      module._permission = 0;
+      if (module.children && module.children.length > 0) {
+        updatePermissions(module.children);
+      }
+    });
+  }
+  updatePermissions(modulesC.value)
+  console.log(modulesC.value)
 }
 
 const addRol = (row) => {
   add.value = true;
+  modulesC.value = modulesP.value
+  console.log(modulesC.value)
   area.value = row;
 }
-const adding = async () => {
-  if (addPuesto.value.hierarchy.valR == 'Mayor') {
-    addPuesto.value.hierarchy.val = addPuesto.value.hierarchy.valP.hierarchy - 1
-  } else if (addPuesto.value.hierarchy.valR == 'Igual') {
-    addPuesto.value.hierarchy.val = addPuesto.value.hierarchy.valP.hierarchy
-  } else if (addPuesto.value.hierarchy.valR == 'Menor') {
-    addPuesto.value.hierarchy.val = addPuesto.value.hierarchy.valP.hierarchy + 1
-  } else {
-    addPuesto.value.hierarchy.val = 1
-  }
-  let data = {
-    rol: {
-      name: addPuesto.value.name,
-      description: addPuesto.value.description,
-      type_rol: addPuesto.value.type_rol.val.id,
-      hierarchy: addPuesto.value.hierarchy.val,
-      _area: area.value.id,
-    },
-    permissions:modules.value.filter(e => e._permission.id > 0)
-  }
-  console.log(data);
-
-  const resp = await uapi.addPuesto(data)
-  if (resp.error) {
-    alert('No se pudo generar el area')
-  } else {
-    console.log(resp)
-    $q.notify({
-      message: 'Puesto Creada :)',
-      type: 'positive',
-      position: 'center'
-    })
-    add.value = false
-    addPuesto.value = {
-      name: '',
-      description: '',
-      type_rol: { val: null, opts: [{ id: 1, name: 'Administrativo' }, { id: 2, name: 'Operativo' },] },
-      hierarchy: { valR: null, valP: null, val: null }
-    }
-    init()
-  }
-}
-
 const newArea = () => {
   wndArea.value.state = true
   console.log('creacion nueva area')
@@ -306,16 +206,62 @@ const addingArea = async () => {
   }
 }
 
-const mosPer = async (a) => {
+const mosPer = async (a, row) => {
   console.log(a.id)
   const resp = await uapi.getPermissionsRol(a.id)
   if (resp.error) {
     alert('No se obtuvieron permisos')
   } else {
     console.log(resp)
-  }
+    if (resp.permissions.length > 0) {
+      let rolePermissioMap = {}
+      resp.permissions.forEach(e => {
+        rolePermissioMap[e._module] = e._permission
+      });
 
+      function updatePermissions(modules) {
+        modules.forEach(module => {
+          if (rolePermissioMap.hasOwnProperty(module.id)) {
+            module._permission = rolePermissioMap[module.id];
+          } else {
+            module._permission = 0;
+          }
+          if (module.children && module.children.length > 0) {
+            updatePermissions(module.children);
+          }
+        });
+      }
+      let modulos = modules.value
+      updatePermissions(modulos);
+      modulesC.value = modulos
+    }else{
+      modulesC.value = modulesP.value
+    }
+
+    console.log(modulesC.value)
+
+    area.value = row;
+    addPuesto.value.id = resp.id
+    addPuesto.value.name = resp.name
+    addPuesto.value.description = resp.description
+    addPuesto.value.type_rol.val = resp.type_rol
+    addPuesto.value.hierarchy.val = resp.hierarchy
+    // console.log(addPuesto.value)
+    add.value = true;
+  }
 }
+
+const termino = () => {
+  add.value = false
+  addPuesto.value = {
+    name: '',
+    description: '',
+    type_rol: { val: null, opts: [{ id: 1, name: 'Administrativo' }, { id: 2, name: 'Operativo' },] },
+    hierarchy: { valR: null, valP: null, val: null }
+  }
+  init()
+}
+
 
 
 init()

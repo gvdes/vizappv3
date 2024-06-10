@@ -22,7 +22,10 @@ export default{
   addProduct(data){
     let burl = `store/${piniaAccount.join}/orders/addProduct`;
     return vizapi.post(burl,data).then( done => done.data).catch( fail => { return {error:fail.response} });
-
+  },
+  removeProduct(data){
+    let burl = `store/${piniaAccount.join}/orders/removeProduct`;
+    return vizapi.post(burl,data).then( done => done.data).catch( fail => { return {error:fail.response} });
   }
 }
 
