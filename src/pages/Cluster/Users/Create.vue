@@ -33,7 +33,7 @@
               </q-tab-panel>
 
               <q-tab-panel name="worker">
-                <datawork :tab2="tab2" :roles="roles" :workpoints="workpoints" :apps="apps" />
+                <datawork  :roles="roles" :workpoints="workpoints" :apps="apps" />
               </q-tab-panel>
 
               <q-tab-panel name="documents">
@@ -122,7 +122,7 @@ const files = ref([
 
 const tab = ref('person');
 
-const tab2 = ref('Rol');
+
 
 const splitterModel = ref(20)
 

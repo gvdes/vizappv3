@@ -56,12 +56,13 @@
 </template>
 
 <script setup>
+import { ref, onMounted, computed } from 'vue';
 const props = defineProps({
-  tab2: { type: String, defaul:'' },
   roles: { type: Object },
   workpoints: { type: Object },
   apps: { type: Object },
 })
+const tab2 = ref('Rol');
 
 const insfo = () => {
   props.workpoints.val = [];
