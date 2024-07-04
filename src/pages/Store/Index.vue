@@ -41,8 +41,9 @@
     "Empecemos...",
     "Manos a la obra!",
     "Exito!",
-    "Me la repelas! xD",
     "Vacaciones??... pff...",
+    "Si buscas resultados distintos, no hagas siempre lo mismo.",
+    "Quien tiene claro un porque? Puede superar casi cualquier cómo"
   ]);
 
   const greeting = computed( () => greetings.value[Math.floor(Math.random()*greetings.value.length)] );

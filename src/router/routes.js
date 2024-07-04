@@ -78,6 +78,15 @@ const routes = [
           { path:'pedidos/:oid', name: 'oid', component: () => import('pages/Store/Preorders/Order.vue') },
         ],
       },
+      {
+        path: 'sales',
+        children: [
+          { path: '', name: 'sles', component: () => import('pages/Store/Sale/Index.vue')},
+          { path: 'cashdesks', name: 'cashR', component: () => import('pages/Store/Sale/CasherRegister.vue')},
+
+
+        ],
+      },
     ]
   },
 
@@ -119,11 +128,19 @@ const routes = [
           { path: 'categories', name: 'categories', component: () => import('pages/Cluster/Products/Categories.vue') },
           { path: 'prices', name: 'prices', component: () => import('pages/Cluster/Products/Prices.vue') },
           { path: 'kits', name: 'kits', component: () => import('pages/Cluster/Products/Kits.vue') },
+        ]
+      },
+      {
+        path: 'manpower',
+        component: () => import('layouts/RhLYT.vue'),
+        children: [
+          { path: '', name: 'rh', component: () => import('pages/Cluster/RRHH/Index.vue') },
+          { path: 'create', name: 'create', component: () => import('pages/Cluster/RRHH/Create.vue') },
+          { path: 'report', name: 'repot', component: () => import('pages/Cluster/RRHH/Report.vue') },
+          { path: 'justification', name: 'justification', component: () => import('pages/Cluster/RRHH/Justification.vue') },
 
         ]
       },
-
-
     ]
   },
 

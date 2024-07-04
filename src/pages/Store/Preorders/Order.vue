@@ -83,10 +83,15 @@
 
     <q-table :rows="products" row-key="name" class="bg-blue-2" hide-header hide-bottom :rows-per-page-options="[0]">
       <template v-slot:body="product">
-        <div class="q-pa-xs col-xs-12 col-sm-6 col-md-4 col-lg-3 grid-style-transition">
+        <div class="q-pa-xs col-xs-12 col-sm-6 col-sm-4 col-md-3 grid-style-transition">
           <q-card class="my-card" bordered @click="productEdit(product.row)">
             <q-card-section class="row items-center">
               <div class="q-pr-sm" v-if="product.row.product.picture">
+                <q-avatar size="60px" font-size="52px"> <q-img
+                    :src="`https://apimport.grupovizcarra.mx/storage/LUPITS.jpeg`" spinner-color="primary"
+                    spinner-size="82px" /></q-avatar>
+              </div>
+              <div class="q-pr-sm" v-else>
                 <q-avatar size="60px" font-size="52px"> <q-img
                     :src="`https://apimport.grupovizcarra.mx/storage/LUPITS.jpeg`" spinner-color="primary"
                     spinner-size="82px" /></q-avatar>
@@ -115,10 +120,25 @@
     </q-table>
 
 
-    <q-dialog v-model="wndProduct" position="bottom" :style="`${isMobile ? '' : 'width: 300px'}`" persistent>
+    <q-dialog v-model="wndProduct" position="bottom" :style="`${isMobile ? '' : 'width: 300px'}`" >
       <addProduct :EditProduct="EditProduct" :order="order" :products="products" :unit_measure="unit_measure"
-        :insertPro="insertPro" @addingProd="addingProd" @delProd="delProd">
+        :insertPro="insertPro" @addingProd="addingProd" @delProd="delProd" @ModifyProd="ModifyProd" :rules="rules">
       </addProduct>
+    </q-dialog>
+
+    <q-dialog v-model="printers.state" persistent>
+      <q-card>
+        <q-card-section class=" text-center text-bold text-subtitle1">
+          Selecciona Impresora
+        </q-card-section>
+        <q-card-section >
+          <q-select v-model="printers.val" :options="printers.opts" label="Impresora" option-label="name" filled />
+        </q-card-section>
+        <q-card-actions align="right">
+          <q-btn flat label="Cancel" color="negative" v-close-popup />
+          <q-btn flat label="Enviar" color="positive" @click="changeStatus" />
+        </q-card-actions>
+      </q-card>
     </q-dialog>
 
 
@@ -127,7 +147,7 @@
       <q-card class="q-mb-md" flat bordered>
         <q-card-section class="row">
           <ProductFinder class="col" @itemtapped="finderFound" withPrices withCategories withStock />
-          <q-btn v-if="products.length > 0" color="primary" flat icon="east" />
+          <q-btn v-if="products.length > 0" color="primary" flat icon="east" @click="getPrint"  />
         </q-card-section>
       </q-card>
     </q-footer>
@@ -171,6 +191,12 @@ const insertPro = ref({
   notes: null,
   _supply_by: null
 })
+const rules = ref([]);
+const printers = ref({
+  state:false,
+  opts:[],
+  val:null
+});
 
 
 const isMobile = computed(() => $q.platform.is.mobile);
@@ -193,6 +219,7 @@ const init = async () => {
     products.value = resp.order.bodie
     // insertPro.value = resp.order.id
     unit_measure.value.opts = resp.unit_measures
+    rules.value = resp.rules;
     console.log(resp);
     $q.loading.hide();
   }
@@ -204,20 +231,20 @@ const finderFound = (item) => {
   if (inx >= 0) {
     $q.notify({ message: `El articulo ya esta en la lista`, type: 'warning', position: 'center' })
   } else {
-    console.log(inx);
     unit_measure.value.val = item.measure
     wndProduct.value = true
     EditProduct.value = item
-  }
+   }
 }
 
 const productEdit = (item) => {
 
     unit_measure.value.val = item.unitsupply
     EditProduct.value = item.product
+    EditProduct.value.measure = item.unitsupply
     insertPro.value._order = item._order,
     insertPro.value._product= item._product,
-    insertPro.value.amount_require=item.amount_require,
+    insertPro.value.amount_require = item.amount_require,
     insertPro.value.units= item.units,
     insertPro.value.price= item.price,
     insertPro.value.total= item.total,
@@ -227,6 +254,7 @@ const productEdit = (item) => {
     insertPro.value._supply_by= item._supply_by
     console.log(insertPro.value);
     wndProduct.value = true
+    console.log(item);
 
 }
 
@@ -240,6 +268,45 @@ const delProd = (item) => {
   products.value.splice(inx,1);
   wndProduct.value = false;
 }
+
+const ModifyProd = (item) => {
+  item.then(i => {
+   let inx =  products.value.findIndex(e => e.product.id == i._product)
+    products.value.splice(inx,1,i)
+  });
+  wndProduct.value = false;
+}
+
+const getPrint = async()=>{
+
+  const resp = await pvtpi.getPrints(3);
+  if(resp.error){
+    console.log(resp);
+  }else{
+    printers.value.state= true
+    printers.value.opts = resp
+  }
+}
+
+const changeStatus = async () => {
+  console.log('se termina el pedido brou')//se tiene que revisar primero la configuracion para ver a donde va primero el pedido si a por surtir o a por validar
+  $q.loading.show({message:'Guardando Pedido :p'});
+  order.value.printer = printers.value.val.id
+  order.value.typelog = 7//el tipo es el 7 siempre en el proceso
+  const resp = await pvtpi.changeStatus(order.value);
+  if(resp.error){
+    console.log(resp)
+  }else{
+    console.log(resp)
+    $q.notify({
+      message:'Pedido en cola',
+      type:'positive',
+      position:'center'
+    })
+    $router.push(`/store/${piniaAccount.join}/preorders/pedidos`)
+  }
+}
+
 onBeforeMount(() => { init() })
 
 </script>

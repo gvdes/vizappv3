@@ -9,8 +9,11 @@
           </template>
         </q-input>
       </template>
-      <template v-slot:body="props">
-        <q-tr :props="props">
+      <template v-slot:body="props" >
+        <div>
+
+        </div>
+        <q-tr :props="props" @click="initPed(props.row)">
           <q-td key="id" :props="props">
             {{ props.row.id }}
           </q-td>
@@ -40,15 +43,6 @@
           <q-icon name="list" />
           <span class="q-ml-sm">Nevo Pedido</span>
         </q-card-section>
-        <!-- <q-card-section>
-          <q-select v-model="client.val" :options="client.filter" option-label="name" label="Cliente"  use-input
-            input-debounce="0" @filter="filterFn" @new-value="createValue">
-            <template v-slot:prepend>
-              <q-btn color="primary" icon="person" title="client" flat @click="client.state = !client.state" />
-            </template>
-          </q-select>
-        </q-card-section> -->
-
         <q-card-section>
           <div class="text-caption text-grey">{{ client.state ? 'Escribe Cliente' : 'Escanea el codigo de barras de el cliente' }}</div>
         </q-card-section>
@@ -147,6 +141,7 @@ const init = async () => {
   if (resp.error) {
     console.log(resp)
   } else {
+    console.log(resp);
     client.value.opts = resp.clients
     orders.value = resp.preorders
     $q.loading.hide();
@@ -167,7 +162,6 @@ const createValue = (val, done) => {
 }
 
 const viewCli = () => {
-
   let data
   if(client.value.state == false){
    let inx = client.value.opts.findIndex(e => e.barcode == client.value.val);
@@ -228,6 +222,11 @@ const filterFn = (val, update) => {
       )
     }
   })
+}
+
+const initPed = (item) => {
+  console.log(item.id);
+  $router.push(`/store/${piniaAccount.join}/preorders/pedidos/${item.id}/`);
 }
 
 init()
