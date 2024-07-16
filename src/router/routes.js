@@ -75,6 +75,7 @@ const routes = [
           { path: '', name: 'pvt', component: () => import('pages/Store/Preorders/Index.vue')},
           { path:'config', name: 'cfg', component: () => import('pages/Store/Preorders/Config.vue') },
           { path:'pedidos', name: 'ped', component: () => import('pages/Store/Preorders/ListOrders.vue') },
+          { path:'checkin', name: 'chckin', component: () => import('pages/Store/Preorders/Checkin.vue') },
           { path:'pedidos/:oid', name: 'oid', component: () => import('pages/Store/Preorders/Order.vue') },
         ],
       },
@@ -84,6 +85,14 @@ const routes = [
           { path: '', name: 'sles', component: () => import('pages/Store/Sale/Index.vue')},
           { path: 'cashdesks', name: 'cashR', component: () => import('pages/Store/Sale/CasherRegister.vue')},
 
+
+        ],
+      },
+      {
+        path: 'manpower',
+        children: [
+          { path: '', name: 'inx', component: () => import('pages/Store/RRHH/Index.vue')},
+          { path: 'justifications', name: 'jst', component: () => import('pages/Store/RRHH/Justification.vue')},
 
         ],
       },

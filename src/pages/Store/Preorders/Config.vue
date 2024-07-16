@@ -40,6 +40,13 @@ $sktpvt.on('connect', () => {
   $sktpvt.emit('ParametrosConexion', piniaAccount)
 });
 
+$sktpvt.on('changeStateConfig', (params)=>{
+  // $messag = params.active == 0 ? 'Desactivado' : 'Activado';
+  $q.notify({message:`El Proceso ${JSON.parse(params.details)[params.active]} `})
+})
+
+
+
 const configs = ref([])
 
 const cnf = computed(() => configs.value.filter(e => e.state.require == 0))
@@ -55,9 +62,18 @@ const init = async () => {
 
 }
 const actState = (item) => {
+  $q.loading.show({message:'Actualizando Estado'})
   console.log(item)
   const resp = pvtpi.changeConfig(item)
   console.log(resp);
+  if(resp.error){
+    console.log(resp)
+  }else{
+    $q.loading.hide()
+    console.log(resp)
+    $sktpvt.emit('ChangeStateConfig',item);
+  }
+
 
 }
 

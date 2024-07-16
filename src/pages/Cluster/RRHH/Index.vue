@@ -10,11 +10,14 @@
     </div>
 
     <q-table
+    hide-bottom
       :rows="devices"
       :columns="table.columns"
       row-key="name"
       grid
       :filter="table.filter"
+      :pagination="table.pagination"
+
     >
     <template v-slot:top-right>
         <q-input borderless dense debounce="300" v-model="table.filter" placeholder="Buscar">
@@ -135,7 +138,8 @@ const table = ref({
     {name:'ip', label:'Direccion Ip',field:row => row.ip},
     {name:'store', label:'Sucursal',field:row => row.store.name}
   ],
-  filter:''
+  filter:'',
+  pagination:{ rowsPerPage: [0]}
 })
 
 const isMobile = computed(() => $q.platform.is.mobile);

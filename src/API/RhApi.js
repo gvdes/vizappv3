@@ -27,4 +27,24 @@ export default{
     let burl = `cluster/Assist/addDevice`;
     return vizapi.post(burl,device).then( done => done.data).catch( fail => { return {error:fail.response} });
   },
+  form(){
+    let burl = `store/${piniaAccount.join}/rrhh/form`
+    return vizapi.get(burl).then( done => done.data).catch( fail => { return {error:fail.response} });
+  },
+  addFile(){
+    return  `${vizapi.defaults.baseURL}/store/${piniaAccount.join}/rrhh/addFile`
+  },
+  addForm(data){
+    let burl = `store/${piniaAccount.join}/rrhh/addForm`
+    return vizapi.post(burl,data).then( done => done.data).catch( fail => { return {error:fail.response} });
+  },
+  getJustifications(){
+    let burl = `cluster/Assist/getJustifications`
+    return vizapi.get(burl).then( done => done.data).catch( fail => { return {error:fail.response} });
+  },
+  changeStatus(data){
+    let burl = `cluster/Assist/changeStatus`
+    return vizapi.post(burl,data).then( done => done.data).catch( fail => { return {error:fail.response} });
+  },
+
 }
