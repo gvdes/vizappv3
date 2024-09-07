@@ -103,6 +103,7 @@ const routes = [
           { path: 'form/:fid', name: 'sles', component: () => import('pages/Store/Forms/Responses.vue')},
         ],
       },
+      { path: 'resurtido', component: () => import('pages/Store/Restock/Index.vue') },
     ]
   },
 
