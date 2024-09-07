@@ -8,7 +8,6 @@
      -->
 
     <div class="row q-gutter-md">
-
       <div class="col">
         <q-card class="my-card">
           <q-card-section horizontal>
@@ -59,7 +58,10 @@
           />
         </q-card>
       </div> -->
-
+      <q-inner-loading :showing="!compReady"
+        label="Descargando estructura..."
+        label-style="font-size: 1.1em"
+      />
     </div>
 
     <q-dialog v-model="wndSectionator.state" :persistent="wndSectionator.block">
@@ -74,7 +76,7 @@
 </template>
 
 <script setup>
-  import { ref, computed, watch } from 'vue';
+  import { ref, computed, watch, onMounted } from 'vue';
   import { useRoute, useRouter } from 'vue-router';
   import Wapi from 'src/API/WarehouseApi';
   import Lapi from 'src/API/WrhsLocation';
@@ -86,9 +88,13 @@
   const $route = useRoute();
   const $router = useRouter();
 
+  const compReady = ref(false);
+
   const $props = defineProps({
-    roots:{ type:Array, default:[] }
+    rootsdb:{ type:Array, default:[] }
   });
+
+  const roots = ref([]);
 
   const $emit = defineEmits(['rootsNews']);
 
@@ -115,16 +121,11 @@
     products:[]
   });
 
-  watch($props.roots, (newVal, oldVal) => {
-    paths_locs.value = []
-    $props.roots = newVal
-  });
-
   const wndSectionator = ref({state:false,block:false});
   const wndLabeler = ref({state:false,block:false});
 
   // almacena las ubicaciones que se renderizaran en la tabla principal
-  const rowsLocs = computed(() => paths_locs.value.length==0 ? $props.roots : section.value.sections);
+  const rowsLocs = computed(() => paths_locs.value.length==0 ? roots.value : section.value.sections);
 
   const resetLocs = () => {
     paths_locs.value = []
@@ -192,5 +193,17 @@
 
     wndLabeler.value.state = false;
   }
+
+  watch(() => $props.rootsdb, (newVal, oldVal) => {
+    console.log("Se detecto el cambio de raices para este componente");
+    paths_locs.value = []
+    roots.value = newVal;
+    compReady.value = true;
+  });
+
+  onMounted(() => {
+    roots.value = $props.rootsdb;
+    compReady.value = true;
+  });
 
 </script>

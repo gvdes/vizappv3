@@ -49,8 +49,17 @@ export default{
   },
 
   setMminMaxState(wid, data){
-    console.log(wid,data);
     let burl = `store/${piniaAccount.join}/warehouses/${wid}/setminmaxstate`;
+    return vizapi.post(burl,data).then( done => done.data ).catch( fail => { console.log(fail); return {error:fail.response} });
+  },
+
+  comparator(wid){
+    let burl = `store/${piniaAccount.join}/warehouses/${wid}/comparator`;
+    return vizapi.get(burl).then( done => done.data ).catch( fail => { console.log(fail); return {error:fail.response} });
+  },
+
+  comparator_start(wid,vswid,data){
+    let burl = `store/${piniaAccount.join}/warehouses/${wid}/comparator/${vswid}`;
     return vizapi.post(burl,data).then( done => done.data ).catch( fail => { console.log(fail); return {error:fail.response} });
   }
 }

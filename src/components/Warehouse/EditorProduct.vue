@@ -102,8 +102,7 @@
 </template>
 
 <script setup>
-  import { ref, computed, watch } from 'vue';
-  import { useQuasar } from 'quasar';
+  import { ref, computed } from 'vue';
 
   let form = ref({
     min:0,

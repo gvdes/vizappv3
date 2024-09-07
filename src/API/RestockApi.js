@@ -3,7 +3,7 @@ import { useAccountStore } from 'stores/Account';
 const piniaAccount = useAccountStore();
 
 export default{
-  index(init,end){
+  index(init="",end=""){
     console.log(init,end);
     let burl = `store/${piniaAccount.join}/restock?init=${init}&end=${end}`;
     return vizapi.get(burl).then( done => done.data ).catch( fail => { return {error:fail.response} });

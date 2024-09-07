@@ -19,8 +19,10 @@
           class="text-primary col-md col-xs-12"
           v-model="tab"
         >
-          <q-tab name="products" label="productos" />
           <q-tab name="structure" label="estructura" />
+          <q-tab name="products" label="productos" />
+          <q-tab name="restock" label="resurtido" />
+          <q-tab name="orders" label="Pedidos" />
         </q-tabs>
       </div>
       <q-separator />
@@ -28,13 +30,18 @@
 
     <!-- MOSTRARA ESTRUCTURA || PRODUCTOS || RESUMEN DEL ALMACEN-->
     <!-- <router-view /> -->
-
-    <q-tab-panels v-model="tab" animated class="transparent">
-      <q-tab-panel name="products" >
-        <ProductsVisor :products="productsDB" :seasons="season_cats" @openeditorproduct="openEditorProduct"/>
+    <q-tab-panels v-model="tab" animated class="transparent" keep-alive>
+      <q-tab-panel name="structure" >
+        <StructureVisor :rootsdb="sectionsRoot" @rootsNews="addRoots"/>
       </q-tab-panel>
-      <q-tab-panel name="structure">
-        <StructureVisor :roots="sectionsRoot" @rootsNews="addRoots"/>
+      <q-tab-panel name="products">
+        <ProductsVisor :store="store" :warehouse="warehouse" />
+      </q-tab-panel>
+      <q-tab-panel name="restock" class="q-pa-none">
+        <PreRestock :store="store" :warehouse="warehouse"/>
+      </q-tab-panel>
+      <q-tab-panel name="orders">
+        <Orders :sid="SID" :wid="WID" />
       </q-tab-panel>
     </q-tab-panels>
 
@@ -46,35 +53,45 @@
       </q-card>
     </q-dialog>
 
-    <q-dialog v-model="wndProductEdit.state">
+    <!-- <q-dialog v-model="wndProductEdit.state">
       <EditorProduct :product="wndProductEdit.product" @setMinMaxState="setMinMaxState"/>
-    </q-dialog>
+    </q-dialog> -->
   </q-page>
 </template>
 
 <script setup>
-  import { ref, computed, reactive } from 'vue';
+  import { ref, computed, onMounted } from 'vue';
   import { useRoute, useRouter } from 'vue-router';
   import { useQuasar } from 'quasar';
-  // import { useAccountStore } from 'stores/Account';
+  import { useAccountStore } from 'stores/Account';
   import { useWarehouseStore } from 'stores/Warehouse';
   import Wapi from 'src/API/WarehouseApi';
   import ProductsVisor from 'src/components/Warehouse/ProductsVisor.vue';
   import StructureVisor from 'src/components/Warehouse/StructureVisor.vue';
   import EditorProduct from 'src/components/Warehouse/EditorProduct.vue';
+  import Orders from 'src/components/Warehouse/Orders.vue';
+  import PreRestock from 'src/components/Warehouse/PreRestock.vue';
 
   const $q = useQuasar();
   const $route = useRoute();
   const $router = useRouter();
+  const piniaAccount = useAccountStore();
   const piniaWarehouse = useWarehouseStore();
 
+  console.log(piniaAccount);
+  console.log(piniaWarehouse);
+
+  const SID = parseInt($route.params.idstore);
+  const WID = parseInt($route.params.wid);
   const wndRestringed = ref({state:false});
-  let wndProductEdit = ref({state:false, product:null});
-  const warehouse = ref(null);
-  const productsDB = ref([]);
-  let season_cats = ref([]);
+  // let wndProductEdit = ref({state:false, product:null});
+  // const productsDB = ref([]);
+  // let season_cats = ref([]);
   let sectionsRoot = ref([]);
-  let tab = ref(undefined);
+  let tab = ref(null);
+
+  let store = ref(null);
+  let warehouse = ref(null);
 
   const isMob = computed(() => $q.platform.is.mobile);
   const $screen = computed(() => $q.screen);
@@ -85,54 +102,86 @@
     locs.forEach( l => sectionsRoot.value.push(l))
   }
 
-  const init = async () => {
-    $q.loading.show({message:"Cargando Almacen, Productos y Secciones, porfavor espera..."});
+  // const openEditorProduct = (row) => {
+  //   wndProductEdit.value.product = row;
+  //   wndProductEdit.value.state = true;
+  // }
 
-    const resp = await Wapi.open($route.params.wid);
-    piniaWarehouse.$reset();
+  // const setMinMaxState = async data => {
+  //   const resp = await Wapi.setMminMaxState($route.params.wid,data);
+
+  //   wndProductEdit.value.state = false;
+  //   wndProductEdit.value.product = null;
+
+  //   let idx = productsDB.value.findIndex( p => p.id == resp.row._product );
+  //   productsDB.value[idx].stock = resp.row;
+
+  //   if(resp.row){
+  //     $q.notify({
+  //       message:"Cambios aplicados",
+  //       icon:"done",
+  //       color:"positive",
+  //       position:"center"
+  //     });
+  //   }
+  // }
+
+  const initComp = async () => {
+    $q.loading.show("Abriendo almacen, espera...");
+    console.log("Inicializando almacen");
+    const resp = await Wapi.open(WID);
     console.log(resp);
 
-    if(resp.error){
-      let ercode = resp.error.status;
-      wndRestringed.value.state = true;
-    }else{
-      warehouse.value = resp.warehouse;
-      piniaWarehouse.setWarehouse(resp.warehouse);
-      productsDB.value = resp.products;
-      season_cats.value = resp.seasons_cats;
-      sectionsRoot.value = resp.sections;
-      tab.value = "products"
-
-      console.log("%cPase por el index del almacen","font-size:1.5em;color:red;");
-    }
-
+    store.value = resp.store;
+    warehouse.value = resp.warehouse;
+    tab.value = "restock";
     $q.loading.hide();
   }
 
-  const openEditorProduct = (row) => {
-    wndProductEdit.value.product = row;
-    wndProductEdit.value.state = true;
-  }
+  onMounted(() => {
+    initComp();
+  });
 
-  const setMinMaxState = async data => {
-    const resp = await Wapi.setMminMaxState($route.params.wid,data);
+  // const getProducts = async () => {
+  //   console.log("Obteniendo productos...");
+  //   warehouse.value = null;
+  //   productsDB.value = [];
+  //   season_cats.value = [];
+  //   // sectionsRoot.value = [];
 
-    wndProductEdit.value.state = false;
-    wndProductEdit.value.product = null;
+  //   const resp = await Wapi.open($route.params.wid);
+  //   console.log("productos listo!!");
+  //   piniaWarehouse.$reset();
+  //   console.log(resp);
 
-    let idx = productsDB.value.findIndex( p => p.id == resp.row._product );
-    productsDB.value[idx].stock = resp.row;
+  //   if(resp.error){
+  //     let ercode = resp.error.status;
+  //     wndRestringed.value.state = true;
+  //   }else{
+  //     warehouse.value = resp.warehouse;
+  //     piniaWarehouse.setWarehouse(resp.warehouse);
+  //     productsDB.value = resp.products;
+  //     season_cats.value = resp.seasons_cats;
+  //     // sectionsRoot.value = resp.sections;
+  //   }
+  // }
 
-    if(resp.row){
-      $q.notify({
-        message:"Cambios aplicados",
-        icon:"done",
-        color:"positive",
-        position:"center"
-      });
-    }
-  }
+  // const getStructure = async() => {
+  //   console.log("Obteniendo estructura...");
+  //   sectionsRoot.value = [];
+  //   const resp = await Wapi.structure($route.params.wid);
+  //   console.log("estructura lista!!");
+  //   console.log(resp);
 
-  init();
+  //   if(resp.error){
+  //     let ercode = resp.error.status;
+  //     wndRestringed.value.state = true;
+  //   }else{
+  //     sectionsRoot.value = resp.sections;
+  //   }
+  // }
+
+  // getStructure();
+  // getProducts();
 
 </script>
