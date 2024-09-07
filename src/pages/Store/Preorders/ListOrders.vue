@@ -100,6 +100,13 @@ $sktpvt.on('PedidoCreado', (param) => {
   console.log(`${param.user.nick} creo el pedido ${param.id} :)`)
 })
 
+$sktpvt.on('updOrder', (params)=>{
+  console.log(params)
+  let inx = orders.value.findIndex(e => e.id == params.id)
+  orders.value[inx].state = params.state
+  orders.value[inx]._state = params._state
+})
+
 const wndOrder = ref(false)
 const client = ref({
   state: true,

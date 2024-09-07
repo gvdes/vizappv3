@@ -69,6 +69,7 @@ const routes = [
           }
         ],
       },
+
       {
         path: 'preorders',
         children: [
@@ -76,6 +77,8 @@ const routes = [
           { path:'config', name: 'cfg', component: () => import('pages/Store/Preorders/Config.vue') },
           { path:'pedidos', name: 'ped', component: () => import('pages/Store/Preorders/ListOrders.vue') },
           { path:'checkin', name: 'chckin', component: () => import('pages/Store/Preorders/Checkin.vue') },
+          { path:'dashboard', name: 'dsh', component: () => import('pages/Store/Preorders/Dashboard.vue') },
+          { path:'warehouse', name: 'wrhp', component: () => import('pages/Store/Preorders/Warehouse.vue') },
           { path:'pedidos/:oid', name: 'oid', component: () => import('pages/Store/Preorders/Order.vue') },
         ],
       },
@@ -84,8 +87,6 @@ const routes = [
         children: [
           { path: '', name: 'sles', component: () => import('pages/Store/Sale/Index.vue')},
           { path: 'cashdesks', name: 'cashR', component: () => import('pages/Store/Sale/CasherRegister.vue')},
-
-
         ],
       },
       {
@@ -94,6 +95,12 @@ const routes = [
           { path: '', name: 'inx', component: () => import('pages/Store/RRHH/Index.vue')},
           { path: 'justifications', name: 'jst', component: () => import('pages/Store/RRHH/Justification.vue')},
 
+        ],
+      },
+      {
+        path: 'resp',
+        children: [
+          { path: 'form/:fid', name: 'sles', component: () => import('pages/Store/Forms/Responses.vue')},
         ],
       },
     ]
@@ -150,6 +157,16 @@ const routes = [
 
         ]
       },
+      {
+      path: 'indicators',
+      component: () => import('layouts/indicatorLYT.vue'),
+      children: [
+        { path: '', name: 'rht', component: () => import('pages/Cluster/Indicator/Index.vue') },
+        { path: 'forms', name: 'frm', component: () => import('pages/Cluster/Indicator/Forms.vue') },
+        { path: 'forms/:fid', name: 'fid', component: () => import('pages/Cluster/Indicator/ViewForm.vue') },
+
+      ]
+    },
     ]
   },
 

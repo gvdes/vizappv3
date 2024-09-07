@@ -148,9 +148,13 @@ $sktpvt.on('updateUserList', (users) => {
   connected.value = users
 })
 
+$sktpvt.on('updOrder', (params)=>{
+  console.log(params)
+  let inx = orders.value.findIndex(e => e.id == params.id)
+  orders.value[inx].state = params.state
+  orders.value[inx]._state = params._state
 
-
-
+})
 
 // referencias
 
