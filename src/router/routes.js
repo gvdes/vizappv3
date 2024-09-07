@@ -69,6 +69,7 @@ const routes = [
           }
         ],
       },
+      { path: 'resurtido', component: () => import('pages/Store/Restock/Index.vue') },
     ]
   },
 

@@ -1,135 +1,173 @@
 <template>
-  <div class="row">
-
-    <div class="q-pr-md">
-      <q-card class="my-card">
-        <q-card-section>
-          <div class="text-h6">Categorias ({{ seasons.length }})</div>
-        </q-card-section>
-        <q-separator />
-        <q-card-actions>
-          <q-btn color="primary" label="Marcar todo" dense no-caps flat @click="treeSeasons.ticked = idscats"/>
-          <q-btn color="primary" label="Borrar todo" dense no-caps flat @click="treeSeasons.ticked = []"/>
-        </q-card-actions>
-        <q-separator />
-        <q-card-section>
-          <q-tree class="col-12 col-sm-6"
-            :nodes="treeSeasons.nodes"
-            v-model:ticked="treeSeasons.ticked"
-            v-model:expanded="treeSeasons.expanded"
-            node-key="idcat"
-            tick-strategy="leaf-filtered"
-            color="primary"
-          />
-        </q-card-section>
-        <q-separator />
-        <q-card-actions>
-          <q-btn color="primary" label="Marcar todo" dense no-caps flat @click="treeSeasons.ticked = idscats"/>
-          <q-btn color="primary" label="Borrar todo" dense no-caps flat @click="treeSeasons.ticked = []"/>
-        </q-card-actions>
-      </q-card>
-    </div>
-
-    <div class="col">
-      <q-card class="q-mb-md">
-        <q-card-section>
-          <div class="text-h6">Filtros</div>
-        </q-card-section>
-        <q-separator />
-        <q-card-section horizontal class="items-center">
-
-          <q-card-section class="col q-pa-sm">
-            <q-select v-model="filters.gstate.opt" :options="filters.gstate.opts" label="Estado (catalogo)" filled />
-          </q-card-section>
-
-          <q-separator vertical />
-          <q-card-section class="col q-pa-sm">
-            <q-select v-model="filters.lstate.opt" :options="filters.lstate.opts" label="Estado (almacen)" filled />
-          </q-card-section>
-
-          <q-separator vertical />
-          <q-card-section class="col q-pa-sm">
-            <q-select v-model="filters.stock.opt" :options="filters.stock.opts" label="Stock" filled />
-          </q-card-section>
-
-          <q-separator vertical />
-          <q-card-section class="col q-pa-sm">
-            <q-select v-model="filters.locations.opt" :options="filters.locations.opts" label="Ubicaciones" filled />
-          </q-card-section>
-
-          <q-separator vertical />
-          <q-card-section class="col q-pa-sm">
-            <q-select v-model="filters.limits.opt" :options="filters.limits.opts" label="Minimos / Maximos" filled />
-          </q-card-section>
-
-          <template v-if="usingFilters">
-            <q-separator vertical />
-            <q-card-section>
-              <q-btn color="negative" flat icon="backspace" round @click="resetFilters"/>
-            </q-card-section>
-          </template>
+  <div>
+    <q-card class="q-mb-md">
+      <q-card-section horizontal class="items-center">
+        <q-card-section class="col q-pa-sm">
+          <q-select dense v-model="filters.gstate.opt" :options="filters.gstate.opts" label="Estado (catalogo)" filled />
         </q-card-section>
 
-        <q-separator />
-        <q-card-section horizontal class="justify-between">
+        <q-separator vertical />
+        <q-card-section class="col q-pa-sm">
+          <q-select dense v-model="filters.lstate.opt" :options="filters.lstate.opts" label="Estado (almacen)" filled />
+        </q-card-section>
+
+        <q-separator vertical />
+        <q-card-section class="col q-pa-sm">
+          <q-select dense v-model="filters.stock.opt" :options="filters.stock.opts" label="Stock" filled />
+        </q-card-section>
+
+        <q-separator vertical />
+        <q-card-section class="col q-pa-sm">
+          <q-select dense v-model="filters.locations.opt" :options="filters.locations.opts" label="Ubicaciones" filled />
+        </q-card-section>
+
+        <q-separator vertical />
+        <q-card-section class="col q-pa-sm">
+          <q-select dense v-model="filters.limits.opt" :options="filters.limits.opts" label="Minimos / Maximos" filled />
+        </q-card-section>
+
+        <template v-if="usingFilters">
+          <q-separator vertical />
           <q-card-section>
-            Productos: {{ productsShow.length }} <span v-if="usingFilters" class="text-grey"> de {{ $props.products.length }}</span>
+            <q-btn color="negative" flat icon="backspace" round @click="resetFilters"/>
           </q-card-section>
-        </q-card-section>
-      </q-card>
-
-      <q-table
-        flat bordered ref="tableProds"
-        :rows="productsShow"
-        :columns="table.columns"
-        row-key="id"
-        :pagination="table.pagination"
-        :filter="table.filter"
-        :visible-columns="table.viewcols"
-        @row-dblclick="openEditorProduct"
-      >
-        <template v-slot:top>
-          <div class="col row items-center">
-            <q-select
-              v-model="table.viewcols"
-              multiple
-              outlined
-              dense
-              options-dense
-              display-value="Columnas"
-              emit-value
-              map-options
-              :options="optsCols"
-              options-cover
-              style="min-width: 150px"
-            />
-            <q-space />
-            <q-input outlined rounded v-model="table.filter" type="text" label="Buscar" dense debounce="300ms"/>
-            <q-space />
-            <div class="row justify-around items-center q-gutter-xs">
-              <q-btn rounded flat icon="download" color="primary" @click="exportAsCsv"  />
-              <q-btn rounded flat icon="rule" color="primary" @click="openComparator"/>
-            </div>
-          </div>
         </template>
-      </q-table>
+      </q-card-section>
+
+      <q-separator />
+      <q-card-section horizontal class="justify-between">
+        <q-card-section class="q-pa-sm">
+          <!-- Productos: {{ productsShow.length }} <span v-if="usingFilters" class="text-grey"> de {{ _products.length }}</span> -->
+          Productos: {{ productsShow.length }} de {{ _products.length }}
+        </q-card-section>
+      </q-card-section>
+    </q-card>
+
+    <div class="row q-gutter-md">
+      <div class="column">
+        <q-card class="q-mb-md">
+          <q-card-section>
+            <div class="text-h6">Temporadas ({{ seasons.length }})</div>
+          </q-card-section>
+          <q-separator />
+          <q-card-actions align="around">
+            <q-btn color="primary" label="Marcar todo" dense no-caps flat @click="treeSeasons.ticked = idscats"/>
+            <q-btn color="primary" label="Desmarcar todo" dense no-caps flat @click="treeSeasons.ticked = []"/>
+          </q-card-actions>
+          <q-separator />
+          <q-card-section>
+            <q-tree class="col-12 col-sm-6"
+              :nodes="treeSeasons.nodes"
+              v-model:ticked="treeSeasons.ticked"
+              v-model:expanded="treeSeasons.expanded"
+              node-key="idcat"
+              tick-strategy="leaf-filtered"
+              color="primary"
+            />
+          </q-card-section>
+          <q-separator />
+          <q-card-actions align="around">
+            <q-btn color="primary" label="Marcar todo" dense no-caps flat @click="treeSeasons.ticked = idscats"/>
+            <q-btn color="primary" label="Desmarcar todo" dense no-caps flat @click="treeSeasons.ticked = []"/>
+          </q-card-actions>
+        </q-card>
+
+        <Informium :productsdb="productsShow" />
+      </div>
+
+      <div class="col">
+        <q-table
+          ref="tableProds"
+          :rows="productsShow"
+          :columns="table.columns"
+          row-key="id"
+          :pagination="table.pagination"
+          :filter="table.filter"
+          :visible-columns="table.viewcols"
+          @row-dblclick="openEditorProduct"
+        >
+          <template v-slot:top>
+            <div class="col row items-center">
+              <q-select
+                v-model="table.viewcols"
+                multiple
+                outlined
+                dense
+                options-dense
+                display-value="Columnas"
+                emit-value
+                map-options
+                :options="optsCols"
+                options-cover
+                style="min-width: 150px"
+              />
+              <q-space />
+              <q-input outlined rounded v-model="table.filter" type="text" label="Buscar" dense debounce="300ms"/>
+              <q-space />
+              <div class="row justify-around items-center q-gutter-xs">
+                <q-btn icon="download" color="primary" @click="exportAsCsv"  />
+                <!-- <q-btn rounded flat icon="rule" color="primary" /> -->
+                <q-btn-dropdown color="primary" icon="fa-solid fa-bolt-lightning">
+                  <q-banner class="bg-warning row items-center" v-if="treeSeasons.ticked.length==0">
+                    <q-icon name="fa-solid fa-triangle-exclamation" /> No hay ninguna categoria seleccionada
+                  </q-banner>
+                  <q-list v-else>
+                    <q-item clickable @click="openRestock" v-close-popup >
+                      <q-item-section>
+                        <q-item-label>Resurtido</q-item-label>
+                        <q-item-label caption>Articulos por agotarse</q-item-label>
+                      </q-item-section>
+                    </q-item>
+
+                    <q-item clickable @click="openComparator" v-close-popup >
+                      <q-item-section>
+                        <q-item-label>Comparativo</q-item-label>
+                        <q-item-label caption>Se utilizan las categorias seleccionadas</q-item-label>
+                      </q-item-section>
+                    </q-item>
+                  </q-list>
+                </q-btn-dropdown>
+              </div>
+            </div>
+          </template>
+        </q-table>
+      </div>
     </div>
 
     <q-dialog v-model="wndCompare.state" :persistent="wndCompare.block">
       <Comparator :pids="wndCompare.pids"/>
     </q-dialog>
+
+    <q-dialog v-model="wndRestock.state" :persistent="wndRestock.block">
+      <PreRestock :basket="wndRestock.basket"/>
+    </q-dialog>
+
+    <q-inner-loading :showing="!readyComp"
+      label="Descargando productos..."
+      label-style="font-size: 1.1em"
+    />
   </div>
 </template>
 
 <script setup>
-  import { ref, computed, reactive, watch } from 'vue';
+  import { ref, computed, reactive, onMounted, watch } from 'vue';
   import { exportFile } from 'quasar';
-  import Comparator from 'src/components/Warehouse/Comparator.vue'
+  import Comparator from 'src/components/Warehouse/Comparator.vue';
+  import PreRestock from 'src/components/Warehouse/PreRestock.vue';
+  import Informium from 'src/components/Warehouse/Informium.vue';
+  import Wapi from 'src/API/WarehouseApi';
 
   const $props = defineProps({
-    products:{type:Array,default:[]},
-    seasons:{type:Array,default:[]}
+    store:{type:Object, default:{}},
+    warehouse:{type:Object, default:{}}
   });
+
+  const sid = $props.store.id;
+  const wid = $props.warehouse.id;
+
+  const readyComp = ref(false);
+  const _products = ref([]);
+  const _seasons = ref([]);
 
   const $emit = defineEmits(["openeditorproduct"]);
 
@@ -140,6 +178,8 @@
   });
 
   const wndCompare = ref({ state:false, pids:[], block:false });
+
+  const wndRestock = ref({ state:false, basket:[], block:false });
 
   const table = ref({
     columns:[
@@ -223,7 +263,7 @@
   const usingFilters = computed(() => Object.keys(filters.value).map( filter => filters.value[filter].opt.id).reduce((ac,cu) => (ac+cu),0) );
 
   const productsShow = computed(() => usingFilters.value ?
-      $props.products.filter( p =>
+      _products.value.filter( p =>
         (
           (filters.value.gstate.opt.id==0 ? true : p._state == filters.value.gstate.opt.id) &&
           (filters.value.lstate.opt.id==0 ? true : p.stock._state == filters.value.lstate.opt.id) &&
@@ -242,18 +282,26 @@
           ) &&
           (treeSeasons.ticked.includes(p._category))
         )
-      ) : $props.products.filter( p => treeSeasons.ticked.includes(p._category))
+      ) : _products.value.filter( p => treeSeasons.ticked.includes(p._category))
   );
 
-  const seasons = computed(() => $props.seasons.map(s => s.parent)); // categorias raiz
+  const seasons = computed(() => _seasons.value.map(s => s.parent)); // categorias raiz
 
-  const categories = computed(() => $props.seasons.map( s => s.children).flat()); // categorias hijas
+  const categories = computed(() => _seasons.value.map( s => s.children).flat()); // categorias hijas
 
   const idscats = computed(() => categories.value.concat(seasons.value.map( c => c.category)).map( c => c.id));
 
   const openComparator = () => {
     wndCompare.value.pids = tableProds.value.filteredSortedRows.map(p => p.id);
     wndCompare.value.state = true;
+  }
+
+  const openRestock = () => {
+    console.log("Iniciando reporte");
+    wndRestock.value.basket = productsShow.value.filter( p => p.stock._min>0 && p.stock._max>0);
+    wndRestock.value.state = true;
+
+    console.log(wndRestock.value.basket.length);
   }
 
   const resetFilters = () => {
@@ -315,15 +363,25 @@
 
   const openEditorProduct = (a,row) => { $emit("openeditorproduct", row); }
 
-  buildTreeSeason();
-  treeSeasons.ticked = idscats.value;
   table.value.viewcols = table.value.columns.map( c => c.name );
   optsCols.value = table.value.columns.map( c => ({ label:c.label, value:c.name, disable:c.optdisab??false }));
 
-  watch($props.products, (newVal, oldVal) => $props.products = newVal);
-  watch($props.seasons, (newVal, oldVal) => {
-    $props.seasons = newVal;
-    buildTreeSeason();
-  });
+  const initComp = async () => {
+    readyComp.value = false;
+    const resp = await Wapi.products(wid);
 
+    console.log(resp);
+
+    _products.value = resp.products;
+    _seasons.value = resp.seasons_cats;
+    treeSeasons.ticked = idscats.value;
+    buildTreeSeason();
+
+    readyComp.value = true;
+  }
+
+  onMounted(() => {
+    console.log(`Productos del almacen ${wid} sucursal ${sid} fue montado`);
+    initComp();
+  })
 </script>
