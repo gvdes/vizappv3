@@ -15,13 +15,21 @@
 
 
     <q-list bordered>
-      <q-item clickable v-ripple v-for="(form, index) in forms" :key="index">
+      <div v-for="(form, index) in forms" :key="index">
+        <q-item clickable v-ripple>
         <q-item-section @click="openForm(form.id)" >
           <q-item-label >{{ form.name }}</q-item-label>
           <q-item-label caption> {{ form.description }}</q-item-label>
         </q-item-section>
+        <q-item-section side >
+          <q-toggle color="blue" v-model="form._active" :true-value="1" :false-value="0" @update:model-value="actState(form)"/>
+        </q-item-section>
       </q-item>
+      <q-separator/>
+      </div>
+
     </q-list>
+
 
 
 
@@ -61,6 +69,11 @@ import { useRoute, useRouter } from 'vue-router';
 import { useQuasar, LocalStorage, Loading } from 'quasar';
 import { useAccountStore } from 'stores/Account';
 import indpi from 'src/API/IndicatorApi.js'
+import { $sktind } from 'boot/socket'
+
+$sktind.connect();
+
+
 
 const $q = useQuasar();
 const $route = useRoute();
@@ -107,6 +120,24 @@ const onSubmit = async() => {
     $router.push(`/cluster/indicators/forms/${resp.id}/`);
   }
 
+}
+
+const actState = async(form)=> {
+  console.log(form);
+  $q.loading.show({message:'Cambiando estado'});
+  const resp = await indpi.changeStatusForm(form)
+  if(resp.error){
+    console.log(resp)
+    $q.notify({message:`Formulario ${resp.name} no se logro cambiar de estado`, type:'negative', position:'center'});
+  }else{
+    console.log(resp)
+    $q.loading.hide()
+
+    $sktind.emit('actForms', form)
+    $q.notify({message:`Formulario ${form.name} cambio de estado`, type:'positive', position:'center'});
+
+
+  }
 }
 
 const openForm = (id) => {

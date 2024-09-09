@@ -18,7 +18,7 @@
           </q-item>
         </div>
       </template>
-      <Branch v-for="(module) in submodules" :key="module.id" :module="module" />
+      <Branch v-for="(module) in submodules" :key="module.id" :module="module" :path="path" />
     </q-expansion-item>
   </template>
 
@@ -46,13 +46,13 @@
   const piniaAccount = useAccountStore();
   const state = ref(true);
 
-  const $props = defineProps({ module:Object });
+  const $props = defineProps({ module:Object, path:String });
   const module = $props.module;
   const submodules = computed(() => piniaAccount.submodules($props.module.id) );
 
   const goto = () => {
     console.log(module)
-    console.log(`%c${module.path}`,"font-size:1.5em; color:pink;");
-    $router.push(module.path);
+    console.log(`%c${$props.path}${module.path}`,"font-size:1.5em; color:pink;");
+    $router.push(`${$props.path}${module.path}`);
   }
 </script>
