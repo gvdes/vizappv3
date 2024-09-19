@@ -40,9 +40,20 @@ const routes = [
         path: 'almacenes',
         children: [
           { path: '', name: 'wrhs', component: () => import('pages/Store/Warehouses/Index.vue') },
-          { path: 'pedidos', component: () => import('pages/Store/Warehouses/Orders.vue') },
-          { path: 'resurtido', component: () => import('pages/Store/Warehouses/Restock.vue') },
-          { path: 'resurtido/:rid', component: () => import('pages/Store/Warehouses/RestockOrder.vue') },
+          {
+            path: 'preventa',
+            children: [
+              { path:'', component: () => import('src/pages/Store/Warehouses/Orders.vue') },
+              { path:':oid', component: () => import('src/pages/Store/Warehouses/Order.vue') }
+            ]
+          },
+          {
+            path: 'resurtido',
+            children: [
+              { path:'', component: () => import('src/pages/Store/Warehouses/Restock/Index.vue') },
+              { path:':roid', component: () => import('src/pages/Store/Warehouses/Restock/Order.vue') }
+            ]
+          },
           {
             path: ':wid',
             children: [

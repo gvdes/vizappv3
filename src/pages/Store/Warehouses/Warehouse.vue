@@ -21,8 +21,9 @@
         >
           <q-tab name="structure" label="estructura" />
           <q-tab name="products" label="productos" />
-          <q-tab name="restock" label="resurtido" />
-          <q-tab name="orders" label="Pedidos" />
+          <!-- <q-tab name="restock" label="resurtido" />
+          <q-tab name="requisitions" label="Pedidos (CDS)" />
+          <q-tab name="orders" label="Pedidos (PRV)" /> -->
         </q-tabs>
       </div>
       <q-separator />
@@ -37,12 +38,12 @@
       <q-tab-panel name="products">
         <ProductsVisor :store="store" :warehouse="warehouse" />
       </q-tab-panel>
-      <q-tab-panel name="restock" class="q-pa-none">
+      <!-- <q-tab-panel name="restock" class="q-pa-none">
         <PreRestock :store="store" :warehouse="warehouse"/>
       </q-tab-panel>
       <q-tab-panel name="orders">
         <Orders :sid="SID" :wid="WID" />
-      </q-tab-panel>
+      </q-tab-panel> -->
     </q-tab-panels>
 
     <q-dialog v-model="wndRestringed.state" persistent no-backdrop-dismiss no-esc-dismiss>
@@ -66,11 +67,11 @@
   import { useAccountStore } from 'stores/Account';
   import { useWarehouseStore } from 'stores/Warehouse';
   import Wapi from 'src/API/WarehouseApi';
-  import ProductsVisor from 'src/components/Warehouse/ProductsVisor.vue';
   import StructureVisor from 'src/components/Warehouse/StructureVisor.vue';
-  import EditorProduct from 'src/components/Warehouse/EditorProduct.vue';
+  import ProductsVisor from 'src/components/Warehouse/ProductsVisor.vue';
+  // import PreRestock from 'src/components/Warehouse/PreRestock.vue';
   import Orders from 'src/components/Warehouse/Orders.vue';
-  import PreRestock from 'src/components/Warehouse/PreRestock.vue';
+  import EditorProduct from 'src/components/Warehouse/EditorProduct.vue';
 
   const $q = useQuasar();
   const $route = useRoute();
@@ -134,7 +135,7 @@
 
     store.value = resp.store;
     warehouse.value = resp.warehouse;
-    tab.value = "restock";
+    tab.value = "products";
     $q.loading.hide();
   }
 

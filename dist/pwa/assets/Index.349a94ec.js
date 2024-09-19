@@ -1,0 +1,1 @@
+import{Q as e}from"./QPage.c1291489.js";import{_ as t,o,e as a,w as s,R as r}from"./index.e42abd2a.js";const c={},n=r(" Welcome to users ");function _(d,p,f,i,m,u){return o(),a(e,{padding:""},{default:s(()=>[n]),_:1})}var $=t(c,[["render",_]]);export{$ as default};

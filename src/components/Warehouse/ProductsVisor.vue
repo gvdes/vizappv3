@@ -43,7 +43,7 @@
       </q-card-section>
     </q-card>
 
-    <div class="row q-gutter-md">
+    <div class="row q-gutter-md items-start" >
       <div class="column">
         <q-card class="q-mb-md">
           <q-card-section>
@@ -75,63 +75,54 @@
         <Informium :productsdb="productsShow" />
       </div>
 
-      <div class="col">
-        <q-table
-          ref="tableProds"
-          :rows="productsShow"
-          :columns="table.columns"
-          row-key="id"
-          :pagination="table.pagination"
-          :filter="table.filter"
-          :visible-columns="table.viewcols"
-          @row-dblclick="openEditorProduct"
-        >
-          <template v-slot:top>
-            <div class="col row items-center">
-              <q-select
-                v-model="table.viewcols"
-                multiple
-                outlined
-                dense
-                options-dense
-                display-value="Columnas"
-                emit-value
-                map-options
-                :options="optsCols"
-                options-cover
-                style="min-width: 150px"
-              />
-              <q-space />
-              <q-input outlined rounded v-model="table.filter" type="text" label="Buscar" dense debounce="300ms"/>
-              <q-space />
-              <div class="row justify-around items-center q-gutter-xs">
-                <q-btn icon="download" color="primary" @click="exportAsCsv"  />
-                <!-- <q-btn rounded flat icon="rule" color="primary" /> -->
-                <q-btn-dropdown color="primary" icon="fa-solid fa-bolt-lightning">
-                  <q-banner class="bg-warning row items-center" v-if="treeSeasons.ticked.length==0">
-                    <q-icon name="fa-solid fa-triangle-exclamation" /> No hay ninguna categoria seleccionada
-                  </q-banner>
-                  <q-list v-else>
-                    <q-item clickable @click="openRestock" v-close-popup >
-                      <q-item-section>
-                        <q-item-label>Resurtido</q-item-label>
-                        <q-item-label caption>Articulos por agotarse</q-item-label>
-                      </q-item-section>
-                    </q-item>
-
-                    <q-item clickable @click="openComparator" v-close-popup >
-                      <q-item-section>
-                        <q-item-label>Comparativo</q-item-label>
-                        <q-item-label caption>Se utilizan las categorias seleccionadas</q-item-label>
-                      </q-item-section>
-                    </q-item>
-                  </q-list>
-                </q-btn-dropdown>
-              </div>
-            </div>
-          </template>
-        </q-table>
-      </div>
+      <q-card class="col">
+        <q-tabs v-model="tab" class="bg-white text-teal" align="justify">
+          <q-tab name="catalog" label="Catalogo" />
+          <q-tab name="reports" label="Reportes" />
+        </q-tabs>
+        <q-separator />
+        <q-tab-panels v-model="tab" animated keep-alive>
+          <q-tab-panel name="catalog" class="q-pa-sm">
+            <q-table flat
+              ref="tableProds"
+              :rows="productsShow"
+              :columns="table.columns"
+              row-key="id"
+              :pagination="table.pagination"
+              :filter="table.filter"
+              :visible-columns="table.viewcols"
+              @row-dblclick="openEditorProduct"
+            >
+              <template v-slot:top>
+                <div class="col row items-center">
+                  <q-select
+                    v-model="table.viewcols"
+                    multiple
+                    outlined
+                    dense
+                    options-dense
+                    display-value="Columnas"
+                    emit-value
+                    map-options
+                    :options="optsCols"
+                    options-cover
+                    style="min-width: 150px"
+                  />
+                  <q-space />
+                  <q-input outlined rounded v-model="table.filter" type="text" label="Buscar" dense debounce="300ms"/>
+                  <q-space />
+                  <div class="row justify-around items-center q-gutter-xs">
+                    <q-btn icon="download" color="primary" @click="exportAsCsv"  />
+                  </div>
+                </div>
+              </template>
+            </q-table>
+          </q-tab-panel>
+          <q-tab-panel name="reports" class="q-pa-sm">
+            <PreRestock :store="store" :warehouse="warehouse" :categories="idscats"/>
+          </q-tab-panel>
+        </q-tab-panels>
+      </q-card>
     </div>
 
     <q-dialog v-model="wndCompare.state" :persistent="wndCompare.block">
@@ -164,6 +155,7 @@
 
   const sid = $props.store.id;
   const wid = $props.warehouse.id;
+  const tab = ref("catalog");
 
   const readyComp = ref(false);
   const _products = ref([]);

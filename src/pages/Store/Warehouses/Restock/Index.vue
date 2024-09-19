@@ -17,10 +17,9 @@
             </q-select>
           </div>
           <q-btn flat rounded icon="autorenew" @click="init" />
-          <q-btn flat rounded icon="add">
+          <q-btn flat rounded icon="add" @click="wndNewReq.state = true" />
+          <!-- <q-btn flat rounded icon="add">
             <q-menu style="min-width:200px;">
-              <q-card-section class="column anek-bld">Nuevo Pedido</q-card-section>
-              <q-separator />
               <q-form
                 class="q-gutter-md"
               >
@@ -33,8 +32,8 @@
                 </q-card-actions>
               </q-form>
             </q-menu>
-          </q-btn>
-          <q-btn flat rounded icon="fas fa-heart-pulse" @click="wndMinMax.state = true;"/>
+          </q-btn>-->
+          <!-- <q-btn flat rounded icon="fas fa-heart-pulse" @click="wndMinMax.state = true;"/> -->
           <q-btn flat rounded icon="support" />
         </div>
       </div>
@@ -78,7 +77,11 @@
         </q-list>
       </q-card>
 
-      <q-dialog persisten no-esc-dismiss no-backdrop-dismiss v-model="wndMinMax.state">
+      <q-dialog v-model="wndNewReq.state" :persistent="wndNewReq.persistent">
+        <FromOrderCreate :reqtypes="reqTypes" :inaCds="inaCds" :storesdb="storesdb" @reqAdded="reqAdded" />
+      </q-dialog>
+
+      <!-- <q-dialog persisten no-esc-dismiss no-backdrop-dismiss v-model="wndMinMax.state">
         <div class="bg-white">
           <div class="row q-pa-md items-center justify-between">
             <span>Productos agotados o por agotarse</span>
@@ -87,7 +90,7 @@
           <q-separator />
           <HealthStockViewer :stores="storesdb" @startorder="setOrderAuto"/>
         </div>
-      </q-dialog>
+      </q-dialog> -->
     </div>
   </q-page>
 </template>
@@ -98,14 +101,15 @@
   import { useQuasar } from 'quasar';
   import { useAccountStore } from 'stores/Account';
   import RestockApi from 'src/API/RestockApi';
-  import HealthStockViewer from 'src/components/Warehouse/HealthStockViewer.vue';
+  // import HealthStockViewer from 'src/components/Restock/HealthStockViewer.vue';
+  import FromOrderCreate from 'src/components/Restock/FormOrderCreate.vue';
   import dayjs from 'dayjs';
 
   const $q = useQuasar();
   const $route = useRoute();
   const $router = useRouter();
   const piniaAccount = useAccountStore();
-  const wndMinMax = ref({ state:false });
+  // const wndMinMax = ref({ state:false });
 
   const views = [
     { id:"day", label:"Hoy" },
@@ -121,15 +125,17 @@
   const states = ref([]);
   const ordersdb = ref([]);
   const storesdb = ref([]);
-  const neworder = ref({ to:null, type:1 });
+  const wndNewReq = ref({ state:false, persistent:false });
   const view = ref(views[0]);
   const rangeDates = ref({ from: null, to: null });
+  const reqTypes = ref([]);
 
   const dispDateInit = computed(() => lapse.value.init.format("YYYY/MM/DD"));
   const dispDateEnd = computed(() =>  lapse.value.end.format("YYYY/MM/DD"));
   const reqsbyme = computed(() => ordersdb.value.length ? ordersdb.value.filter( o => o._store_from==o._store_to) : []);
   const reqstome = computed(() => ordersdb.value.length ? ordersdb.value.filter( o => o._store_from!=o._store_to) : []);
   const easyDate = computed(() => { return date => dayjs(date).format("YYYY/MM/DD HH:mm"); });
+  const inaCds = computed(() => piniaAccount.joinedStore._type == 1 );
 
   onBeforeMount(() => {
     init();
@@ -146,7 +152,8 @@
     states.value = resp.states;
     ordersdb.value = resp.orders;
     storesdb.value = resp.stores;
-    neworder.value.to = storesdb.value.length == 1 ? storesdb.value[0]: null;
+    reqTypes.value = resp.reqTypes;
+    // neworder.value.to = storesdb.value.length == 1 ? storesdb.value[0]: null;
     $q.loading.hide();
   }
 
@@ -166,6 +173,10 @@
     // ordersdb.value.push(resp.order);
     $router.push(`/store/${piniaAccount.join}/alma cenes/resurtido/${resp.order.id}`)
     $q.loading.hide();
+  }
+
+  const reqAdded = async () => {
+    console.log("Componente FormOrderCreate creo un pedido");
   }
 
   const setViewDates = (v) => {

@@ -24,8 +24,8 @@ export default{
     return vizapi.get(burl).then( done => done.data ).catch( fail => { return {error:fail.response} });
   },
 
-  preview(rid){
-    let burl = `store/${piniaAccount.join}/restock/preview/${rid}`;
+  preview(rid, wrhsrc){
+    let burl = `store/${piniaAccount.join}/restock/preview/${rid}?wrhsrc=${wrhsrc}`;
     return vizapi.get(burl).then( done => done.data ).catch( fail => { return {error:fail.response} });
   }
 }
