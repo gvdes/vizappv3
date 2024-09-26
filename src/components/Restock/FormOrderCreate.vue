@@ -20,14 +20,6 @@
       </q-card-section>
     </template>
 
-    <!-- <template v-if="inaCds && ctxRestock.opt.id=='FOR'">
-      <q-separator />
-      <q-card-section class="row q-gutter-md">
-        <q-select v-model="vsCedis" :options="vscedises" label="vs CEDIS" option-label="name" filled class="col"/>
-        <div v-if="vsCedis" class="col"> Se realizara el comparativo contra los almacenes {{ vsCedis.warehouses.map( w => w.name ).join(",") }}</div>
-      </q-card-section>
-    </template> -->
-
     <!-- <q-separator />
     <div>{{ stores_std.map( s => s.alias ) }}</div>
     <div>{{ stores_cds.map( s => s.alias ) }}</div>
@@ -54,10 +46,28 @@
           </q-card-section>
           <q-separator />
           <template v-if="basketDB.length">
-
             <q-table
               :rows="basketDB"
-            />
+              row-key="name"
+              :columns="tablePrev.cols"
+              :pagination="tablePrev.pgnt"
+              :filter="tablePrev.filter"
+            >
+              <template v-slot:top>
+                <div class="full-width">
+                  <div class="row items-center">
+                    <div class="col">Filtros</div>
+                    <div class="col">
+                      <q-input outlined dense rounded debounce="300" v-model="tablePrev.filter" placeholder="Buscar">
+                        <template v-slot:append>
+                          <q-icon name="search" />
+                        </template>
+                      </q-input>
+                    </div>
+                  </div>
+                </div>
+              </template>
+            </q-table>
             <q-separator />
             <q-card-actions align="center" v-if="basketDB.length">
               <q-btn color="primary" label="Iniciar reserva" @click="createByImport" />
@@ -134,14 +144,50 @@
       { id:"B", label:"Modelos Faltantes", dsc:"" },
     ]
   });
+  const unitsMeasure = [
+    { id:1, label:"Pieza"},
+    { id:2, label:"Docena"},
+    { id:3, label:"Caja"},
+  ];
 
-  // const ctxRestock = ref({
-  //   opt:{ label:"Local", id:"LOC"},
-  //   opts:[
-  //     { label:"Local", id:"LOC"},
-  //     { label:"Foraneo", id:"FOR"},
-  //   ]
-  // });
+  const tablePrev = ref({
+    cols:[
+      { name:"idp", label:"IDP", field:"_product", align:"rigth" },
+      { name:"code", label:"Codigo", field:row => row.product.code, align:"rigth", sortable:true },
+      { name:"shortcode", label:"Codigo Corto", field:row => row.product.short_code, align:"center", sortable:true },
+      { name:"desc", label:"Descripcion", field:row => row.product.description, align:"rigth" },
+      // { name:"desc", label:"Producto", field:row => row.product, sortable:true }
+      { name:"unitsupply", label:"Unidad/Surtido", field:row => unitsMeasure.find( um => um.id == row.product._assortment_unit).label, align:"center" },
+      { name:"ipack", label:"Piezas/empaque", field:row => row.product.pieces, align:"center", sortable:true },
+      { name:"min", label:"Stock Min.", field:"_min", align:"center", sortable:true },
+      { name:"max", label:"Stock Max.", field:"_max", align:"center", sortable:true },
+      { name:"available", label:"Stock Disponible", field:"available", align:"center", sortable:true },
+      { name:"current", label:"Stock Actual", field:"_current", align:"center", sortable:true },
+      { name:"income", label:"En Transito", field:"in_coming", align:"center", sortable:true },
+      {
+        name:"request",
+        label:"Solicitud",
+        field: row => {
+          let req = (row.available<=row._min);
+          let amount = (row._max - row.available);
+
+          return row.product._assortment_unit == 3 ?
+            (req ? Math.floor(amount/row.product.pieces) : 0):
+            (req ? amount : 0);
+        },
+        format: (val,row) => {
+          let lbl = row.product._assortment_unit == 3 ? "cj":"pz"
+          lbl = val == 1 ? lbl : lbl+"s";
+          return `${val} (${lbl})`;
+        },
+        align:"center",
+        sortable:true
+      },
+      { name:"avlprov", label:"Disp. (CDS/pzs)", field:"stocks_product_sum_available", align:"center", sortable:true },
+    ],
+    pgnt:{ rowsPerPage: 10 },
+    filter:""
+  });
 
   const stores_std = computed(() => $props.storesdb.filter( s => s._type==2));
   // const stores_cds = computed(() => $props.storesdb.filter( s => s._type==1));
