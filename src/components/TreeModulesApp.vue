@@ -3,14 +3,14 @@
     <template v-if="bof_modules.length">
       <q-list>
         <q-item-label header>Sucursal ({{ bof_modules.length }})</q-item-label>
-        <BranchModule v-for="(module) in bof_modules" :key="module.id" :module="module" :path="`/store/${sid}/`" />
+        <BranchModule v-for="(module) in bof_modules" :key="module.id" :module="module" :cluster="false" />
       </q-list>
     </template>
     <q-separator />
     <template v-if="clu_modules.length">
       <q-list>
         <q-item-label header>Cluster ({{ clu_modules.length }})</q-item-label>
-        <BranchModule v-for="(module) in clu_modules" :key="module.id" :module="module" :path="`/cluster/`"  />
+        <BranchModule v-for="(module) in clu_modules" :key="module.id" :module="module" :cluster="true"  />
       </q-list>
     </template>
   </div>
@@ -26,7 +26,7 @@
   const piniaAccount = useAccountStore();
   const $route = useRoute();
   const $router = useRouter();
-  const sid = piniaAccount.join
+
   const clu_modules = computed(() => piniaAccount.clu_modules );
   const bof_modules = computed(() => piniaAccount.bof_modules );
 </script>

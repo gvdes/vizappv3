@@ -230,7 +230,8 @@ const init = async () => {
 const finderFound = (item) => {
   console.log("Finder encontro lo + chido");
   console.log(item);
-  let inx = products.value.findIndex(i => i.product.id == item.id);
+  if(item){
+    let inx = products.value.findIndex(i => i.product.id == item.id);
   if (inx >= 0) {
     $q.notify({ message: `El articulo ya esta en la lista`, type: 'warning', position: 'center' })
   } else {
@@ -238,6 +239,8 @@ const finderFound = (item) => {
     wndProduct.value = true
     EditProduct.value = item
    }
+  }
+
 }
 
 const productEdit = (item) => {
@@ -262,7 +265,7 @@ const productEdit = (item) => {
 }
 
 const addingProd = (item) => {
-  item.then(i => products.value.push(i));
+  products.value.push(item);
   wndProduct.value = false;
 }
 
@@ -273,10 +276,10 @@ const delProd = (item) => {
 }
 
 const ModifyProd = (item) => {
-  item.then(i => {
-   let inx =  products.value.findIndex(e => e.product.id == i._product)
-    products.value.splice(inx,1,i)
-  });
+
+   let inx =  products.value.findIndex(e => e.product.id == item._product)
+    products.value.splice(inx,1,item)
+  ;
   wndProduct.value = false;
 }
 

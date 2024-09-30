@@ -43,7 +43,7 @@ $sktind.on('NotifyForm', (param)=>{
         if (piniaAccount.account.rol._area == 15 && param._responsible == 3 || param._responsible == 1) {
           form.value.push(param)
           $q.notify({message:`El formulario ${param.name} esta disponible :)`, position:'center',type:'positive'})
-        } else if ([1, 5, 7, 8, 15, 16, 17].includes(piniaAccount.account.rol._area) && param._responsible == 2 || param._responsible == 1 || param._responsible == 3) {
+        } else if ([1, 5, 7, 8].includes(piniaAccount.account.rol._area) && param._responsible == 2) {
           form.value.push(param)
           $q.notify({message:`El formulario ${param.name} esta disponible :)`, position:'center',type:'positive'})
         } else if( param._responsible == 3) {
@@ -62,7 +62,7 @@ $sktind.on('NotifyForm', (param)=>{
 
 const piniaAccount = useAccountStore();
 
-console.log(piniaAccount.account.rol._area);
+
 const apps = piniaAccount.apps.map(a => a.app)
 const form = ref(null)
 
@@ -83,6 +83,7 @@ const greetings = ref([
 
 
 const init = async () => {
+  console.log(piniaAccount.account)
   const resp = await indpi.getForms()
   if (resp.error) {
     console.log(resp)

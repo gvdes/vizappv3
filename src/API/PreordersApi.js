@@ -33,7 +33,7 @@ export default{
   },
   ModifyProduct(data){
     let burl = `store/${piniaAccount.join}/orders/ModifyProduct`;
-    return vizapi.post(burl,data).then( done => done.data).catch( fail => { return {error:fail.response} });
+    return vizapi.post(burl,data).then( done => done.data).catch( fail => { return {error:fail.error.response} });
   },
   removeProduct(data){
     let burl = `store/${piniaAccount.join}/orders/removeProduct`;

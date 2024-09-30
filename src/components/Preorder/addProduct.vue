@@ -103,7 +103,7 @@
 
 <script setup>
 import { ref, watch, onBeforeMount, computed, onMounted } from "vue";
-import ProductFinder from "src/components/ProductFinder.vue";
+
 import { useRoute, useRouter } from "vue-router";
 import { useQuasar, LocalStorage, Loading } from "quasar";
 import { useAccountStore } from "stores/Account";
@@ -241,6 +241,7 @@ const actPrice = () => {
       e.total = e.product.prices.filter(i => i._rate == 2)[0].price * e.amount_require
       }
     }
+    editProduct(e);
   })
 }
 
@@ -363,20 +364,21 @@ const addProduct = async () => {
   insertPro._rate = selectPrice.value;
   insertPro._supply_by = unit_measure.val.id;
   insertPro._order = order.id;
-  const addPr = pvtpi.addProduct(insertPro);
+  const addPr = await pvtpi.addProduct(insertPro);
   // console.log(addPr);
   if (addPr.error) {
     console.log(addPr);
   } else {
     emit("addingProd", addPr);
-    console.log(products)
+    console.log(addPr)
+    // console.log(products)
     $q.loading.hide();
     actPrice();
     reset();
   }
 };
 
-const modifyProduct = () => {
+const modifyProduct = async () => {
   $q.loading.show({ message: "Actualizando  :|" });
   insertPro.price = price.value;
   insertPro._state = 1;
@@ -386,7 +388,7 @@ const modifyProduct = () => {
   insertPro._supply_by = unit_measure.val.id;
   insertPro._order = order.id;
   console.log(insertPro)
-  const mdPr = pvtpi.ModifyProduct(insertPro);
+  const mdPr = await pvtpi.ModifyProduct(insertPro);
   console.log(mdPr);
   if (mdPr.error) {
 
@@ -399,9 +401,9 @@ const modifyProduct = () => {
   }
 };
 
-const removeProduct = () => {
+const removeProduct = async () => {
   $q.loading.show({ message: "Eliminando  :0" });
-  const addPr = pvtpi.removeProduct(insertPro);
+  const addPr = await pvtpi.removeProduct(insertPro);
   if (addPr.error) {
     console.log(addPr);
   } else {
@@ -423,5 +425,31 @@ const reset = () => {
   (insertPro._state = null),
   (insertPro.notes = null),
   (insertPro._supply_by = null);
+};
+
+const editProduct = async (curr) => {
+  // $q.loading.show({ message: "Actualizando  :|" });
+  console.log(curr.price);
+  let modifyProduct
+
+  modifyProduct.price = curr.price;
+  modifyProduct._state = curr._state;
+  modifyProduct.total = curr.total;
+  modifyProduct._product = curr._product;
+  modifyProduct._rate = curr._rate;
+  modifyProduct._supply_by = curr._supply_by;
+  modifyProduct._order = curr._order;
+  console.log(modifyProduct)
+  // const mdPr = await pvtpi.ModifyProduct(insertPro);
+  // console.log(mdPr);
+  // if (mdPr.fail) {
+
+  //   console.log(mdPr);
+  // } else {
+  //   emit("ModifyProd", mdPr);
+    // $q.loading.hide();
+    // actPrice();
+    // reset();
+  // }
 };
 </script>
