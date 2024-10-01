@@ -26,5 +26,9 @@ export default{
   getFormResp(data){
     let burl = `resp/form/${data}`;
     return vizapi.get(burl).then( done => done.data ).catch( fail => { return {error:fail.response} });
+  },
+  changeStatusForm(data){
+    let burl = `cluster/Indicators/changeStatus`;
+    return vizapi.post(burl,data).then( done => done.data ).catch( fail => { return {error:fail.response} });
   }
 }

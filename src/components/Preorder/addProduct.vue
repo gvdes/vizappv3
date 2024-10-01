@@ -79,6 +79,11 @@
       </div>
     </q-card-section>
 
+      <!-- <q-card-section>
+      {{ allProducts[0].product }}
+      </q-card-section> -->
+
+
     <q-card-actions align="center">
       <q-btn-group spread class="full-width" v-if="!existProduct">
         <q-btn round flat title="Cancelar" icon="close" color="negative" v-close-popup @click="reset"/>
@@ -103,7 +108,7 @@
 
 <script setup>
 import { ref, watch, onBeforeMount, computed, onMounted } from "vue";
-import ProductFinder from "src/components/ProductFinder.vue";
+
 import { useRoute, useRouter } from "vue-router";
 import { useQuasar, LocalStorage, Loading } from "quasar";
 import { useAccountStore } from "stores/Account";
@@ -121,6 +126,7 @@ const props = defineProps({
   order: { type: Object, default: {} },
   unit_measure: { type: Object, default: {} },
   products: { type: Array, default: [] },
+  firstProducts: { type:Array, default:[]},
   insertPro: { type: Object, default: {} },
   rules:{type: Array, defaul:[]}
 });
@@ -129,9 +135,12 @@ const order = props.order;
 const unit_measure = props.unit_measure;
 unit_measure.val = EditProduct.measure;
 const products = props.products;
+const firstProducts = props.firstProducts;
 const insertPro = props.insertPro;
 console.log(EditProduct)
 const reglas = props.rules
+// const allProducts  =ref([...firstProducts, ...products])
+
 
 
 //computadas
@@ -150,6 +159,8 @@ const reglas = props.rules
 const price = computed(() => EditProduct?.prices.filter((e) => e._rate == selectPrice.value)[0].price
 );
 
+const allProducts = computed(() =>  [...firstProducts, ...products])
+
 
 const mostPrice = computed(() => {
   if (order.client.rate.id <= 3) {
@@ -160,11 +171,11 @@ const mostPrice = computed(() => {
 });
 
 const calcularMayo = computed(() => {
-  let data = verificarPrecioMayoreo(products, EditProduct)
+  let data = verificarPrecioMayoreo(allProducts.value, EditProduct)
   return data
 })
 const calcularDoce = computed(() => {
-  let data = verificarPrecioDocena(products, EditProduct)
+  let data = verificarPrecioDocena(allProducts.value, EditProduct)
   return data
 })
 
@@ -216,9 +227,9 @@ const existPrice = computed(() => {
 // metodos
 const actPrice = () => {
   let r
-  products.forEach(e => {
-    const cumpleMayoreo = verificarPrecioMayoreo(products, e.product)
-    const cumpleDocena = verificarPrecioDocena(products , e.product)
+  allProducts.value.forEach(e => {
+    const cumpleMayoreo = verificarPrecioMayoreo(allProducts.value, e.product)
+    const cumpleDocena = verificarPrecioDocena(allProducts.value , e.product)
       if ( e.amount_require >= e.product.pieces ) {
       r = 4;
       } else {
@@ -241,6 +252,8 @@ const actPrice = () => {
       e.total = e.product.prices.filter(i => i._rate == 2)[0].price * e.amount_require
       }
     }
+    console.log(e.rates.id)
+    AlterProduct(e)
   })
 }
 
@@ -263,8 +276,9 @@ const verificarPrecioMayoreo = (prdts, product) => {
   let inx = prdts.findIndex((e) => e.product.id == product.id);
   if (inx >= 0) {
     if(EditProduct.id === product.id){
-        prdts = prdts.filter(e => e.product.id !== product.id)
+        // prdts = prdts.filter(e => e.product.id !== product.id)
        sameModel = prdts.filter(p => p.product.id === product.id).reduce((acc, curr) => acc + curr.amount_require, 0);
+       console.log(sameModel)
        sameFamily = prdts.filter(p => p.product.category.familia.id === product.category.familia.id ).reduce((acc, curr) => acc + curr.amount_require, 0);
        distin = prdts.filter(p =>  p.product.category.familia.seccion.id === product.category.familia.seccion.id && p.product.id !== product.id).reduce((acc, curr) => acc + curr.amount_require, 0)
 
@@ -273,6 +287,7 @@ const verificarPrecioMayoreo = (prdts, product) => {
         distinct = distin + insertPro.amount_require
     }else{
       model = sameModel
+      console.log(model)
       family = sameFamily
       distinct = distin
     }
@@ -363,20 +378,21 @@ const addProduct = async () => {
   insertPro._rate = selectPrice.value;
   insertPro._supply_by = unit_measure.val.id;
   insertPro._order = order.id;
-  const addPr = pvtpi.addProduct(insertPro);
+  const addPr = await pvtpi.addProduct(insertPro);
   // console.log(addPr);
   if (addPr.error) {
     console.log(addPr);
   } else {
     emit("addingProd", addPr);
-    console.log(products)
+    // console.log(addPr)
+    console.log(allProducts.value)
     $q.loading.hide();
     actPrice();
     reset();
   }
 };
 
-const modifyProduct = () => {
+const modifyProduct = async () => {
   $q.loading.show({ message: "Actualizando  :|" });
   insertPro.price = price.value;
   insertPro._state = 1;
@@ -386,7 +402,7 @@ const modifyProduct = () => {
   insertPro._supply_by = unit_measure.val.id;
   insertPro._order = order.id;
   console.log(insertPro)
-  const mdPr = pvtpi.ModifyProduct(insertPro);
+  const mdPr = await pvtpi.ModifyProduct(insertPro);
   console.log(mdPr);
   if (mdPr.error) {
 
@@ -399,9 +415,9 @@ const modifyProduct = () => {
   }
 };
 
-const removeProduct = () => {
+const removeProduct = async () => {
   $q.loading.show({ message: "Eliminando  :0" });
-  const addPr = pvtpi.removeProduct(insertPro);
+  const addPr = await pvtpi.removeProduct(insertPro);
   if (addPr.error) {
     console.log(addPr);
   } else {
@@ -423,5 +439,20 @@ const reset = () => {
   (insertPro._state = null),
   (insertPro.notes = null),
   (insertPro._supply_by = null);
+};
+
+const AlterProduct = async (curr) => {
+  curr._rate = curr.rates.id
+  console.log(curr)
+  const mdPr = await pvtpi.ModifyProduct(curr);
+  console.log(mdPr);
+  if (mdPr.fail) {
+
+    console.log(mdPr);
+  } else {
+
+    emit("ModifyProd", mdPr);
+    $q.loading.hide();
+  }
 };
 </script>

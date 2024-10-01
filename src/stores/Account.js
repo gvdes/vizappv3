@@ -39,7 +39,9 @@ export const useAccountStore = defineStore('account', {
 
     setAccount(data){ this.account=data; },
 
-    setStore(data){ this.join=data; },
+    setStore(data){ {
+      this.join=data;
+    } },
 
     setStores(data){ this.stores=data; },
 

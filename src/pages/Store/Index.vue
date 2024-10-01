@@ -29,14 +29,40 @@
 import { ref, computed } from 'vue';
 import { useAccountStore } from 'stores/Account';
 import MiniApps from 'src/components/MiniApps.vue';
+import { useQuasar, LocalStorage, Loading } from 'quasar';
 import forms from 'src/components/Forms.vue';
 import indpi from 'src/API/IndicatorApi.js'
+import { $sktind } from 'boot/socket'
+const $q = useQuasar();
 
+$sktind.connect()
 
+$sktind.on('NotifyForm', (param)=>{
+  console.log(param)
+      if (param._active === 1) {
+        if (piniaAccount.account.rol._area == 15 && param._responsible == 3 || param._responsible == 1) {
+          form.value.push(param)
+          $q.notify({message:`El formulario ${param.name} esta disponible :)`, position:'center',type:'positive'})
+        } else if ([1, 5, 7, 8].includes(piniaAccount.account.rol._area) && param._responsible == 2) {
+          form.value.push(param)
+          $q.notify({message:`El formulario ${param.name} esta disponible :)`, position:'center',type:'positive'})
+        } else if( param._responsible == 3) {
+          form.value.push(param)
+          $q.notify({message:`El formulario ${param.name} esta disponible :)`, position:'center',type:'positive'})
+        }
+
+      }else if(param._active === 0){
+        let inx = form.value.findIndex(e => e.id == param.id);
+        form.value.splice(inx,1)
+        $q.notify({message:`El formulario ${param.name} ya no  esta disponible :(`, position:'center',type:'negative'})
+
+      }
+
+})
 
 const piniaAccount = useAccountStore();
 
-console.log(piniaAccount.account.rol._area);
+
 const apps = piniaAccount.apps.map(a => a.app)
 const form = ref(null)
 
@@ -57,6 +83,7 @@ const greetings = ref([
 
 
 const init = async () => {
+  console.log(piniaAccount.account)
   const resp = await indpi.getForms()
   if (resp.error) {
     console.log(resp)
