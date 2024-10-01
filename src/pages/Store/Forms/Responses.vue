@@ -81,7 +81,7 @@
 
 
             <div v-else-if="question.type.id == 4"> <!-- Colaboradores -->
-              <q-select v-model="question.response" :options="usersBranch" label="Colaboradores">
+              <q-select v-model="question.response" :options="usersBranch" label="Colaboradores"  :option-label=" item => (item === null ? 'Null value' : `${item.name} ${item.surnames}`)">
                 <template v-slot:option="scope">
                   <q-item v-bind="scope.itemProps">
                     <q-item-section>

@@ -3,14 +3,14 @@
     <template v-if="bof_modules.length">
       <q-list>
         <q-item-label header>Sucursal ({{ bof_modules.length }})</q-item-label>
-        <BranchModule v-for="(module) in bof_modules" :key="module.id" :module="module" />
+        <BranchModule v-for="(module) in bof_modules" :key="module.id" :module="module" :cluster="false" />
       </q-list>
     </template>
     <q-separator />
     <template v-if="clu_modules.length">
       <q-list>
         <q-item-label header>Cluster ({{ clu_modules.length }})</q-item-label>
-        <BranchModule v-for="(module) in clu_modules" :key="module.id" :module="module" />
+        <BranchModule v-for="(module) in clu_modules" :key="module.id" :module="module" :cluster="true"  />
       </q-list>
     </template>
   </div>

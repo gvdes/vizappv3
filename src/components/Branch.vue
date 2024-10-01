@@ -18,7 +18,7 @@
           </q-item>
         </div>
       </template>
-      <Branch v-for="(module) in submodules" :key="module.id" :module="module" />
+      <Branch v-for="(module) in submodules" :key="module.id" :module="module" :cluster="cluster" />
     </q-expansion-item>
   </template>
 
@@ -46,13 +46,22 @@
   const piniaAccount = useAccountStore();
   const state = ref(true);
 
-  const $props = defineProps({ module:Object });
+  const $props = defineProps({ module:Object, cluster:Boolean });
   const module = $props.module;
   const submodules = computed(() => piniaAccount.submodules($props.module.id) );
-
   const goto = () => {
     console.log(module)
-    console.log(`%c${module.path}`,"font-size:1.5em; color:pink;");
-    $router.push(module.path);
+    if($props.cluster){
+      $router.push(`/cluster/${module.path}`);
+      console.log(`%c/cluster/${module.path}`,"font-size:1.5em; color:pink;");
+    }else{
+      if($route.params.idstore){
+        $router.push(`/store/${$route.params.idstore}/${module.path}`);
+        console.log(`%c/store/${$route.params.idstore}/${module.path}`,"font-size:1.5em; color:pink;");
+      }else{
+        $router.push(`/store/${piniaAccount.join}/${module.path}`);
+        console.log(`%c/store/${piniaAccount.join}/${module.path}`,"font-size:1.5em; color:pink;");
+      }
+    }
   }
 </script>
