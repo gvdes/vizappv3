@@ -4,7 +4,7 @@
       <q-card-section>Nuevo Pedido</q-card-section>
       <q-card-section>
         <div class="row items-center q-gutter-md">
-          <q-select v-model="neworder.type" :options="reqtypes" dense filled option-label="name" option-value="id" />
+          <q-select v-model="neworder.type" :options="reqtypes" dense filled option-label="name" option-value="id" @update:model-value="reqTypeChange" />
           <!-- <q-select v-if="inaCds" v-model="ctxRestock.opt" dense :options="ctxRestock.opts" filled /> -->
         </div>
       </q-card-section>
@@ -32,7 +32,7 @@
       <q-tab-panel name="MAN" class="q-pa-none">
         <q-card flat>
           <q-card-section class="text-center">
-            <q-btn color="primary" label="Iniciar pedido en blanco" @click="createBlank" />
+            <q-btn color="primary" label="Iniciar pedido en blanco" @click="create" />
           </q-card-section>
         </q-card>
       </q-tab-panel>
@@ -42,12 +42,13 @@
           <q-card-section horizontal class="items-center">
             <q-card-section class="text-subtitle2">Cargar productos desde</q-card-section>
             <q-card-section><q-select dense v-model="preViewType.opt" :options="preViewType.opts" filled /></q-card-section>
-            <q-card-actions align="center"><q-btn color="primary" label="Cargar" @click="loadPrev"/></q-card-actions>
+            <q-card-actions align="center"><q-btn color="primary" label="Cargar" @click="loadPrevAvz"/></q-card-actions>
           </q-card-section>
           <q-separator />
-          <template v-if="basketDB.length">
+          <template v-if="tablePrev.state">
             <q-table
-              :rows="basketDB"
+              :loading="tablePrev.state==2"
+              :rows="basketAvz"
               row-key="name"
               :columns="tablePrev.cols"
               :pagination="tablePrev.pgnt"
@@ -56,7 +57,7 @@
               <template v-slot:top>
                 <div class="full-width">
                   <div class="row items-center">
-                    <div class="col">Filtros</div>
+                    <!-- <div class="col">Filtros</div> -->
                     <div class="col">
                       <q-input outlined dense rounded debounce="300" v-model="tablePrev.filter" placeholder="Buscar">
                         <template v-slot:append>
@@ -69,8 +70,8 @@
               </template>
             </q-table>
             <q-separator />
-            <q-card-actions align="center" v-if="basketDB.length">
-              <q-btn color="primary" label="Iniciar reserva" @click="createByImport" />
+            <q-card-actions align="center" v-if="basketAvz.length">
+              <q-btn color="primary" label="Iniciar reserva" @click="create" />
             </q-card-actions>
           </template>
         </q-card>
@@ -79,16 +80,16 @@
       <q-tab-panel name="VFSOL" class="q-pa-none">
         <q-card flat>
           <q-card-section class="text-subtitle2">Cargar productos desde una Venta en Factusol</q-card-section>
-          <q-card-section horizontal class="items-center justify-between">
+          <q-card-section horizontal class="items-center">
             <q-card-section v-if="inaCds"><q-select dense v-model="srcBranch" label="Sucursal" :options="stores_std" option-label="name" /></q-card-section>
-            <q-card-section><q-input dense v-model="folio.iptVal" label="Folio" type="text" /></q-card-section>
+            <q-card-section><q-input outlined dense rounded v-model="folio.iptVal" label="Folio" type="text" /></q-card-section>
             <q-card-actions align="center"><q-btn color="primary" label="Cargar" /></q-card-actions>
           </q-card-section>
           <q-separator />
-          <template v-if="basketDB.length">
+          <template v-if="basketFsol.length">
             <q-separator />
             <q-card-actions align="right" >
-              <q-btn color="primary" label="Iniciar reserva" @click="createByImport" />
+              <q-btn color="primary" label="Iniciar reserva" @click="create" />
             </q-card-actions>
           </template>
         </q-card>
@@ -97,15 +98,15 @@
       <q-tab-panel name="PVT" class="q-pa-none">
         <q-card flat>
           <q-card-section class="text-subtitle2">Cargar productos Desde un pedido en Preventa</q-card-section>
-          <q-card-section horizontal class="items-center justify-between">
-              <q-card-section><q-input dense v-model="folio.iptVal" label="Folio" type="text" /></q-card-section>
+          <q-card-section horizontal class="items-center">
+              <q-card-section><q-input outlined dense rounded v-model="folio.iptVal" label="Folio" type="text" /></q-card-section>
             <q-card-actions align="center"><q-btn color="primary" label="Cargar" /></q-card-actions>
           </q-card-section>
 
-          <template v-if="basketDB.length">
+          <template v-if="basketPrev.length">
             <q-separator />
             <q-card-actions align="right" >
-              <q-btn color="primary" label="Iniciar reserva" @click="createByImport" />
+              <q-btn color="primary" label="Iniciar reserva" @click="create" />
             </q-card-actions>
           </template>
         </q-card>
@@ -136,7 +137,9 @@
   const srcBranch = ref(null);
   const folio = ref({ iptVal:"", state:0 });
   const neworder = ref({ type:{id: 1, name: 'Manual', shortname: 'MAN'}, to:null });
-  const basketDB = ref([]);
+  const basketAvz = ref([]);
+  const basketPrev = ref([]);
+  const basketFsol = ref([]);
   const preViewType = ref({
     opt:{ id:"A", label:"Minimos y Maximos", dsc:"" },
     opts:[
@@ -151,38 +154,22 @@
   ];
 
   const tablePrev = ref({
+    state:0,
     cols:[
       { name:"idp", label:"IDP", field:"_product", align:"rigth" },
       { name:"code", label:"Codigo", field:row => row.product.code, align:"rigth", sortable:true },
       { name:"shortcode", label:"Codigo Corto", field:row => row.product.short_code, align:"center", sortable:true },
       { name:"desc", label:"Descripcion", field:row => row.product.description, align:"rigth" },
       // { name:"desc", label:"Producto", field:row => row.product, sortable:true }
-      { name:"unitsupply", label:"Unidad/Surtido", field:row => unitsMeasure.find( um => um.id == row.product._assortment_unit).label, align:"center" },
       { name:"ipack", label:"Piezas/empaque", field:row => row.product.pieces, align:"center", sortable:true },
       { name:"min", label:"Stock Min.", field:"_min", align:"center", sortable:true },
       { name:"max", label:"Stock Max.", field:"_max", align:"center", sortable:true },
       { name:"available", label:"Stock Disponible", field:"available", align:"center", sortable:true },
       { name:"current", label:"Stock Actual", field:"_current", align:"center", sortable:true },
       { name:"income", label:"En Transito", field:"in_coming", align:"center", sortable:true },
-      {
-        name:"request",
-        label:"Solicitud",
-        field: row => {
-          let req = (row.available<=row._min);
-          let amount = (row._max - row.available);
-
-          return row.product._assortment_unit == 3 ?
-            (req ? Math.floor(amount/row.product.pieces) : 0):
-            (req ? amount : 0);
-        },
-        format: (val,row) => {
-          let lbl = row.product._assortment_unit == 3 ? "cj":"pz"
-          lbl = val == 1 ? lbl : lbl+"s";
-          return `${val} (${lbl})`;
-        },
-        align:"center",
-        sortable:true
-      },
+      { name:"unitsupply", label:"Unidad/Surtido", field:row => unitsMeasure.find( um => um.id == row.product._assortment_unit).label, align:"center" },
+      { name:"requnits", label:"Solicitud (uns)", field:"_z_amount_units", align:"center", sortable:true },
+      { name:"reqpacks", label:"Solicitud (emp)", field:"_z_amount_packs", align:"center", sortable:true },
       { name:"avlprov", label:"Disp. (CDS/pzs)", field:"stocks_product_sum_available", align:"center", sortable:true },
     ],
     pgnt:{ rowsPerPage: 10 },
@@ -196,21 +183,27 @@
   // const vscedises = computed(() => stores_cds.value.filter( s => s.id!=$sid));
   const settingsforcedis = computed(() => ($props.inaCds && [1,2].includes(neworder.value.type.id)));
 
-  const $emit = defineEmits(["reqAdded", "fn2", "start"]);
+  const $emit = defineEmits(["created", "scale", "start"]);
 
-  const createBlank = () => {
+  const create = async () => {
     console.log("Creando pedido");
-    console.log(neworder.value);
 
-    $emit("reqAdded");
+    let data = {
+      type:neworder.value,
+      config:{
+        avz_params:{type:preViewType.value.opt,sections:[]},
+        folio:folio.value.iptVal
+      }
+    }
+
+    console.log(data);
+    const resp = await RestockApi.create(data);
+    console.log(resp);
   }
 
-  const createByImport = () => {
-    console.log(neworder.value);
-    console.log("Creando por importacion");
-  }
-
-  const loadPrev = async () => {
+  const loadPrevAvz = async () => {
+    basketAvz.value = [];
+    tablePrev.value.state = 2;
     console.log(neworder.value);
     console.log("Cargando vista previa");
 
@@ -220,11 +213,23 @@
     $q.loading.show({message:"Cargando productos, espera..."});
 
     const resp = await RestockApi.preview(rid,wrhsrc);
-    basketDB.value = resp.resdynfn.basket;
+    basketAvz.value = resp.resdynfn.basket;
+    tablePrev.value.state = 1;
     console.log(resp);
 
+    $emit("scale","full");
     $q.loading.hide();
+  }
 
+  const reqTypeChange = type => {
+    console.log();
+
+    switch(type.id){
+      case 1: $emit("scale",null); break;
+
+      default:
+        tablePrev.value.state ? $emit("scale","full") : void 0;
+    }
   }
 
 </script>

@@ -77,8 +77,8 @@
         </q-list>
       </q-card>
 
-      <q-dialog v-model="wndNewReq.state" :persistent="wndNewReq.persistent">
-        <FromOrderCreate :reqtypes="reqTypes" :inaCds="inaCds" :storesdb="storesdb" @reqAdded="reqAdded" />
+      <q-dialog v-model="wndNewReq.state" :persistent="wndNewReq.persistent" :full-width="wndNewReq.fullWidth" :full-height="wndNewReq.fullHeight">
+        <FromOrderCreate :reqtypes="reqTypes" :inaCds="inaCds" :storesdb="storesdb" @created="restockCreated" @scale="restockResizeForm"/>
       </q-dialog>
 
       <!-- <q-dialog persisten no-esc-dismiss no-backdrop-dismiss v-model="wndMinMax.state">
@@ -125,7 +125,7 @@
   const states = ref([]);
   const ordersdb = ref([]);
   const storesdb = ref([]);
-  const wndNewReq = ref({ state:false, persistent:false });
+  const wndNewReq = ref({ state:false, persistent:false, fullWidth:false, fullHeight:false });
   const view = ref(views[0]);
   const rangeDates = ref({ from: null, to: null });
   const reqTypes = ref([]);
@@ -175,8 +175,19 @@
     $q.loading.hide();
   }
 
-  const reqAdded = async () => {
+  const restockCreated = async () => {
     console.log("Componente FormOrderCreate creo un pedido");
+  }
+
+  const restockResizeForm = size => {
+    console.log(size);
+    if(size == "full"){
+      wndNewReq.value.fullHeight = true;
+      wndNewReq.value.fullWidth = true;
+    }else{
+      wndNewReq.value.fullHeight = false;
+      wndNewReq.value.fullWidth = false;
+    }
   }
 
   const setViewDates = (v) => {

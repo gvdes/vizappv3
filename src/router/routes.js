@@ -48,13 +48,6 @@ const routes = [
             ]
           },
           {
-            path: 'resurtido',
-            children: [
-              { path:'', component: () => import('src/pages/Store/Warehouses/Restock/Index.vue') },
-              { path:':roid', component: () => import('src/pages/Store/Warehouses/Restock/Order.vue') }
-            ]
-          },
-          {
             path: ':wid',
             children: [
               { path:'', name: 'wrh', component: () => import('pages/Store/Warehouses/Warehouse.vue') },
@@ -80,7 +73,13 @@ const routes = [
           },
         ],
       },
-      { path: 'resurtido', component: () => import('pages/Store/Restock/Index.vue') },
+      {
+        path: 'resurtido',
+        children: [
+          { path:'', component: () => import('src/pages/Store/Warehouses/Restock/Index.vue') },
+          { path:':roid', component: () => import('src/pages/Store/Warehouses/Restock/Order.vue') }
+        ]
+      },
       {
         path: 'preorders',
         children: [
