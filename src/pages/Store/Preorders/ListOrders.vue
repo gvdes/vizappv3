@@ -9,11 +9,11 @@
           </template>
         </q-input>
       </template>
-      <template v-slot:body="props" >
+      <template v-slot:body="props">
         <div>
 
         </div>
-        <q-tr :props="props" @click="initPed(props.row)">
+        <q-tr :props="props" @click="verifiedOrder(props.row)">
           <q-td key="id" :props="props">
             {{ props.row.id }}
           </q-td>
@@ -52,7 +52,7 @@
             <q-input v-model="client.val" :type="client.state ? 'text' : 'number'" label="Cliente">
               <template v-slot:prepend>
                 <q-btn color="primary" :icon="client.state ? 'person_add_disabled' : 'person_add'" title="client" flat
-                 @click="client.state = !client.state" />
+                  @click="client.state = !client.state" />
               </template>
             </q-input>
           </q-form>
@@ -61,6 +61,24 @@
         <q-card-actions align="right">
           <q-btn flat title="Cancelar" color="negative" v-close-popup icon="close" />
           <q-btn flat color="positive" icon="check" @click="viewCli" />
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
+
+    <q-dialog v-model="anexo.state" persistent>
+      <q-card>
+        <q-card-section class="row items-center">
+          <q-avatar icon="add_box" color="primary" text-color="white" />
+          <span class="q-ml-sm text-h6 text-bold">Crear anexo de el pedido {{ anexo.val.id }}</span>
+        </q-card-section>
+        <q-card-section>
+          <div class="text-h6"> Cliente: {{ anexo.val.name }}</div>
+          <div class="text-h6 text-overline"> Creado: {{ `${anexo.val.user.name} ${anexo.val.user.surnames}` }}</div>
+
+        </q-card-section>
+        <q-card-actions align="center">
+          <q-btn flat icon="close" color="negative" @click="anexo.state = null; anexo.val = null" />
+          <q-btn flat icon="check" color="positive" @click="createdAnexo(anexo.val)" />
         </q-card-actions>
       </q-card>
     </q-dialog>
@@ -100,13 +118,16 @@ $sktpvt.on('PedidoCreado', (param) => {
   console.log(`${param.user.nick} creo el pedido ${param.id} :)`)
 })
 
-$sktpvt.on('updOrder', (params)=>{
+$sktpvt.on('updOrder', (params) => {
   console.log(params)
   let inx = orders.value.findIndex(e => e.id == params.id)
   orders.value[inx].state = params.state
   orders.value[inx]._state = params._state
 })
-
+const anexo = ref({
+  state: false,
+  val: null
+})
 const wndOrder = ref(false)
 const client = ref({
   state: true,
@@ -170,23 +191,23 @@ const createValue = (val, done) => {
 
 const viewCli = () => {
   let data
-  if(client.value.state == false){
-   let inx = client.value.opts.findIndex(e => e.barcode == client.value.val);
-   console.log(inx);
-   if(inx >= 0){
-    console.log(client.value.opts[inx]);
-    data = {
-    _client: client.value.opts[inx].id,
-    name:client.value.opts[inx].name
-   }
+  if (client.value.state == false) {
+    let inx = client.value.opts.findIndex(e => e.barcode == client.value.val);
+    console.log(inx);
+    if (inx >= 0) {
+      console.log(client.value.opts[inx]);
+      data = {
+        _client: client.value.opts[inx].id,
+        name: client.value.opts[inx].name
+      }
 
-   createdOrder(data);
-   }else{
-    $q.notify({message:"No existe el cliente",type:'negative',position:'center'})
-    client.value.val = null;
-   }
-  }else{
-    data  = {
+      createdOrder(data);
+    } else {
+      $q.notify({ message: "No existe el cliente", type: 'negative', position: 'center' })
+      client.value.val = null;
+    }
+  } else {
+    data = {
       _client: typeof (client.value.val) === 'string' ? 0 : client.value.val.id,
       name: typeof (client.value.val) === 'string' ? client.value.val : client.value.val.name,
     }
@@ -229,6 +250,38 @@ const filterFn = (val, update) => {
       )
     }
   })
+}
+
+const verifiedOrder = (item) => {
+  console.log(item);
+  if (item._state > 1) {
+    console.log('creacion de anexo')
+    anexo.value.state = true
+    anexo.value.val = item
+  } else {
+    console.log('validar si es de el mismo usuario para poder continuar')
+  }
+}
+
+const createdAnexo = async (data) => {
+  console.log(data)
+  const resp = await pvtpi.createAnexo(data);
+  console.log(resp)
+  if (resp.error) {
+    $q.notify({
+      message: `${resp.error}`,
+      type: 'negative',
+      position: 'center'
+    })
+  } else {
+    $q.notify({
+      message: `El Anexo ${resp.id} se creo de el pedido ${data.id}`,
+      type: 'positive',
+      position: 'center'
+    })
+    $sktpvt.emit('CreacionPedido', resp)
+    $router.push(`/store/${piniaAccount.join}/preorders/pedidos/${resp.id}/`);
+  }
 }
 
 const initPed = (item) => {

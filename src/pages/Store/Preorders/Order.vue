@@ -5,7 +5,7 @@
 
         <div class="q-pa-xs col text-center ">
 
-          <q-expansion-item popup :label="`Preventa : ${piniaAccount.joinedStore.name}`" class="text-grey-13 text-bold">
+          <q-expansion-item popup :label="`Preventa : ${piniaAccount.joinedStore.name} `" class="text-grey-13 text-bold">
             <q-card class="my-card">
               <q-card-section>
                 <div class="row items-start justify-between">
@@ -76,10 +76,26 @@
           </q-item>
         </q-list>
       </div>
+      <q-separator />
     </q-header>
 
     <q-separator spaced inset vertical dark />
 
+    <div v-if="order._order_by">
+      <q-card class="my-card" >
+        <q-card-section>
+
+          <div class="row">
+            <div class="col">Pedido {{ order.order.id }}</div>
+            <div class="col">Modelos: {{ order.order.bodie.length }}</div>
+            <div class="col">Piezas: {{ order.order.bodie.reduce((acc,item) => acc + item.amount_require, 0) }}</div>
+            <div class="col">Total: {{ order.order.bodie.reduce((acc,item) => acc + parseFloat(item.total), 0) }}</div>
+
+
+          </div>
+        </q-card-section>
+      </q-card>
+    </div>
 
     <q-table :rows="products" row-key="name" class="bg-blue-2" hide-header hide-bottom :rows-per-page-options="[0]">
       <template v-slot:body="product">
@@ -121,7 +137,7 @@
 
 
     <q-dialog v-model="wndProduct" position="bottom" :style="`${isMobile ? '' : 'width: 300px'}`" >
-      <addProduct :EditProduct="EditProduct" :order="order" :products="products" :unit_measure="unit_measure"
+      <addProduct :EditProduct="EditProduct" :order="order" :products="products" :unit_measure="unit_measure" :firstProducts="firstProducts"
         :insertPro="insertPro" @addingProd="addingProd" @delProd="delProd" @ModifyProd="ModifyProd" :rules="rules">
       </addProduct>
     </q-dialog>
@@ -176,6 +192,7 @@ const order = ref(null);
 const wndProduct = ref(false);
 
 const products = ref([])
+const firstProducts = ref([]);
 
 const EditProduct = ref([])
 const unit_measure = ref({
@@ -219,6 +236,9 @@ const init = async () => {
     $router.push(`/store/${piniaAccount.join}/preorders/pedidos`)
   } else {
     order.value = (resp.order)
+    if(resp.order._order_by){
+      firstProducts.value = resp.order.order.bodie
+    }
     products.value = resp.order.bodie
     // insertPro.value = resp.order.id
     unit_measure.value.opts = resp.unit_measures
@@ -276,10 +296,8 @@ const delProd = (item) => {
 }
 
 const ModifyProd = (item) => {
-
-   let inx =  products.value.findIndex(e => e.product.id == item._product)
-    products.value.splice(inx,1,item)
-  ;
+  let inx =  products.value.findIndex(e => e.product.id == item._product)
+  products.value.splice(inx,1,item);
   wndProduct.value = false;
 }
 

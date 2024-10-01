@@ -27,6 +27,10 @@ export default{
     let burl = `store/${piniaAccount.join}/orders/createOrder`;
     return vizapi.post(burl,data).then( done => done.data).catch( fail => { return {error:fail.response} });
   },
+  createAnexo(data){
+    let burl = `store/${piniaAccount.join}/orders/createOrderAnexo`;
+    return vizapi.post(burl,data).then( done => done.data).catch( fail => { return {error:fail.response} });
+  },
   addProduct(data){
     let burl = `store/${piniaAccount.join}/orders/addProduct`;
     return vizapi.post(burl,data).then( done => done.data).catch( fail => { return {error:fail.response} });
