@@ -164,6 +164,7 @@ const addConditionToOption = () => {
   let adding = JSON.parse(optionCondition.value.condition)
   adding.push(addCondition.value)
   optionCondition.value.condition = JSON.stringify(adding)
+  console.log('jpo')
   parsedCondition()
 
 }
