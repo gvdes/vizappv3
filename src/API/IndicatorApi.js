@@ -21,7 +21,7 @@ export default{
   },
   AddQuestion(data){
     let burl = `cluster/Indicators/addQuestion`;
-    return vizapi.post(burl,data).then( done => done.data ).catch( fail => { return {error:fail.response} });
+    return vizapi.post(burl,data).then( done => done.data ).catch( fail => { return {error:fail.error.response} });
   },
   getFormResp(data){
     let burl = `resp/form/${data}`;
@@ -30,5 +30,13 @@ export default{
   changeStatusForm(data){
     let burl = `cluster/Indicators/changeStatus`;
     return vizapi.post(burl,data).then( done => done.data ).catch( fail => { return {error:fail.response} });
-  }
+  },
+  editQuest(data){
+    let burl = `cluster/Indicators/editQuest`;
+    return vizapi.post(burl,data).then( done => done.data ).catch( fail => { return {error:fail.error.response} });
+  },
+  deleteQuest(data){
+    let burl = `cluster/Indicators/deleteQuest`;
+    return vizapi.post(burl,data).then( done => done.data ).catch( fail => { return {error:fail.error.response} });
+  },
 }

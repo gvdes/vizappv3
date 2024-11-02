@@ -1,6 +1,6 @@
 <template>
-  <q-page v-if="order">
-    <q-header class="bg-white" elevated>
+  <q-page v-if="order" >
+    <q-header class="bg-white" >
       <div class="row items-start justify-between">
 
         <div class="q-pa-xs col text-center ">

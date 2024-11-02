@@ -83,9 +83,36 @@
       </q-card>
     </q-dialog>
 
+    <q-dialog v-model="Anex.state" persistent>
+      <q-card>
+        <q-card-section class="row items-center bg-primary text-white">
+          <q-icon name="post_add" />
+          <span class="q-ml-sm">Nuevo Anexo</span>
+        </q-card-section>
+        <q-card-section>
+          <q-form @submit="newAnexo">
+            <q-input v-model="Anex.val" type="number" label="Pedido" />
+          </q-form>
+        </q-card-section>
+        <q-card-actions align="right">
+          <q-btn flat title="Cancelar" color="negative" v-close-popup icon="close" />
+          <q-btn flat color="positive" icon="check" @click="newAnexo" />
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
 
-    <q-page-sticky position="bottom-right" :offset="[15, 20]">
+
+    <!-- <q-page-sticky position="bottom-right" :offset="[15, 20]">
       <q-btn fab icon="add" color="primary" @click="newOrder" />
+    </q-page-sticky> -->
+
+
+    <q-page-sticky position="bottom-right" :offset="[20, 20]">
+      <q-fab color="primary" icon="add" direction="up">
+        <q-fab-action color="primary" @click="newOrder" icon="add" label="Pedido" />
+        <q-fab-action color="primary" @click="Anex.state = !Anex.state" icon="post_add" label="Anexo" />
+      </q-fab>
+      <!-- <q-btn fab icon="add" color="primary" @click="newOrder" /> -->
     </q-page-sticky>
 
 
@@ -135,14 +162,16 @@ const client = ref({
   opts: [],
   filter: []
 })
+const Anex = ref({
+  state: false,
+  val: null
+})
 const orders = ref(null)
 const table = ref({
   columns: [
     { id: 'id', name: 'id', label: 'ID', field: row => row.id },
     { id: 'client', name: 'client', label: 'CLIENTE', field: row => row.name },
-    {
-      id: 'state', name: 'state', label: 'Estado', field: row => row.state.name, align: 'center',
-    },
+    { id: 'state', name: 'state', label: 'Estado', field: row => row.state.name, align: 'center', },
     { id: 'created', name: 'created', label: 'Realizo', field: row => row.user.nick },
     { id: 'date', name: 'date', label: 'Fecha', field: row => dayjs(row.created_at).format('YYYY-MM-DD HH:mm A') }
   ],
@@ -253,13 +282,13 @@ const filterFn = (val, update) => {
 }
 
 const verifiedOrder = (item) => {
-  console.log(item);
-  if (item._state > 1) {
+  // console.log(item);
+  if (item._state > 1 && item._state < 8) {
     console.log('creacion de anexo')
     anexo.value.state = true
     anexo.value.val = item
-  } else {
-    console.log('validar si es de el mismo usuario para poder continuar')
+  } else if (item._state = 1 && item._created_by == piniaAccount.account.id) {
+    $router.push(`/store/${piniaAccount.join}/preorders/pedidos/${item.id}/`);
   }
 }
 
@@ -283,6 +312,41 @@ const createdAnexo = async (data) => {
     $router.push(`/store/${piniaAccount.join}/preorders/pedidos/${resp.id}/`);
   }
 }
+
+const newAnexo = async () => {
+
+  $q.loading.show({ message: 'Cargando Pedido' });
+  const resp = await pvtpi.getOrder(Anex.value.val)
+  console.log(resp);
+  if (resp.error) {
+    console.log(resp.error.response.status)
+    console.log(resp.error.response.data)
+    $q.notify({
+      message: `${resp.error.response.data}`,
+      type: 'negative',
+      position: 'center'
+    })
+    $q.loading.hide();
+  //   $router.push(`/store/${piniaAccount.join}/preorders/pedidos`)
+  } else {
+    console.log()
+    if (resp.order._state > 1 && resp.order._state < 8) {
+    console.log('creacion de anexo')
+    anexo.value.state = true
+    anexo.value.val = resp.order
+  } else  {
+    $q.notify({
+      message: `El pedido esta en Levantando No se puede crear el anexo`,
+      type: 'negative',
+      position: 'center'
+    })
+    Anex.value.state = false
+    Anex.value.val = null
+  }
+    $q.loading.hide();
+  }
+}
+
 
 const initPed = (item) => {
   console.log(item.id);

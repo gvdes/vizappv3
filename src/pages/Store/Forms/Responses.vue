@@ -8,94 +8,26 @@
           ${form.responsible?.name}` }}</div>
       </q-card-section>
       <q-card-section>
-        <q-form @submit="onSubmit" @reset="onReset" class="q-gutter-md">
+        <q-form @submit="onSubmit" @reset="onReset" class="q-gutter-md ">
 
-          <div v-for="(question, index) in form.question" :key="index">
-
-            <div>{{ question.question }}</div>
-            <div v-if="question.type.id == 1"> <!-- Texto -->
-              <q-input v-model="question.response" type="text" :label="question.question" />
-            </div>
-            <div v-else-if="question.type.id == 2"> <!-- Opciones -->
-              <q-select v-model="question.response" :options="question.options" :label="question.question"
-                option-label="option" />
-              <!-- {{ question.response }} -->
-
-
-
-              <div v-if="question.response?.condition">
-
-                {{ JSON.parse(question.response.condition).response }}
-                <div class="text-bold">{{ JSON.parse(question.response.condition).quest.question }}</div>
-
-                <div v-if="JSON.parse(question.response.condition).quest._type.id == 1"> <!-- Texto -->
-                  <q-input v-model="question.condresp" type="text" :label="question.question" />
-                </div>
-
-
-                <div v-else-if="JSON.parse(question.response.condition).quest._type.id == 2"> <!-- Opciones -->
-                  <q-select v-model="question.condresp"
-                    :options="JSON.parse(question.response.condition).opts" :label="question.question"
-                    option-label="option" />
-                </div>
-
-
-                <div v-else-if="JSON.parse(question.response.condition).quest._type.id == 3"> <!-- Archivo -->
-                  <q-uploader
-                    url="http://localhost:4444/upload"
-                    color="teal"
-                    flat
-                    bordered
-                    style="max-width: 300px"
-                  />
-                </div>
-
-
-                <div v-else-if="JSON.parse(question.response.condition).quest._type.id == 4"> <!-- Colaboradores -->
-                  <q-select v-model="question.condresp" :options="usersBranch" label="Colaboradores" :option-label=" item => (item === null ? 'Null value' : `${item.name} ${item.surnames}`)" >
-                    <template v-slot:option="scope">
-                      <q-item v-bind="scope.itemProps">
-                        <q-item-section>
-                          <q-item-label>{{ `${scope.opt.name} ${scope.opt.surnames}` }}</q-item-label>
-                          <q-item-label caption>{{ scope.opt.nick }}</q-item-label>
-                        </q-item-section>
-                      </q-item>
-                    </template>
-                  </q-select>
-                </div>
-              </div>
-            </div>
-
-
-
-
-            <div v-else-if="question.type.id == 3"> <!-- Archivo -->
-              <q-uploader
-                    url="http://localhost:4444/upload"
-                    color="teal"
-                    flat
-                    bordered
-                    style="max-width: 300px"
-                  />
-            </div>
-
-
-            <div v-else-if="question.type.id == 4"> <!-- Colaboradores -->
-              <q-select v-model="question.response" :options="usersBranch" label="Colaboradores"  :option-label=" item => (item === null ? 'Null value' : `${item.name} ${item.surnames}`)">
-                <template v-slot:option="scope">
-                  <q-item v-bind="scope.itemProps">
-                    <q-item-section>
-                      <q-item-label>{{ `${scope.opt.name} ${scope.opt.surnames}` }}</q-item-label>
-                      <q-item-label caption>{{ scope.opt.nick }}</q-item-label>
-                    </q-item-section>
-                  </q-item>
-                </template>
-
-              </q-select>
-            </div>
+          <div class="flex justify-center">
+            <q-card class="my-card">
+              <q-card-section v-for="(question,index) in form.question">
+                <div class="text-h6">{{ question.question }}</div>
+                <div class="text-h6" v-if="question._type == 1"> <q-input v-model="question._response" type="text" label="Label" /></div>
+                <div class="text-h6" v-if="question._type == 2"> <q-select v-model="question._reponse" :options="question.options" label="Opciones" option-label="option" filled /></div>\
+                <div v-if="question._type == 2 && question._" ></div>
+                <div class="text-h6" v-if="question._type == 4"> <q-select v-model="question._response" :options="colaborators" label="Standard" filled /> </div>
+                <div class="text-h6" v-if="question._type == 3"> <q-uploader
+                  url="http://localhost:4444/upload"
+                  color="teal"
+                  flat
+                  bordered
+                  style="max-width: 300px"
+                /> </div>
+              </q-card-section>
+            </q-card>
           </div>
-
-
           <div class="flex justify-center">
             <q-btn label="Enviar" type="submit" color="positive" flat />
             <q-btn label="Cancelar" type="reset" color="negative" flat class="q-ml-sm" />
@@ -138,6 +70,8 @@ const init = async () => {
   } else {
     console.log(resp)
     form.value = resp.formulario;
+    form.value.question.forEach(e => e._response
+    )
     colaborators.value = resp.usuarios
   }
 }
