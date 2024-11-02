@@ -44,3 +44,11 @@
 .fs-dec4{ font-size: .6em; }
 
 *, html{ font-family: "TFontLG"; }
+
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input[type=number] { -moz-appearance:textfield; }

@@ -77,7 +77,7 @@ const routes = [
         path: 'resurtido',
         children: [
           { path:'', component: () => import('src/pages/Store/Warehouses/Restock/Index.vue') },
-          { path:':roid', component: () => import('src/pages/Store/Warehouses/Restock/Order.vue') }
+          { path:':resid', component: () => import('src/pages/Store/Warehouses/Restock/Order.vue') }
         ]
       },
       {

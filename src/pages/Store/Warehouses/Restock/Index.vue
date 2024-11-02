@@ -6,7 +6,7 @@
         <div class="col anek-bld text-grey-9 q-pl-sm">Resurtido</div>
         <div class="row items-center">
           <div class="row items-stretch">
-            <q-select v-model="view"  :options="views" dense filled @update:model-value="setViewDates" >
+            <q-select v-model="view" :options="views" dense filled @update:model-value="setViewDates" >
               <!-- <template v-slot:append>
                 <q-btn flat dense color="primary" icon="fas fa-calendar-days" @click.stop disable>
                   <q-menu>
@@ -18,22 +18,6 @@
           </div>
           <q-btn flat rounded icon="autorenew" @click="init" />
           <q-btn flat rounded icon="add" @click="wndNewReq.state = true" />
-          <!-- <q-btn flat rounded icon="add">
-            <q-menu style="min-width:200px;">
-              <q-form
-                class="q-gutter-md"
-              >
-                <q-card-section>
-                  <q-select v-model="neworder.to" :options="storesdb" label="Proveedor" option-value="id" option-label="name" :disable="storesdb.length==1" />
-                </q-card-section>
-
-                <q-card-actions align="right">
-                  <q-btn color="primary" icon="done" label="Crear" no-caps @click="create"/>
-                </q-card-actions>
-              </q-form>
-            </q-menu>
-          </q-btn>-->
-          <!-- <q-btn flat rounded icon="fas fa-heart-pulse" @click="wndMinMax.state = true;"/> -->
           <q-btn flat rounded icon="support" />
         </div>
       </div>
@@ -41,56 +25,32 @@
     </div>
 
     <div class="q-pa-md">
-      <q-card v-if="!ordersdb.length" flat class="text-center transparent text-grey-6">
-        <q-card-section> -- v a c i o -- </q-card-section>
-      </q-card>
+      <q-table
+        :rows="ordersView"
+        row-key="name"
+        :columns="tblRestock.cols"
+        :pagination="tblRestock.paginate"
+        @row-click="rowRestockClicked"
+      />
 
-      <q-card v-if="reqsbyme.length" class="q-mb-md">
-        <q-card-section>Pedidos</q-card-section>
-        <q-list separator>
-          <q-item clickable v-ripple v-for="(order) in reqsbyme" :key="order.id" @click="$router.push(`/store/${piniaAccount.join}/almacenes/resurtido/${order.id}`)">
-            <q-item-section>FOLIO (GLB): {{order.id}}</q-item-section>
-            <q-item-section>Folio (DIA): {{order.num_ticket}}</q-item-section>
-            <q-item-section>Folio (SUC): {{order.num_ticket_store}}</q-item-section>
-            <q-item-section>Solicita: {{order.owner.nick}}</q-item-section>
-            <q-item-section>Origen: {{order.from_store.name}}</q-item-section>
-            <q-item-section>Destino: {{order.to_store.name}}</q-item-section>
-            <q-item-section>Status: {{order.state.name}}</q-item-section>
-            <q-item-section><q-item-label>{{easyDate(order.created_at)}}</q-item-label></q-item-section>
-          </q-item>
-        </q-list>
-      </q-card>
-
-      <q-card v-if="reqstome.length" class="q-mb-md">
-        <q-card-section>Mis pedidos</q-card-section>
-        <q-list separator>
-          <q-item clickable v-ripple v-for="(order) in reqstome" :key="order.id" @click="$router.push(`/store/${piniaAccount.join}/almacenes/resurtido/${order.id}`)">
-            <q-item-section>FOLIO (GLB): {{order.id}}</q-item-section>
-            <q-item-section>Folio (DIA): {{order.num_ticket}}</q-item-section>
-            <q-item-section>Folio (SUC): {{order.num_ticket_store}}</q-item-section>
-            <q-item-section>Solicita: {{order.owner.nick}}</q-item-section>
-            <q-item-section>Origen: {{order.from_store.name}}</q-item-section>
-            <q-item-section>Destino: {{order.to_store.name}}</q-item-section>
-            <q-item-section>Status: {{order.state.name}}</q-item-section>
-            <q-item-section><q-item-label>{{easyDate(order.created_at)}}</q-item-label></q-item-section>
-          </q-item>
-        </q-list>
-      </q-card>
-
-      <q-dialog v-model="wndNewReq.state" :persistent="wndNewReq.persistent" :full-width="wndNewReq.fullWidth" :full-height="wndNewReq.fullHeight">
-        <FromOrderCreate :reqtypes="reqTypes" :inaCds="inaCds" :storesdb="storesdb" @created="restockCreated" @scale="restockResizeForm"/>
+      <q-dialog v-model="wndNewReq.state"
+        :persistent="wndNewReq.persistent"
+        :full-width="wndNewReq.fullSize"
+        :full-height="wndNewReq.fullSize"
+        @hide="resetDialogCreate"
+      >
+        <FromOrderCreate
+          :reqtypes="reqTypes"
+          :inaCds="inaCds"
+          :storesdb="storesdb"
+          @cancel="restockCancel"
+          @scale="restockScaleForm"
+          @creating="restockCreating"
+          @created="restockCreated"
+          @previewLoading="restockPreviewLoading"
+          @previewLoaded="restockPreviewLoaded"
+        />
       </q-dialog>
-
-      <!-- <q-dialog persisten no-esc-dismiss no-backdrop-dismiss v-model="wndMinMax.state">
-        <div class="bg-white">
-          <div class="row q-pa-md items-center justify-between">
-            <span>Productos agotados o por agotarse</span>
-            <q-btn dense flat unelevated color="primary" icon="close" v-close-popup />
-          </div>
-          <q-separator />
-          <HealthStockViewer :stores="storesdb" @startorder="setOrderAuto"/>
-        </div>
-      </q-dialog> -->
     </div>
   </q-page>
 </template>
@@ -98,7 +58,7 @@
 <script setup>
   import { ref, onBeforeMount, computed } from 'vue';
   import { useRoute, useRouter } from 'vue-router';
-  import { useQuasar } from 'quasar';
+  import { ClosePopup, useQuasar } from 'quasar';
   import { useAccountStore } from 'stores/Account';
   import RestockApi from 'src/API/RestockApi';
   // import HealthStockViewer from 'src/components/Restock/HealthStockViewer.vue';
@@ -125,21 +85,35 @@
   const states = ref([]);
   const ordersdb = ref([]);
   const storesdb = ref([]);
-  const wndNewReq = ref({ state:false, persistent:false, fullWidth:false, fullHeight:false });
+  const wndNewReq = ref({ state:false, persistent:false, fullSize:false, fullWidth:false, fullHeight:false });
   const view = ref(views[0]);
   const rangeDates = ref({ from: null, to: null });
   const reqTypes = ref([]);
 
   const dispDateInit = computed(() => lapse.value.init.format("YYYY/MM/DD"));
   const dispDateEnd = computed(() =>  lapse.value.end.format("YYYY/MM/DD"));
-  const reqsbyme = computed(() => ordersdb.value.length ? ordersdb.value.filter( o => o._store_from==o._store_to) : []);
-  const reqstome = computed(() => ordersdb.value.length ? ordersdb.value.filter( o => o._store_from!=o._store_to) : []);
+  const ordersView = computed(() => ordersdb.value);
   const easyDate = computed(() => { return date => dayjs(date).format("YYYY/MM/DD HH:mm"); });
   const inaCds = computed(() => piniaAccount.joinedStore._type == 1 );
 
-  onBeforeMount(() => {
-    init();
+  const tblRestock = ref({
+    cols:[
+      { name:"oid", label:"ID", field:"id" },
+      { name:"consday", label:"Cons. dia", field:"num_ticket" },
+      { name:"conssucday", label:"Cons. Suc", field:"num_ticket_store" },
+      { name:"conssucday", label:"Tipo", field:row=>row.type.name },
+      { name:"storereq", label:"Suc. Origen", field:row=>row.origin_wrh.store.alias },
+      { name:"wrhreq", label:"Alm. Origen", field:row=>row.origin_wrh.name },
+      { name:"storesrc", label:"Suc. Fuente", field:row=>row.source_wrh.store.alias },
+      { name:"wrhsrc", label:"Alm. Fuente", field:row=>row.source_wrh.name },
+      { name:"state", label:"Estado", field:row=>row.state.name },
+    ],
+    paginate:{
+      rowsPerPage:10
+    }
   });
+
+  onBeforeMount( async () => { await init(); });
 
   const init = async () => {
     $q.loading.show({message:"Cargando vista"});
@@ -157,36 +131,9 @@
     $q.loading.hide();
   }
 
-  const setOrderAuto = (data) => {
-    console.log(data);
-    console.log("Iniciando pedido automatico");
-    neworder.value = data;
-
-    create();
-  }
-
-  const create = async () => {
-    $q.loading.show({message:"Creando, porfavor espera"});
-
-    let data = { origin:neworder.value.to.id, type:neworder.value.type };
-    const resp = await RestockApi.create(data);
-    // ordersdb.value.push(resp.order);
-    $router.push(`/store/${piniaAccount.join}/alma cenes/resurtido/${resp.order.id}`)
-    $q.loading.hide();
-  }
-
-  const restockCreated = async () => {
-    console.log("Componente FormOrderCreate creo un pedido");
-  }
-
-  const restockResizeForm = size => {
-    console.log(size);
-    if(size == "full"){
-      wndNewReq.value.fullHeight = true;
-      wndNewReq.value.fullWidth = true;
-    }else{
-      wndNewReq.value.fullHeight = false;
-      wndNewReq.value.fullWidth = false;
+  const restockScaleForm = id => {
+    if(id == 1){
+      wndNewReq.value.fullSize = false;
     }
   }
 
@@ -194,4 +141,31 @@
     lapse.value.init = dayjs(Date.now()).startOf(v.id);
     init();
   };
+
+  const rowRestockClicked = (evt, row, idx) => $router.push(`resurtido/${row.id}`);
+
+  const restockCreating = () => wndNewReq.value.persistent = true;
+
+  const restockCreated = order => {
+    console.log(order);
+    let newOrderId = order.resp.id;
+    wndNewReq.value.persistent = false;
+    wndNewReq.value.state = false;
+
+    $router.push(`resurtido/${newOrderId}`);
+  };
+
+  const restockPreviewLoading = () => {
+    console.log("Cargando preview");
+    wndNewReq.value.persistent = true;
+  }
+
+  const restockPreviewLoaded = scale => {
+    console.log("Preview finalizo carga");
+    wndNewReq.value.persistent = false;
+    wndNewReq.value.fullSize = scale;
+  }
+
+  const restockCancel = () => wndNewReq.value.state = false;
+  const resetDialogCreate = () => wndNewReq.value.fullSize = false;
 </script>
