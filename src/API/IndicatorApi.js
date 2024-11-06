@@ -39,4 +39,8 @@ export default{
     let burl = `cluster/Indicators/deleteQuest`;
     return vizapi.post(burl,data).then( done => done.data ).catch( fail => { return {error:fail.error.response} });
   },
+  addResponse(data){
+    let burl = `resp/form/addResponse`
+    return vizapi.post(burl,data).then( done => done.data ).catch( fail => { return {error:fail.response} });
+  }
 }
