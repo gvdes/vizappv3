@@ -1,5 +1,9 @@
 <template>
   <q-page padding>
+
+
+    <q-btn icon="arrow_back" @click="$router.push(`/`)" flat title="regreso" />
+
     <q-card class="my-card" v-if="form">
       <q-card-section>
         <div class="text-h5 text-bold text-center">{{ form.name }}</div>
@@ -22,10 +26,6 @@
 
       </q-card-section>
     </q-card>
-    {{ form.question?.map(e => {
-      return { id: e.id, response: e._response, condresp: e.conresp }
-    }) }}
-
     <!-- {{form.question}} -->
   </q-page>
 </template>
@@ -47,7 +47,6 @@ const piniaAccount = useAccountStore();
 
 const form = ref([]);
 const colaborators = ref([])
-console.log(piniaAccount.account.id)
 const usersBranch = computed(() => colaborators.value.filter(e => e._store == piniaAccount.account._store && e._state == 2 && e.id != piniaAccount.account.id))
 
 const init = async () => {
@@ -65,49 +64,46 @@ const init = async () => {
 
 const onSubmit = async () => {
 
- const formData = new FormData();
+  const formData = new FormData();
+  console.log(form.value.question)
+  formData.append('_user', piniaAccount.account.id);
+  formData.append('_form', form.value.id);
 
- formData.append('_user',piniaAccount.account.id);
- formData.append('_form',form.value._form);
+  form.value.question.forEach((question, index) => { //inicio foreach de questions
 
- form.value.question.forEach((question, index) => {
-  // Agrega los datos de la pregunta
-  // console.log(question)
-  formData.append(`question[${index}][id]`, question.id);
-  if(question._type== 2){
-    console.log(question._response?.condition)
-    let condition = question._response?.condition ? null : question._response?.condition
-    if(condition){
-      console.log(condition)
-    }else{
+    formData.append(`question[${index}][id]`, question.id);
+    if (question._type == 2) {// pregunta tipo opciones
+      let condition = question.conresp ? question.conresp : null // se pregunta si tiene respuesta dee condiciones
+      if (condition) {// si hay pregunta de condiciones
+        formData.append(`question[${index}][_condition]`, question.conresp); // se agrega una llave llamada condition
+      }
+      formData.append(`question[${index}][_option]`, question._response?.id);// se agrega la opcion
+      formData.append(`question[${index}][text]`, question._response?.option);// se agrega el texto de la opion
 
+    } else if (question._type == 3) {// pregunta tipo evidencia
+
+    } else if (question._type == 4) {
+      formData.append(`question[${index}][text]`, JSON.stringify(question._response.map(e => e.id)));
+    } else {
+      formData.append(`question[${index}][text]`, question._response);
     }
-    formData.append(`question[${index}][_response]`, question._response);
-  }else{
-    formData.append(`question[${index}][_response]`, question._response);
+
+    if (question.evidence && question.evidence.length > 0) {
+      question.evidence.forEach((file, fileIndex) => {
+        formData.append(`question[${index}][evidence][${fileIndex}]`, file);
+      });
+    }
+
+  }); //termino foreach de questions
+
+
+  console.log(formData)
+  const resp = await indpi.addResponse(formData)
+  if (resp.error) {
+    alert(resp);
+  } else {
+    $q.notify({ message: 'El formulario fue enviado', type: 'positive', position: 'center' })
   }
-
-
-
-  // Si hay archivos de evidencia, los agregamos también
-  if (question.evidence && question.evidence.length > 0) {
-    question.evidence.forEach((file, fileIndex) => {
-      formData.append(`question[${index}][evidence][${fileIndex}]`, file);
-    });
-  }
-});
-
-
-
-//  let files =  form.value.question.filter((e, i) => e.evidence.length > 0 );
-//  files[0].evidence.forEach(i => {
-//   formData.append('files[]',i);
-//  })
-//  formData.append('id',101);
-
-  // console.log(formData)
-  // const resp = await indpi.addResponse(formData)
-  // console.log(resp)
 
 }
 

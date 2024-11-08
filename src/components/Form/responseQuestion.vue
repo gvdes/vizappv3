@@ -1,54 +1,42 @@
 <template>
-    <q-card class="my-card" style="width: 50%;">
-      <q-card-section >
-        <div class="text-h6">{{ question.question }}</div>
-        <div dense class="text-h6" v-if="question._type == 1"> <q-input v-model="question._response" type="text"
-          :placeholder="question.question" filled  /></div>
-        <div dense class="text-h6" v-if="question._type == 2"><q-select v-model="question._response"
-            :options="question.options" label="Opciones" option-label="option"  filled /></div>
-        <div dense class="text-h6" v-if="question._type == 3">
-          <q-uploader
-                hide-upload-btn
-                color="primary"
-                bordered
-                style="width: 99%"
-                :label="question.question"
-                accept=".jpg, image/*"
-                ref="reference"
-                @rejected="onRejected"
-                @added="insertimage"
-                :url="uapi.addFile"
-                :headers="headers"
-                @failed="failed"
-                @uploading="subiendo"
-                field-name="file"
-                @uploaded="subido"
-                @removed="remove"
-                :form-fields="formFields"
-                multiple
-              />
-        </div>
-        <div dense class="text-h6" v-if="question._type == 4"> <q-select v-model="question._response"
-            :options="colaborators" label="Standard" filled :option-label="i => (`${i.name} ${i.surnames}`)" /> </div>
-          <q-separator spaced inset vertical dark />
-        <div v-if="question._response && question._type == 2 && JSON.parse(question._response?.condition).length > 0">
-          <q-card class="my-card">
-            <q-card-section v-for="(condition, index) in JSON.parse(question._response?.condition)">
-            <div  >{{ condition.question }}</div>
-            <div dense class="text-h6" v-if="condition.type.id == 1"> <q-input v-model="question.conresp"
-                type="text" label="Label" /></div>
-            <div dense class="text-h6" v-if="condition.type.id == 2"><q-select v-model="question.conresp"
+  <q-card class="my-card" style="width: 50%;">
+    <q-card-section>
+      <div class="text-h6">{{ question.question }}</div>
+      <div dense class="text-h6" v-if="question._type == 1"> <q-input v-model="question._response" type="text"
+          :placeholder="question.question" filled /></div>
+      <div dense class="text-h6" v-if="question._type == 2"><q-select v-model="question._response"
+          :options="question.options" label="Opciones" option-label="option" filled /></div>
+      <div dense class="text-h6" v-if="question._type == 3">
+        <q-uploader hide-upload-btn color="primary" bordered style="width: 99%" :label="question.question"
+          accept=".jpg, image/*" ref="reference" @rejected="onRejected" @added="insertimage" :url="uapi.addFile"
+          :headers="headers" @failed="failed" @uploading="subiendo" field-name="file" @uploaded="subido"
+          @removed="remove" :form-fields="formFields" multiple />
+      </div>
+      <div dense class="text-h6" v-if="question._type == 4"> <q-select v-model="question._response"
+          :options="colaborators" multiple use-chips use-input :label="question.question" filled
+          :option-label="i => (`${i.name} ${i.surnames}`)" /> </div>
+      <q-separator spaced inset vertical dark />
+      <div v-if="question._response && question._type == 2 && JSON.parse(question._response?.condition).length > 0">
+        <q-card class="my-card">
+          <!-- <q-card-section v-for="(condition, index) in JSON.parse(question._response?.condition)"> -->
+          <q-card-section v-for="(condition, index) in conditions">
+
+            <div>{{ condition.question }}</div>
+            <div dense class="text-h6" v-if="condition.type.id == 1"> <q-input v-model="condition.response" type="text"
+                :label="condition.question" filled /></div>
+            <div dense class="text-h6" v-if="condition.type.id == 2"><q-select v-model="condition.response"
                 :options="condition.options" label="Opciones" option-label="option" filled /></div>
-            <div dense class="text-h6" v-if="condition.type.id == 3"> <q-uploader  url="http://localhost:4444/upload"
+            <div dense class="text-h6" v-if="condition.type.id == 3"> <q-uploader url="http://localhost:4444/upload"
                 color="teal" flat bordered style="width: 100%" /> </div>
-            <div dense class="text-h6" v-if="condition.type.id == 4"> <q-select v-model="question.conresp"
-                :options="colaborators" multiple use-chips use-input :label="condition.question" filled :option-label="i => (`${i.name} ${i.surnames}`)"  /> </div>
+            <div dense class="text-h6" v-if="condition.type.id == 4"> <q-select v-model="condition.response"
+                :options="colaborators" multiple use-chips use-input :label="condition.question" filled
+                :option-label="i => (`${i.name} ${i.surnames}`)" /> </div>
           </q-card-section>
-          </q-card>
-          <q-separator spaced inset vertical dark />
-        </div>
-      </q-card-section>
-    </q-card>
+        </q-card>
+        <q-separator spaced inset vertical dark />
+      </div>
+    </q-card-section>
+  </q-card>
 </template>
 
 <script setup>
@@ -70,18 +58,21 @@ const props = defineProps({
 })
 
 
+// const conditionResponse = ref([])
 
+const conditions = ref([]);
 const reference = ref(null)
-const headers = ref([{name:'Authorization', value:`Bearer ${piniaAccount.token}`} ])
-const formFields = ref([{name:'idms', value:null}])
+const headers = ref([{ name: 'Authorization', value: `Bearer ${piniaAccount.token}` }])
+const formFields = ref([{ name: 'idms', value: null }])
+
 
 const onRejected = () => {
-  $q.notify({message:'No se acepta este archivo', type:'negative',position:'center'})
+  $q.notify({ message: 'No se acepta este archivo', type: 'negative', position: 'center' })
 };
 
 const insertimage = (files) => {
   console.log(files);
-  props.question._response = files[0].name
+  // props.question._response = files[0].name
   props.question.evidence = files;
 }
 
@@ -92,18 +83,52 @@ const remove = () => {
 
 
 const failed = (files) => {
-  $q.notify({message:'No se logro subir la evidencia',type:'negative',position:'center'})
+  $q.notify({ message: 'No se logro subir la evidencia', type: 'negative', position: 'center' })
 }
 
 const subiendo = (files) => {
-  $q.loading.show({message:'Subiendo Archivo'})
+  $q.loading.show({ message: 'Subiendo Archivo' })
 }
 const subido = async (files) => {
   $q.loading.hide();
-  $q.notify({message:'Evidencia Enviada',type:'positive',position:'center'})
+  $q.notify({ message: 'Evidencia Enviada', type: 'positive', position: 'center' })
   reference.value.reset();
 
 }
+
+onMounted(() => {
+  if (props.question._type == 2) {
+    let condition = props.question.options.filter(e => JSON.parse(e.condition).length > 0)
+    if (condition.length > 0) {
+      conditions.value = JSON.parse(condition[0].condition)
+    }
+
+  }
+})
+
+watch(() => conditions.value,
+  (newCondition) => {
+
+    if (newCondition) {
+      // console.log(newCondition)
+      props.question.conresp = JSON.stringify(newCondition.filter(e => e.response ? e : null).map(e => {
+        let response = null
+        if (e.type.id == 4) {
+          response = e.response.map(i =>i.id);
+        } else if (e.type.id == 3) {
+          response = e.response = null
+        } else if (e.type.id == 2) {
+          response = e.response.option
+        } else {
+          response = e.response
+        }
+        return { question: e.question, response: response}
+      }))
+    }
+  },
+  { deep: true } // Esto observa los cambios dentro del array condition
+)
+
 
 
 

@@ -19,8 +19,22 @@
               <div class="text-subtitle text-overline text-center">{{ `Tipo ${form.type.name} , Contesta
                 ${form.responsible.name}` }}</div>
             </q-card-section>
-          </q-card>
+            <q-card-actions>
 
+              <q-space />
+
+              <q-btn color="grey" round flat dense :icon="expanded ? 'keyboard_arrow_up' : 'settings'"
+                @click="expanded = !expanded" />
+            </q-card-actions>
+            <q-slide-transition>
+              <div v-show="expanded">
+                <q-separator />
+                <q-card-section class="text-subtitle2">
+                  <q-toggle v-model="form._qualified" color="primary" :trueValue="1" :falseValue="0" left-Label label="El formulario sera calificado ?"/>
+                </q-card-section>
+              </div>
+            </q-slide-transition>
+          </q-card>
         </div>
 
         <q-separator spaced inset vertical dark />
@@ -38,7 +52,7 @@
             <div v-if="question._edit == 1">
               <div class="row">
                 <div class="col">
-                  <Preguntas :question="question" :typeQuestion="typeQuestion" :isCondit="false" @delete="deleteQuest">
+                  <Preguntas :question="question" :typeQuestion="typeQuestion" :isCondit="false" @delete="deleteQuest" :qualified="form._qualified">
                   </Preguntas>
                 </div>
                 <q-separator spaced inset vertical dark />
@@ -58,8 +72,8 @@
       </div>
       <q-separator spaced inset vertical dark />
       <div>
-        <div v-if="form?.question.length == 0"> <q-btn push color="white" icon="add" dense rounded class="text-black" title="agregar pregunta"
-            @click="newQue" /></div>
+        <div v-if="form?.question.length == 0"> <q-btn push color="white" icon="add" dense rounded class="text-black"
+            title="agregar pregunta" @click="newQue" /></div>
         <q-separator spaced inset vertical dark />
       </div>
 
@@ -87,7 +101,7 @@ const form = ref(null);
 
 const questions = ref([])
 const typeQuestion = ref([])
-
+const expanded = ref(false)
 const addQuestion = ref({
   question: 'Pregunta',
   type: { id: 1, name: 'Texto' },
@@ -97,7 +111,7 @@ const addQuestion = ref({
 })
 
 
-const newQue = async () => {4
+const newQue = async () =>{
   initEdit();
   $q.loading.show({ message: 'Agregando Pregunta' })
   addQuestion.value._form = $route.params.fid

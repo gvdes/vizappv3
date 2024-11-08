@@ -41,11 +41,12 @@
     <q-card-actions align="right">
       <q-btn color="grey" round flat dense :icon="expanded ? 'keyboard_arrow_up' : 'keyboard_arrow_down'"
         @click="expanded = !expanded"
-        v-if=" question._type == 2 && question.options ? question.options.filter(e => JSON.parse(e.condition).length > 0).length > 0 : null || expanded == true && !isCondit" />
+        v-if="question._type == 2 && question.options ? question.options.filter(e => JSON.parse(e.condition).length > 0).length > 0 : null || expanded == true && !isCondit" />
       <q-space />
       <q-btn flat icon="add_circle" title="Agregar Condicion"
         v-if="question.type?.id == 2 && !expanded && question.options ? question.options.filter(e => JSON.parse(e.condition).length > 0).length <= 0 : null && !isCondit"
         @click="expanded = !expanded" />
+      <q-input v-model="question._points" type="number" label="Puntos" v-if="qualified == 1" filled dense />
       <q-btn flat icon="delete" title="eliminar"
         @click="isCondit ? deleteCondition(question) : deleteQuestion(question)" />
       <q-toggle v-model="question._required" color="primay" label="Obligatorio" left-label :true-value="1"
@@ -102,7 +103,8 @@ const $router = useRouter();
 const props = defineProps({
   question: { type: Object, default: {} },
   typeQuestion: { type: Array, default: [] },
-  isCondit: { type: Boolean, default: true }
+  isCondit: { type: Boolean, default: true },
+  qualified: { type: Number, default: 1 },
 })
 console.log(props.question)
 
