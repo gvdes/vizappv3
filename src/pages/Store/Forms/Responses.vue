@@ -1,7 +1,5 @@
 <template>
   <q-page padding>
-
-
     <q-btn icon="arrow_back" @click="$router.push(`/`)" flat title="regreso" />
 
     <q-card class="my-card" v-if="form">
@@ -19,14 +17,14 @@
 
           </div>
           <div class="flex justify-center">
-            <q-btn label="Enviar" type="submit" color="positive" flat />
+            <q-btn label="Enviar" type="submit" color="positive" flat
+              :disable="validFormQuestion?.length > 0 || validFormCondition?.length > 0" />
             <q-btn label="Cancelar" type="reset" color="negative" flat class="q-ml-sm" />
           </div>
         </q-form>
 
       </q-card-section>
     </q-card>
-    <!-- {{form.question}} -->
   </q-page>
 </template>
 
@@ -49,11 +47,49 @@ const form = ref([]);
 const colaborators = ref([])
 const usersBranch = computed(() => colaborators.value.filter(e => e._store == piniaAccount.account._store && e._state == 2 && e.id != piniaAccount.account.id))
 
+
+const validFormQuestion = computed(() => form.value?.question?.filter(e => e._required == 1 && e._response == null));
+
+const validFormCondition = computed(() => {
+  if (!form.value?.question) return [];
+
+  return form.value.question
+    .map(e => {
+      if (e._response) {
+        const condition = JSON.parse(e._response?.condition || "[]");
+        if (condition.length > 0) {
+          return {
+            condition: condition,
+            response: JSON.parse(e.conresp || "[]")
+          };
+        }
+      }
+      return null; // Evita valores nulos en caso de no cumplir la condición
+    })
+    .filter(e => e !== null) // Filtra elementos nulos
+    .flatMap(entry => {
+      const requiredQuestions = entry.condition
+        .filter(item => item._required === 1)
+        .map(item => item.question);
+
+      const respondedQuestions = entry.response.map(r => r.question);
+
+      return requiredQuestions.filter(
+        question => !respondedQuestions.includes(question)
+      );
+    });
+});
+
+
 const init = async () => {
   console.log($route.params.fid)
-  const resp = await indpi.getFormResp($route.params.fid)
+  let sid =  piniaAccount.join
+
+  const resp = await indpi.getFormResp($route.params.fid,sid)
   if (resp.error) {
-    console.log(resp)
+    console.log(resp.error)
+    $q.notify({message:resp.error.data, type:'negative', position:'center'})
+    $router.push(`/`)
   } else {
     console.log(resp)
     form.value = resp.formulario;
@@ -68,7 +104,7 @@ const onSubmit = async () => {
   console.log(form.value.question)
   formData.append('_user', piniaAccount.account.id);
   formData.append('_form', form.value.id);
-
+  formData.append('_store', piniaAccount.join);
   form.value.question.forEach((question, index) => { //inicio foreach de questions
 
     formData.append(`question[${index}][id]`, question.id);
@@ -77,15 +113,25 @@ const onSubmit = async () => {
       if (condition) {// si hay pregunta de condiciones
         formData.append(`question[${index}][_condition]`, question.conresp); // se agrega una llave llamada condition
       }
-      formData.append(`question[${index}][_option]`, question._response?.id);// se agrega la opcion
-      formData.append(`question[${index}][text]`, question._response?.option);// se agrega el texto de la opion
-
+      if (question._response) {
+        formData.append(`question[${index}][_option]`, question._response?.id);// se agrega la opcion
+        formData.append(`question[${index}][text]`, question._response?.option);// se agrega el texto de la opion
+      }else{
+        formData.append(`question[${index}][text]`, '');// se agrega el texto de la opion
+      }
     } else if (question._type == 3) {// pregunta tipo evidencia
 
     } else if (question._type == 4) {
-      formData.append(`question[${index}][text]`, JSON.stringify(question._response.map(e => e.id)));
+      console.log(question._response)
+      formData.append(`question[${index}][text]`, question._response != null ? JSON.stringify(question._response.map(e => {
+        if (e.col) {
+          return { col: e.col.id, qualified: e.qualified?.map(e => e.option).join(", ") }
+        } else {
+          return e.id
+        }
+      })) : '');
     } else {
-      formData.append(`question[${index}][text]`, question._response);
+      formData.append(`question[${index}][text]`, question._response ? question._response : '' );
     }
 
     if (question.evidence && question.evidence.length > 0) {
@@ -98,17 +144,19 @@ const onSubmit = async () => {
 
 
   console.log(formData)
-  const resp = await indpi.addResponse(formData)
+  let sid =  piniaAccount.join
+  const resp = await indpi.addResponse(formData,sid)
   if (resp.error) {
     alert(resp);
   } else {
     $q.notify({ message: 'El formulario fue enviado', type: 'positive', position: 'center' })
+    $router.push(`/`)
   }
 
 }
 
 const onReset = () => {
-
+  $router.push(`/`)
 }
 
 init();

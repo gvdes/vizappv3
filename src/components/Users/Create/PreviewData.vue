@@ -2,8 +2,9 @@
   <q-card class="my-card">
     <q-card-section class="text-center bg-primary text-white text-weight-medium">
       <div>
-        <q-avatar size="150px">
-          <q-img :src="addPersonImage" />
+        <!-- {{ personaldata.avatar.__img.src }} -->
+        <q-avatar size="200px">
+          <q-img :src="personaldata.avatar ? personaldata.avatar.url : addPersonImage" />
         </q-avatar>
       </div>
       <div class="text-h4 text-center">{{ personaldata.name + ' ' + personaldata.surnames }}</div>
@@ -68,7 +69,8 @@
       </div>
     </div>
 
-    <q-card-section>
+
+    <!-- <q-card-section>
       <div class="text-h4 text-center text-white bg-primary"> Documentacion</div>
     </q-card-section>
     <div class="row">
@@ -95,10 +97,9 @@
         </div>
       </div>
 
-    </div>
+    </div> -->
   </q-card>
-
-
+  <q-separator spaced inset vertical dark />
   <div>
     <q-btn unelevated rounded class="full-width" label="Enviar" type="submit" color="primary" :loading="loading" />
   </div>

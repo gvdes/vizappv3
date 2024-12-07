@@ -112,7 +112,7 @@ const wndArea = ref({
 const addPuesto = ref({
   name: '',
   description: '',
-  type_rol: { val: null, opts: [{ id: 1, name: 'Administrativo' }, { id: 2, name: 'Operativo' },] },
+  type_rol: { val: null, opts: [{ id: 1, name: 'Administrativo' }, { id: 2, name: 'Operativo' }, {id: 0, name:'Auditoria'}] },
   hierarchy: { valR: null, valP: null, val: null }
 })
 const add = ref(false)
@@ -161,7 +161,7 @@ const reset = () => {
   addPuesto.value = {
     name: '',
     description: '',
-    type_rol: { val: null, opts: [{ id: 1, name: 'Administrativo' }, { id: 2, name: 'Operativo' },] },
+    type_rol: { val: null, opts: [{ id: 1, name: 'Administrativo' }, { id: 2, name: 'Operativo' }, {id:0, name:'Auditoria'}] },
     hierarchy: { valR: null, valP: null, val: null }
   }
   add.value = false

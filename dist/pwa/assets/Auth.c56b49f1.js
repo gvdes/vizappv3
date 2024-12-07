@@ -1,1 +1,0 @@
-import{vizapi as a}from"./axios.07048d0b.js";var s={trySignin(r){return a.post("signin",r).then(t=>t.data).catch(t=>t)},setPass(r){return a.post("kraken/setpass",r).then(t=>t.data).catch(t=>({error:t}))}};export{s as A};

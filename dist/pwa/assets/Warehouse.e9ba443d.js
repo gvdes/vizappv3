@@ -1,1 +1,0 @@
-import{d as t}from"./index.e42abd2a.js";const s=t("warehouse",{state:()=>({warehouse:null,location:null,sections:null}),getters:{doubleCount(e){return e.counter*2}},actions:{setWarehouse(e){this.warehouse=e},setLocation(e){this.location=e},setSections(e){this.sections=e}}});export{s as u};

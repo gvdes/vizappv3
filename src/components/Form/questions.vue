@@ -8,7 +8,7 @@
       <div class="row">
         <div class="col"><q-input v-model="question.question" type="text" filled placeholder="Pregunta" /></div>
         <q-separator spaced inset vertical dark />
-        <div class="col"><q-select v-model="question.type" :options="typeQuestion" option-label="name" filled /></div>
+        <div class="col"><q-select v-model="question.type" :options="typeQuestion" option-label="name" :option-disable="(item) => isCondit ? item.id== 3  : null" filled /></div>
       </div>
     </q-card-section>
     <q-card-section v-if="question.type?.id == 1">
@@ -21,13 +21,14 @@
           <template v-slot:append>
             <q-btn color="primary" icon="close" @click="(index) => { question.options.splice(index, 1) }" flat round
               runded title="eliminar" />
+              <q-checkbox v-if="qualified == 1"  v-model="option._correct" :true-value="1" :false-value="0" />
           </template>
         </q-input>
       </div>
       <div class="q-mt-lg">
         <q-form
-          @submit="() => { question.options?.push({ option: noption.val, condition: noption.condition }); noption.val = ''; noption.condition = JSON.stringify([]); }"
-          @reset="() => { noption.val = ''; noption.condition = [] }" class="q-gutter-md">
+          @submit="() => { question.options?.push({ option: noption.val, condition: noption.condition, _correct: noption._correct }); noption.val = ''; noption.condition = JSON.stringify([]); noption._correct = 0 }"
+          @reset="() => { noption.val = ''; noption.condition = [];  noption._correct = 0 }" class="q-gutter-md">
           <q-input v-model="noption.val" type="text" dense outlined placeholder="Opcion" />
         </q-form>
       </div>
@@ -37,6 +38,32 @@
     </q-card-section>
     <q-card-section v-if="question.type?.id == 4">
       <q-btn icon="person_add" label="Colaboradores" disable color="grey-1" text-color="grey-14" />
+      <q-separator spaced inset vertical dark />
+      <q-toggle v-model="question._breach" color="primay" label="Agregar Calificaciones" left-label :true-value="1"
+        :false-value="0" />
+      <q-slide-transition>
+        <div v-show="question._breach == 1">
+          <q-card-section>
+            <div v-for="(option, index) in question.options" :key="index" v-if="question.options?.length > 0">
+              <q-separator spaced inset vertical dark />
+              <q-input v-model="question.options[index].option" type="text" dense outlined>
+                <template v-slot:append>
+                  <q-btn color="primary" icon="close" @click="(index) => { question.options.splice(index, 1) }" flat
+                    round runded title="eliminar" />
+                </template>
+              </q-input>
+            </div>
+            <div class="q-mt-lg">
+              <q-form
+                @submit="() => { question.options?.push({ option: noption.val, condition: noption.condition }); noption.val = ''; noption.condition = JSON.stringify([]); }"
+                @reset="() => { noption.val = ''; noption.condition = [] }" class="q-gutter-md">
+                <q-input v-model="noption.val" type="text" dense outlined placeholder="Opcion" />
+              </q-form>
+            </div>
+          </q-card-section>
+        </div>
+      </q-slide-transition>
+
     </q-card-section>
     <q-card-actions align="right">
       <q-btn color="grey" round flat dense :icon="expanded ? 'keyboard_arrow_up' : 'keyboard_arrow_down'"
@@ -44,9 +71,9 @@
         v-if="question._type == 2 && question.options ? question.options.filter(e => JSON.parse(e.condition).length > 0).length > 0 : null || expanded == true && !isCondit" />
       <q-space />
       <q-btn flat icon="add_circle" title="Agregar Condicion"
-        v-if="question.type?.id == 2 && !expanded && question.options ? question.options.filter(e => JSON.parse(e.condition).length > 0).length <= 0 : null && !isCondit"
+        v-if="(question.type?.id == 2 && !expanded && question.options ? question.options.filter(e => JSON.parse(e.condition).length > 0).length <= 0 : null) && !isCondit"
         @click="expanded = !expanded" />
-      <q-input v-model="question._points" type="number" label="Puntos" v-if="qualified == 1" filled dense />
+      <q-input v-model="question._points" type="number" label="Puntos" v-if="qualified == 1 && question.type?.id == 2"  filled dense />
       <q-btn flat icon="delete" title="eliminar"
         @click="isCondit ? deleteCondition(question) : deleteQuestion(question)" />
       <q-toggle v-model="question._required" color="primay" label="Obligatorio" left-label :true-value="1"
@@ -113,7 +140,7 @@ console.log(props.question)
 const emit = defineEmits(['delete', 'deleteCondition']);
 const condition = ref([]);
 
-const noption = ref({ val: '', condition: JSON.stringify([]) })
+const noption = ref({ val: '', condition: JSON.stringify([]), _correct:0 })
 const expanded = ref(false)
 
 
@@ -123,6 +150,7 @@ const addCondition = ref({
   question: 'Condicion',
   type: { id: 1, name: 'Texto' },
   _required: 0,
+  _breach: 0,
   options: []
 })
 

@@ -21,17 +21,16 @@
         toggle-color="primary" color="white" text-color="primary" :options="personaldata.gender.opts" />
       <q-input rounded outlined v-model="personaldata.nick" type="text" label="Nick(alias)" class="q-my-md"
         error-message="El nick ya esta en uso" :error="nickvalid" />
-      <!-- {{ personaldata.avatar }}
+      <!-- {{ personaldata.avatar }} -->
         <q-uploader
-        :multiple="false"
+        hide-upload-btn
         label="Fotografia"
-        ref="avatar"
         color="primary"
         accept="image/*"
-        :factory="envioarch"
         @added="insertImage"
+        @removed="() => personaldata.avatar = null"
         class="full-width"
-      /> -->
+      />
 
     </q-card-section>
   </q-card>
@@ -47,5 +46,16 @@ const props = defineProps({
   celvalid: { type: Boolean },
   nickvalid: { type: Boolean },
 })
+
+const insertImage = (file) => {
+  // console.log(file)
+  // props.personaldata.avatar = file[0];
+  if (file.length > 0) {
+    props.personaldata.avatar = {
+      file: file[0],
+      url: URL.createObjectURL(file[0])
+    };
+  }
+}
 
 </script>

@@ -191,7 +191,7 @@ const users = computed(() => userList.value.filter(e => (e.name + e.surnames).to
 const userArchived = computed(() => userListArchived.value.filter(e => (e.name + e.surnames).toLowerCase().includes(search.value.toLowerCase())));
 const isMobile = computed(() => $q.platform.is.mobile);
 const permissions = computed(() => piniaAccount.account.modules.filter((e) => e.module.root == '4f36'))
-
+console.log(piniaAccount.account.modules)
 
 const posopts = () => {
   filter.value.position.opts = filter.value.position.optsdb.filter((e) => e._area == filter.value.area.val.id)

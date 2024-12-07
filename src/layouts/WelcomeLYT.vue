@@ -29,12 +29,12 @@
                   <q-item-section side>
                     <q-icon :color="valPass?'positive':'negative'" :name="valPass?'done':'close'" />
                   </q-item-section>
-                  <q-item-section>Al menos 1 numero</q-item-section>
+                  <q-item-section>Alfanumerico</q-item-section>
                 </q-item>
 
                 <q-item>
                   <q-item-section side>
-                    <q-icon :color="valSamepass?'positive':'negative'" :name="valSamepass?'done':'close'" />
+                    <q-icon :color="samepass?'positive':'negative'" :name="samepass?'done':'close'" />
                   </q-item-section>
                   <q-item-section>Los campos coinciden</q-item-section>
                 </q-item>
@@ -50,7 +50,7 @@
             >
               <q-card-section>
                 <div class="text-center q-pb-md"><q-btn color="negative" flat rounded :icon="inputs.icon" @click="toggleInputs" :disable="btnNext.l" /></div>
-                <q-input v-model.trim="pass" :type="inputs.type" label="Nueva contraseña" ref="iptpass" input-class="text-center" autofocus :readonly="btnNext.l"/>
+                <q-input v-model.trim="pass" :type="inputs.type" label="Nueva contraseña" ref="iptpass" input-class="text-center" autofocus :readonly="btnNext.l" :error="validdo" error-message="La contrasena tiene numeros consecutivos ejemplo de contrasena a1b2c3"/>
                 <q-input v-model.trim="passconfirm" :type="inputs.type" label="Confirmar contraseña" input-class="text-center" ref="iptpassconfirm" :readonly="btnNext.l"/>
               </q-card-section>
 
@@ -92,10 +92,14 @@
 
   const inputs = ref({type:'password',icon:"fas fa-eye"});
   const validpass = new RegExp(/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{5,}$/);
+  // const validpass = new RegExp(/^(?=.*[A-Za-z])(?=.*\d)(?=.*(?:012|123|234|345|456|567|678|789))[A-Za-z\d]{5,}$/);
+
 
   const valLength = computed(() => (pass.value&&pass.value.length>4) );
-  const valPass = computed(() => valLength.value&&validpass.test(pass.value) );
-  const valSamepass = computed(() => valLength.value&&(pass.value==passconfirm.value) );
+  const validdo = computed(() => hasConsecutiveNumbers(pass.value));
+  const valPass = computed(() => valLength.value && validpass.test(pass.value));
+  const samepass = computed(() => pass.value==passconfirm.value)
+  const valSamepass = computed(() => valLength.value&&(pass.value==passconfirm.value) && valPass.value && validdo );
 
   const toggleInputs = () => {
 
@@ -135,5 +139,19 @@
       setTimeout(() => $router.replace(`/store/${piniaAccount.join}/`), 1500);
     }
   };
+
+  const hasConsecutiveNumbers = (password)  => {
+    for (let i = 0; i < password?.length - 2; i++) {
+        if (!isNaN(password[i]) && !isNaN(password[i + 1]) && !isNaN(password[i + 2])) {
+            const a = parseInt(password[i]);
+            const b = parseInt(password[i + 1]);
+            const c = parseInt(password[i + 2]);
+            if (b === a + 1 && c === b + 1) {
+                return true;
+            }
+        }
+    }
+    return false;
+}
   console.log(piniaAccount.joinedStore)
 </script>

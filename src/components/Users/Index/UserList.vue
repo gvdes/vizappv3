@@ -33,11 +33,11 @@
                 </div>
                 <q-separator spaced inset vertical dark />
                 <div class="flex justify-center" v-if="use.avatar">
-                  <q-avatar size="170px"> <q-img :src="`src/assets/avatares/${use.avatar}`" /> </q-avatar>
+                  <q-avatar size="170px"> <q-img :src="`${vizmedia}/profiles/${use.id}/${use.avatar}`" /> </q-avatar>
                 </div>
-                <div class="flex justify-center" v-else>
+                <!-- <div class="flex justify-center" v-else>
                   <q-avatar size="170px"> <q-img :src="`src/assets/avatares/pokesnorlax.png`" /> </q-avatar>
-                </div>
+                </div> -->
               </q-card-section>
             </q-card>
           </q-item-section>
@@ -54,6 +54,7 @@
 <script setup>
 const props = defineProps({ users: { type: Array }, areas: { type: Array }, roles: { type: Array }, branches: { type: Array } })
 const emit = defineEmits(['init'])
+import { vizmedia } from 'boot/axios'
 import viewUser from 'src/components/Users/Index/UserView.vue';
 import { ref, computed } from 'vue';
 const useEdit = ref({

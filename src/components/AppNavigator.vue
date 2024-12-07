@@ -10,7 +10,7 @@
           <q-card-section class="row items-center q-pr-none">
             <q-btn flat round @click="$router.push('/profile')">
               <q-avatar size="50px">
-                <q-img :src="piniaAccount.avatar"/>
+                <q-img :src="`${vizmedia}/profiles/${piniaAccount.account.id}/${piniaAccount.account.avatar}`"/>
               </q-avatar>
             </q-btn>
           </q-card-section>
@@ -55,6 +55,7 @@
   import { useRouter } from 'vue-router';
   import { useQuasar, LocalStorage } from 'quasar';
   import { useAccountStore } from 'stores/Account';
+  import {vizmedia} from 'boot/axios'
   import treeModulesApp from 'src/components/TreeModulesApp.vue';
 
   const $q = useQuasar();

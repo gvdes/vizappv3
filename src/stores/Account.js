@@ -21,7 +21,7 @@ export const useAccountStore = defineStore('account', {
     },
     rol(){ return this.account.rol },
     joinedStore(){ return (this.account&&this.stores) ? this.stores.find( s => this.join == s.id ) : null; },
-    unjoinStores(){ return this.stores ? this.stores.filter( s => s.id!=this.join ) : [];},
+    unjoinStores(){ return this.stores ? this.stores: [];},
     submodules(){ return id => { return this.modauths.filter( m => m.module.root==id).map( m => m.module); } },
     aim(){ return moduleid => { return this.permissions ? this.permissions.find( a => a._module==moduleid ) : null } },// retorna el permiso correspondiente al modulo en busqueda
     avatar(){ return this.account.avatar ? `src/assets/avatares/${this.account.avatar}` : "src/assets/avatares/flat8.png"; },

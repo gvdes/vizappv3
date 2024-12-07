@@ -4,7 +4,8 @@
       <q-card class="my-card">
         <q-card-section>
           <div class="flex justify-center">
-            <q-avatar size="170px"> <q-img :src="`src/assets/avatares/${useEdit.body.avatar}`" /> </q-avatar>
+
+            <q-avatar size="170px"> <q-img :src="`${vizmedia}/profiles/${useEdit.body.id}/${useEdit.body.avatar}`" /> </q-avatar>
           </div>
         </q-card-section>
         <q-card-section>
@@ -55,7 +56,7 @@
                   toggle-color="primary" color="white" text-color="primary" :options="gender.opts" />
                 <q-input dense v-model="data.nick" type="text" label="Nick(alias)" error-message="El nick ya esta en uso"
                   :error="nickvalid" />
-                <q-btn outlined rounded color="primary full-width" icon="lock" label="Cambio de contrasena" />
+                <q-btn outlined rounded color="primary full-width" icon="lock" label="Cambio de contrasena" @click="changePass.state = !changePass.state" :disable="data._state == 1" />
                 <q-dialog v-model="date">
                   <q-date v-model="data.dob" minimal mask="YYYY-MM-DD" />
                 </q-dialog>
@@ -89,12 +90,13 @@
 
                           <q-input dense filled v-model="data.RC_id" type="text" label="Id Reloj Checador" :disable="true"
                             class="col" v-if="data.RC_id" />
-                          <q-btn outline color="primary" label="Id Reloj Checador" v-else />
+                          <q-btn outline color="primary" label="Id Reloj Checador" @click="checador = !checador" v-else />
                           <q-separator spaced inset vertical dark />
 
                           <q-input dense filled v-model="data.TPV_id" type="text" label="Id TPVSol" :disable="true"
                             class="col" v-if="data.TPV_id" />
                           <q-btn outline color="primary" label="Id TPVSol" v-else />
+
                         </div>
                       </q-tab-panel>
                       <q-tab-panel name="positions">
@@ -150,6 +152,39 @@
       </q-card-actions>
     </q-card>
   </q-dialog>
+
+  <q-dialog v-model="changePass.state" persistent>
+    <q-card>
+      <q-card-section class="row items-center">
+        <q-avatar icon="lock" color="primary" text-color="white" />
+        <span class="q-ml-sm">Deseas  resetear la contrasena ?</span>
+      </q-card-section>
+      <q-card-section>
+        Esta accion cambiara la contrasena actual a 12345 y se saldra de los dispositivos ya iniciados
+      </q-card-section>
+      <q-card-actions align="right">
+        <q-btn flat label="Cancelar" color="primary" v-close-popup />
+        <q-btn flat label="Resetear" color="primary" @click="resetPass" />
+      </q-card-actions>
+    </q-card>
+  </q-dialog>
+
+  <q-dialog v-model="checador" persistent>
+      <q-card style="min-width: 350px">
+        <q-card-section>
+          <div class="text-h6">Cual es el id?</div>
+        </q-card-section>
+
+        <q-card-section class="q-pt-none">
+          <q-input dense v-model="data.RC_id" autofocus @keyup.enter="prompt = false" />
+        </q-card-section>
+
+        <q-card-actions align="right" class="text-primary">
+          <q-btn flat label="Cancelar" v-close-popup />
+          <q-btn flat label="Ingresar" @click="insertRCid" />
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
 </template>
 
 <script setup>
@@ -157,6 +192,7 @@ import { ref, computed } from 'vue'
 import { useQuasar } from 'quasar';
 import uapi from 'src/API/UserApi';
 import { useAccountStore } from 'stores/Account';
+import { vizmedia } from 'boot/axios'
 const $q = useQuasar();
 const piniaAccount = useAccountStore();
 const props = defineProps({ useEdit: { type: Object } })
@@ -164,6 +200,7 @@ const emit = defineEmits(['recargar']);
 const tab = ref('personaldata')
 const tab2 = ref('general')
 const splitter = ref(25)
+const checador = ref(false)
 const data = ref(JSON.parse(JSON.stringify(props.useEdit.body)));
 const filter = ref({
   status: { val: null, opts: null },
@@ -182,6 +219,11 @@ const gender = ref({
     { value: 'I', label: "Indefinido" }
   ]
 })
+
+const changePass = ref({
+  state: false
+})
+
 
 const valifecha = computed(() => validafecha(data.value.dob))
 const filpos = computed(() => filter.value.position.optsdb.filter((e) => e._area == data.value.rol.area.id))
@@ -298,9 +340,12 @@ const changeapps = (v) => {
   })
 }
 const changefavoritwork = (v) => {
-  data.value.use_store.map((e) => e._state = 2)
+  console.log(v);
+  console.log(data.value.use_store);
+  data.value.use_store.map((e) => e._store == v.value ? e._state = 1 :  e._state = 2)
   filter.value.branches.val = []
   filter.value.branches.val.push(v.value)
+  console.log(data.value.use_store);
 }
 
 const init = async () => {
@@ -331,6 +376,7 @@ const editar = () => {
 
 const actualizacion = async () => {
   data.value.user = account.value.id
+  console.log(data.value);
   const notif = $q.notify({
     type:'ongoing',
     messagge:'Actualizando Usuario'
@@ -350,6 +396,38 @@ const actualizacion = async () => {
     confirm.value = false
     props.useEdit.state = false
     emit('recargar')
+  }
+}
+
+const resetPass = async () => {
+  $q.loading.show({ message: "Reseteando Contrasena de  Usuario..." });
+  console.log(props.useEdit)
+  const resp = await uapi.RessetPass(props.useEdit.body.id);
+  if (resp.error) {
+    console.log(resp);
+  } else {
+    console.log(resp)
+    $q.notify({message:resp, type:'positive', position:'center'})
+    changePass.value.state = !changePass.value.state
+    $q.loading.hide();
+  }
+}
+
+const insertRCid = async () => {
+  $q.loading.show({ message: "Insertando id de el checador..." });
+  let dat = {
+    id:props.useEdit.body.id,
+    RC_id:data.value.RC_id
+  };
+  console.log(props.useEdit)
+  const resp = await uapi.InsertRCid(dat);
+  if (resp.error) {
+    console.log(resp);
+  } else {
+    console.log(resp)
+    $q.notify({message:resp, type:'positive', position:'center'})
+    checador.value = !checador.value
+    $q.loading.hide();
   }
 }
 init();

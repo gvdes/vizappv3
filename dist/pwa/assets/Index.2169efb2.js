@@ -1,1 +1,0 @@
-import{Q as e}from"./QPage.c1291489.js";import{_ as t,o as a,e as o,w as r,R as s}from"./index.e42abd2a.js";const c={},n=s(" For Zent page ");function _(p,d,f,i,x,m){return a(),o(e,{padding:""},{default:r(()=>[n]),_:1})}var $=t(c,[["render",_]]);export{$ as default};

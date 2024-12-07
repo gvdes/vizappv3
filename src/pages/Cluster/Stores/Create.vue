@@ -22,10 +22,10 @@
               :error="validname" />
             <q-separator spaced inset vertical dark />
             <q-input dense v-model="data.alias" type="text" label="Alias" error-message="El alias ya esta en uso"
-              :error="validalias" mask="AAA" />
+              :error="validalias" mask="AAX" />
             <q-separator spaced inset vertical dark />
             <q-input v-model="data.access_file" type="text" label="Nombre Access"
-              error-message="El archivo access ya esta en uso" :error="validacces" mask="AAA####"/>
+              error-message="El archivo access ya esta en uso" :error="validacces" mask="AAX####"/>
             <q-separator spaced inset vertical dark />
             <div class="row">
               <q-input class="col" v-model="data.local_domain" type="text" label="Direccion IP"

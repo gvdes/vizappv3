@@ -3,7 +3,7 @@
     <q-card-section class=" bg-white text-primary">
       <div class="text-h4">
         <q-icon name="person" class="q-mr-xs" />
-        Datos Personales
+        Datos Laborales
       </div>
     </q-card-section>
     <q-card-section>
@@ -18,8 +18,8 @@
           <q-tab-panel name="Rol">
             <q-card class="my-card">
               <q-card-section>
-                <q-select v-model="roles.areas.val" :options="roles.areas.opts" label="Area" filled option-label="name" />
-                <q-separator spaced inset vertical dark />
+                <q-select v-model="roles.areas.val" :options="roles.areas.opts" label="Area" filled option-label="name"  @update:model-value="roles.puesto.val = null" />
+                <q-separator spaced inset vertical dark/>
                 <div v-if="roles.areas.val">
                   <q-select v-model="roles.puesto.val" :options="roles.areas.val.roles" label="Puesto" filled
                     class="q-my-md" option-label="name" />

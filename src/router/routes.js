@@ -175,7 +175,7 @@ const routes = [
         { path: '', name: 'rht', component: () => import('pages/Cluster/Indicator/Index.vue') },
         { path: 'forms', name: 'frm', component: () => import('pages/Cluster/Indicator/Forms.vue') },
         { path: 'forms/:fid', name: 'fid', component: () => import('pages/Cluster/Indicator/ViewForm.vue') },
-
+        { path: 'reports', name: 'rus', component: () => import('pages/Cluster/Indicator/Report.vue') },
       ]
     },
     ]

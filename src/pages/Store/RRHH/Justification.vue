@@ -7,68 +7,70 @@
         </q-card-section>
         <q-card-section>
           <q-form @submit="onSubmit" @reset="onReset" class="q-gutter-md">
-            <q-select
-              v-model="justification.user"
-              :options="users"
-              label="Colaborador"
-              option-label="complete_name"
-              filled
-            />
+            <q-select v-model="justification.user" :options="users" label="Colaborador" option-label="complete_name"
+              filled />
             <div class="row">
-              <q-input
-                v-model="justification.start_date"
-                type="date"
-                class="col"
-                filled
-                label="Fecha Inicio"
-                :stack-label=true
-                :error="validfech"
-                error-message="La fecha de inicio es mayor que la fecha de fin"
-              />
+              <q-input v-model="justification.start_date" type="date" class="col" filled label="Fecha Inicio"
+                :stack-label=true :error="validfech" error-message="La fecha de inicio es mayor que la fecha de fin" />
               <q-separator spaced inset vertical dark />
-              <q-input
-                v-model="justification.final_date"
-                type="date"
-                class="col"
-                filled
-                hint="Fecha Fin"
-                label="Fecha Inicio"
-                :stack-label=true
-                :error="validfech"
-                error-message="La fecha de inicio es mayor que la fecha de fin"
-              />
+              <q-input v-model="justification.final_date" type="date" class="col" filled hint="Fecha Fin"
+                label="Fecha Fin" :stack-label=true :error="validfech"
+                error-message="La fecha de inicio es mayor que la fecha de fin" />
             </div>
-            <q-input
-              v-model="justification.notes"
-              type="text"
-              label="Motivo(especificar)"
-              filled/>
+            <q-select v-model="justification._type" :options="types" label="Tipo de justificacion" filled
+              option-label="name" />
+            <q-input v-model="justification.notes" type="text" label="Motivo(especificar)" filled />
 
-              <q-uploader
-                hide-upload-btn
-                color="primary"
-                bordered
-                style="width: 99%"
-                label="Evidencia / Justificacion "
-                accept=".jpg, image/*"
-                ref="reference"
-                @rejected="onRejected"
-                @added="insertimage"
-                :max-files="1"
-                :url="rhpi.addFile"
-                :headers="headers"
-                @failed="failed"
-                @uploading="subiendo"
-                field-name="file"
-                @uploaded="subido"
-                @removed="remove"
-                :form-fields="formFields"
-              />
+            <q-card class="my-card">
+              <q-card-section class="text-left text-h6 text-bold">
+                Evidencia
+              </q-card-section>
+              <q-card-section>
+                <q-uploader hide-upload-btn color="white" text-color="grey" style="height: auto; width: 100%"
+                  label="Evidencia" accept="image/*" ref="reference" @added="insertimage" field-name="file" multiple
+                  flat @rejected="onRejected" max-files="3">
+
+                  <template v-slot:header="scope">
+                    <div class="row no-wrap items-center q-pa-sm q-gutter-xs text-center "
+                      style="border-radius: 8px; padding: 16px;" @click="scope.pickFiles">
+                      Haz clic para subir los archivos o arrastra y suelta los archivos aquí
+                      <q-uploader-add-trigger />
+                    </div>
+                  </template>
+
+                  <template v-slot:list="scope">
+
+                    <q-table :rows="scope.files" grid hide-bottom :pagination="{ rowsPerPage: 0 }">
+                      <template v-slot:item="props">
+                        <div style="position: relative; border: 1px solid #EEEEEE;
+                       border-radius: 10px;
+                       width: 100px;
+                       height: 100px;
+                       margin: 5px
+                       ">
+                          <div @mouseover="hoveredItem = props.row" @mouseleave="hoveredItem = null"
+                            :style="hoveredItem == props.row ? 'opacity: 0.7;' : null" style="margin:12px;">
+                            <q-avatar size="75px" square>
+                              <q-img :src="props.row.__img.src" style="height: 75px; width: 75px">
+                              </q-img>
+                            </q-avatar>
+                            <q-btn size="sm" icon="delete" color="white" class="absolute" text-color="black"
+                              style="top: 5px; left: 5px; z-index: 10; width: 10px; "
+                              v-if="hoveredItem == props.row ? true : false" @click="removeEvidence(scope, props)" />
+                          </div>
+                        </div>
+                      </template>
+                    </q-table>
+                  </template>
+                </q-uploader>
+              </q-card-section>
+            </q-card>
+
 
 
             <div>
-              <q-btn label="Enviar" type="submit" color="positive" flat :disable="!validform"  />
-              <q-btn label="Cancelar" type="reset" color="negative" flat class="q-ml-sm"/>
+              <q-btn label="Enviar" type="submit" color="positive" flat :disable="!validform" />
+              <q-btn label="Cancelar" type="reset" color="negative" flat class="q-ml-sm" />
             </div>
           </q-form>
         </q-card-section>
@@ -77,7 +79,7 @@
   </q-page>
 </template>
 
-<script setup >
+<script setup>
 import { ref, computed } from "vue";
 import { useRouter } from "vue-router";
 import { useQuasar } from "quasar";
@@ -90,15 +92,18 @@ const piniaAccount = useAccountStore();
 
 
 const user = ref([]);
+const types = ref([]);
+const hoveredItem = ref(null)
 const reference = ref(null)
-const headers = ref([{name:'Authorization', value:`Bearer ${piniaAccount.token}`} ])
-const formFields = ref([{name:'idms', value:null}])
+const headers = ref([{ name: 'Authorization', value: `Bearer ${piniaAccount.token}` }])
+const formFields = ref([{ name: 'idms', value: null }])
 const justification = ref({
   user: null,
   start_date: null,
   final_date: null,
+  _type: null,
   notes: null,
-  evidence:null,
+  evidence: [],
 });
 
 const users = computed(() =>
@@ -108,12 +113,13 @@ const users = computed(() =>
   })
 );
 
-const validform = computed(() => justification.value.user && justification.value.start_date && justification.value.final_date && justification.value.notes && justification.value.evidence && !validfech.value)
+const validform = computed(() => justification.value.user && justification.value.start_date && justification.value.final_date && justification.value._type && justification.value.notes && justification.value.evidence.length > 0 && !validfech.value)
 
 const validfech = computed(() => {
-  const start  = new Date(justification.value.start_date);
+  const start = new Date(justification.value.start_date);
   const final = new Date(justification.value.final_date)
-   return start > final})
+  return start > final
+})
 
 const init = async () => {
   const resp = await rhpi.form();
@@ -121,34 +127,43 @@ const init = async () => {
     console.log(resp);
   } else {
     console.log(resp);
-    user.value = resp;
+    user.value = resp.user;
+    types.value = resp.types
   }
 };
 
-const onSubmit = async() => {
-  $q.loading.show({message:'Enviando formulario'})
-  console.log(justification.value)
-  const resp = await rhpi.addForm(justification.value)
-  if(resp.error){
+const onSubmit = async () => {
+  $q.loading.show({ message: 'Enviando formulario' })
+
+  const formData = new FormData();
+  formData.append('user', justification.value.user.id);
+  formData.append('start_date', justification.value.start_date);
+  formData.append('final_date', justification.value.final_date);
+  formData.append('_type', justification.value._type.id);
+  formData.append('notes', justification.value.notes);
+  justification.value.evidence.forEach((file, index) => {
+    formData.append(`evidence[${index}]`, file);
+  });
+  console.log(formData);
+
+  const resp = await rhpi.addForm(formData)
+  if (resp.error) {
     console.log(resp)
-  }else{
+  } else {
     console.log(resp)
-    // reference.value.reset();
-    $q.notify({message:'Formulario Enviado',type:'positive',position:'center'})
-    formFields.value[0].value = resp.id
+    $q.notify({ message: 'Formulario Enviado', type: 'positive', position: 'center' })
     $q.loading.hide()
-    reference.value.upload();
 
     justification.value = {
-    user: null,
-    start_date: null,
-    final_date: null,
-    notes: null,
-    evidence:null,
+      user: null,
+      start_date: null,
+      final_date: null,
+      notes: null,
+      evidence: [],
     };
+    reference.value.reset();
 
   }
-  // reference.value.upload();
 };
 const onReset = () => {
   justification.value = {
@@ -156,37 +171,25 @@ const onReset = () => {
     start_date: null,
     final_date: null,
     notes: null,
-    evidence:null,
-    };
-    reference.value.reset();
+    evidence: [],
+  };
+
 };
 
 const onRejected = () => {
-  $q.notify({message:'No se acepta este archivo', type:'negative',position:'center'})
+  $q.notify({ message: 'No se acepta este archivo', type: 'negative', position: 'center' })
 };
 
-const insertimage = (a) => {
-  console.log(a[0].name);
-  justification.value.evidence = a[0].name;
+const insertimage = (file) => {
+  justification.value.evidence = file;
 }
-const remove = () => {
-  justification.value.evidence = null;
+const removeEvidence = (scope, rows) => {
+  scope.removeFile(rows.row);
+  let inx = justification.value.evidence.findIndex(e => e.__key == rows.row.__key);
+
+  if (inx >= 0) {
+    justification.value.evidence.splice(inx, 1);
+  }
 }
-
-
-const failed = (file) => {
-  $q.notify({message:'No se logro subir la evidencia',type:'negative',position:'center'})
-}
-
-const subiendo = (file) => {
-  $q.loading.show({message:'Subiendo Archivo'})
-}
-const subido = async (file) => {
-  $q.loading.hide();
-  $q.notify({message:'Evidencia Enviada',type:'positive',position:'center'})
-  reference.value.reset();
-
-}
-
 init();
 </script>

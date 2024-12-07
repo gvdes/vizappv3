@@ -1,1 +1,0 @@
-import{Q as e}from"./QPage.c1291489.js";import{_ as o,o as r,e as t,w as s,R as a}from"./index.e42abd2a.js";const c={},d=a(" Hello to roders of Orders ");function _(n,p,f,i,l,m){return r(),t(e,{padding:""},{default:s(()=>[d]),_:1})}var $=o(c,[["render",_]]);export{$ as default};

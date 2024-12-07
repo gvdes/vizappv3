@@ -30,7 +30,7 @@
               <div v-show="expanded">
                 <q-separator />
                 <q-card-section class="text-subtitle2">
-                  <q-toggle v-model="form._qualified" color="primary" :trueValue="1" :falseValue="0" left-Label label="El formulario sera calificado ?"/>
+                  <q-toggle v-model="form._qualified" color="primary" :trueValue="1" :falseValue="0" left-Label label="El formulario sera calificado ?" @update:modelValue="changeQualified"/>
                 </q-card-section>
               </div>
             </q-slide-transition>
@@ -45,7 +45,7 @@
               <q-item clickable v-ripple @click="edit(index)">
                 <q-item-section>{{ `${index + 1}.- ${question.question}` }}</q-item-section>
                 <q-item-section>{{ question.type.name }}</q-item-section>
-                <q-item-section>{{ question._edit }}</q-item-section>
+                <q-item-section>{{ question._required == 1 ? 'Obligatorio' : 'No obligatorio'  }}</q-item-section>
               </q-item>
             </q-list>
 
@@ -108,6 +108,7 @@ const addQuestion = ref({
   _required: 0,
   _edit: 1,
   options: [],
+  _breach: 0,
 })
 
 
@@ -167,7 +168,6 @@ const initEdit = async () => {
     console.log(data)
     const resp = await indpi.editQuest(data)
     console.log(resp)
-
   } else {
     console.log('No hay bro')
   }
@@ -187,6 +187,10 @@ const deleteQuest = async (q) => {
       questions.value.splice(inx, 1)
     }
   }
+}
+
+const changeQualified = async () => {
+  console.log(form.value)
 }
 
 init()

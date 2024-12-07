@@ -19,6 +19,10 @@ export default{
     return vizapi.post(burl,data).then( done => done.data ).catch( fail => { return {error:fail.response} });
   },
 
+  RessetPass(uid){
+    let burl = `cluster/accounts/changePass/${uid}`;
+    return vizapi.get(burl).then( done => done.data ).catch( fail => { return {error:fail.error.response} });
+  },
   workus(){
     let burl = `cluster/accounts/getUserWor`;
     return vizapi.get(burl).then( done => done.data ).catch( fail => { return {error:fail.response} });
@@ -51,5 +55,9 @@ export default{
   modifyPuesto(data){
     let burl = `cluster/accounts/modifyPuesto`;
     return vizapi.post(burl,data).then( done => done.data ).catch( fail => { return {error:fail.response} });
+  },
+  InsertRCid(data){
+    let burl = `cluster/accounts/InsertRCid`;
+    return vizapi.post(burl,data).then( done => done.data ).catch( fail => { return {error:fail.error.response} });
   }
 }

@@ -19,7 +19,7 @@
             <q-tabs v-model="tab" vertical class="text-primary">
               <q-tab name="person" icon="person" label="Datos Personales" style="height: 225px;" />
               <q-tab name="worker" icon="work" label="Datos Laborales" style="height: 225px;" />
-              <q-tab name="documents" icon="folder" label="Documentos" style="height: 225px;" />
+              <!-- <q-tab name="documents" icon="folder" label="Documentos" style="height: 225px;" /> -->
               <q-tab name="envuser" icon="addperson" label="Vista Previa" style="height: 225px;" v-if="formsvalid" />
             </q-tabs>
           </template>
@@ -33,15 +33,16 @@
               </q-tab-panel>
 
               <q-tab-panel name="worker">
-                <datawork  :roles="roles" :workpoints="workpoints" :apps="apps" />
+                <datawork :roles="roles" :workpoints="workpoints" :apps="apps" />
               </q-tab-panel>
 
-              <q-tab-panel name="documents">
+              <!-- <q-tab-panel name="documents">
                 <datadoc :files="files" />
-              </q-tab-panel>
+              </q-tab-panel> -->
 
               <q-tab-panel name="envuser">
-              <datapre :addPersonImage="addPersonImage" :personaldata="personaldata" :area="area" :pos="pos" :work="work" :appis="appis" :files="files" :loading="loading" />
+                <datapre :addPersonImage="addPersonImage" :personaldata="personaldata" :area="area" :pos="pos"
+                  :work="work" :appis="appis" :files="files" :loading="loading" />
               </q-tab-panel>
 
             </q-tab-panels>
@@ -54,7 +55,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, computed } from 'vue';
+import { ref, onMounted, computed, watch } from 'vue';
 import { useQuasar } from 'quasar';
 import AppNavigator from 'src/components/AppNavigator.vue';
 import uapi from 'src/API/UserApi';
@@ -80,6 +81,7 @@ const personaldata = ref({
   celphone: null,
   email: null,
   nick: null,
+  avatar: null,
   gender: {
     val: null, opts: [
       { value: 'M', label: "Masculino" },
@@ -169,22 +171,24 @@ const init = async () => {
 const onSubmit = async () => {
   console.log('Se creara el usuario');
   loading.value = true;
-  let adduser = {
-    user:account.value.id,
-    name: personaldata.value.name,
-    surnames: personaldata.value.surnames,
-    dob: personaldata.value.dayofbirth.val,
-    celphone: personaldata.value.celphone,
-    nick: personaldata.value.nick,
-    email: personaldata.value.email,
-    gender: personaldata.value.gender.val,
-    _rol: roles.value.puesto.val.id,
-    _store: workpoints.value.valfav.value,
-    stores: workpoints.value.val,
-    apps: apps.value.val,
-  }
-  console.log(adduser);
-  const addp = await uapi.adduser(adduser);
+  const formData = new FormData();
+
+  formData.append('user', account.value.id)
+  formData.append('name', personaldata.value.name)
+  formData.append('surnames', personaldata.value.surnames)
+  formData.append('dob', personaldata.value.dayofbirth.val)
+  formData.append('celphone', personaldata.value.celphone)
+  formData.append('nick', personaldata.value.nick)
+  formData.append('email', personaldata.value.email)
+  formData.append('avatar', personaldata.value.avatar.file)
+  formData.append('gender', personaldata.value.gender.val)
+  formData.append('_rol', roles.value.puesto.val.id)
+  formData.append('_store', workpoints.value.valfav.value)
+  formData.append('stores', workpoints.value.val)
+  formData.append('apps', apps.value.val)
+
+  console.log(formData);
+  const addp = await uapi.adduser(formData);
   if (addp.error) {
     console.log(addp)
   } else {
@@ -197,6 +201,7 @@ const onSubmit = async () => {
     personaldata.value.nick = null;
     personaldata.value.email = null;
     personaldata.value.gender.val = null;
+    personaldata.value.avatar = null;
     roles.value.areas.val = null;
     roles.value.puesto.val = null;
     workpoints.value.valfav = null;
@@ -245,4 +250,5 @@ const validafecha = (fecha) => {
 }
 
 const isMob = computed(() => $q.platform.is.mobile);
+
 </script>

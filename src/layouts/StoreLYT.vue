@@ -25,7 +25,7 @@
 
 <script setup>
   import { ref, watch } from 'vue';
-  import { useRoute } from 'vue-router';
+  import { useRoute, useRouter } from 'vue-router';
   import { useQuasar } from 'quasar';
   import { useAccountStore } from 'stores/Account'
   import AppMainToolbar from 'src/components/AppMainToolbar.vue';
@@ -35,6 +35,7 @@
   const piniaAccount = useAccountStore();
   const $q = useQuasar();
   const $route = useRoute();
+  const $router = useRouter();
   const access = ref(false); // muestra la pagina (interfaz) solo hasta que la api responde
   const main_menu = ref(null);
   const wndRestringed = ref({state:false});
@@ -56,6 +57,8 @@
       let ercode = resp.error.status;
       access.value=false;
       wndRestringed.value.state=true;
+      $router.push('/')
+
     }else{
       wndRestringed.value.state = false;
       console.log("Kraken response: ");
