@@ -44,7 +44,7 @@ const routes = [
             path: 'preventa',
             children: [
               { path:'', component: () => import('src/pages/Store/Warehouses/Orders.vue') },
-              { path:':oid', component: () => import('src/pages/Store/Warehouses/Order.vue') }
+              // { path:':oid', component: () => import('src/pages/Store/Warehouses/Order.vue') } //descomentar al merge
             ]
           },
           {
@@ -113,7 +113,7 @@ const routes = [
           { path: 'form/:fid', name: 'sles', component: () => import('pages/Store/Forms/Responses.vue')},
         ],
       },
-      { path: 'resurtido', component: () => import('pages/Store/Restock/Index.vue') },
+      // { path: 'resurtido', component: () => import('pages/Store/Restock/Index.vue') }, //descomentar al merge
     ]
   },
 

@@ -1,0 +1,1 @@
+import{Q as r}from"./QPage.2905d6db.js";import{I as o,o as e,e as t}from"./index.96825631.js";import{u as a}from"./use-quasar.72cd0c11.js";import"./RhApi.de537530.js";import"./Account.e0131f82.js";import"./axios.a4a5cb41.js";const d={__name:"Report",setup(p){return a(),o(),(s,m)=>(e(),t(r,{padding:""}))}};export{d as default};
