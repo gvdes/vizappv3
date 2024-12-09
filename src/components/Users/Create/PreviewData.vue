@@ -3,21 +3,21 @@
     <q-card-section class="text-center bg-primary text-white text-weight-medium">
       <div>
         <!-- {{ personaldata.avatar.__img.src }} -->
-        <q-avatar size="200px">
+        <q-avatar :size="isMob ? '100px' : '200px'">
           <q-img :src="personaldata.avatar ? personaldata.avatar.url : addPersonImage" />
         </q-avatar>
       </div>
-      <div class="text-h4 text-center">{{ personaldata.name + ' ' + personaldata.surnames }}</div>
+      <div :class=" `${isMob ? 'text-h6'  : 'text-h4'} text-h4 text-center`">{{ personaldata.name + ' ' + personaldata.surnames }}</div>
       <div class="text-center">
         <q-badge color="white" class="text-center text-primary">
           {{ personaldata.nick }}
         </q-badge>
       </div>
     </q-card-section>
-    <div class="row">
+    <div  :class="isMob ? null: 'row' ">
       <div class="col" style="">
         <q-card-section>
-          <div class="text-h4 text-center text-white bg-primary"> Informacion Personal </div>
+          <div :class="`${isMob ? 'text-h6'  : 'text-h4'} text-center text-white bg-primary`"> Informacion Personal </div>
         </q-card-section>
         <q-card-section>
           <div class="text-subtitle1 row">
@@ -43,7 +43,7 @@
       </div>
       <div class="col" style="">
         <q-card-section>
-          <div class="text-h4 text-center text-white bg-primary"> Informacion Laboral </div>
+          <div :class="`${isMob ? 'text-h6'  : 'text-h4'} text-center text-white bg-primary`"> Informacion Laboral </div>
         </q-card-section>
         <q-card-section>
           <div class="text-subtitle1 row">
@@ -106,6 +106,10 @@
 </template>
 
 <script setup>
+import {  computed } from 'vue';
+import { useQuasar } from 'quasar';
+const $q = useQuasar();
+
 defineProps({
   addPersonImage: { type: String },
   personaldata: { type: Object },
@@ -117,4 +121,5 @@ defineProps({
   loading: { type: Boolean }
 })
 
+const isMob = computed(() => $q.platform.is.mobile);
 </script>

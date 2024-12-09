@@ -14,13 +14,12 @@
     <q-form @submit="onSubmit" class="q-gutter-md">
       <div>
         <q-splitter v-model="splitterModel">
-
           <template v-slot:before>
             <q-tabs v-model="tab" vertical class="text-primary">
-              <q-tab name="person" icon="person" label="Datos Personales" style="height: 225px;" />
-              <q-tab name="worker" icon="work" label="Datos Laborales" style="height: 225px;" />
+              <q-tab name="person" icon="person" :label="isMob ? '' : 'Datos Personales'" :style="isMob ? 'height: 125px;' : 'height: 225px;'" />
+              <q-tab name="worker" icon="work" :label="isMob ? '' : 'Datos Laborales'" :style="isMob ? 'height: 125px;' : 'height: 225px;'" />
               <!-- <q-tab name="documents" icon="folder" label="Documentos" style="height: 225px;" /> -->
-              <q-tab name="envuser" icon="addperson" label="Vista Previa" style="height: 225px;" v-if="formsvalid" />
+              <q-tab name="envuser" icon="person_add" :label="isMob ? '' : 'Vista Previa'" :style="isMob ? 'height: 125px;' : 'height: 225px;'" v-if="formsvalid" />
             </q-tabs>
           </template>
 
@@ -126,7 +125,7 @@ const tab = ref('person');
 
 
 
-const splitterModel = ref(20)
+const splitterModel = ref($q.platform.is.mobile ? 15 : 20)
 
 const isValid = computed(() => {
   let eamil = users.value.filter((e) => e.email == personaldata.value.email);

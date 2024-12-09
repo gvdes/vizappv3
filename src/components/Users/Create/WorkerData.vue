@@ -1,8 +1,8 @@
 <template>
   <q-card class="my-card">
     <q-card-section class=" bg-white text-primary">
-      <div class="text-h4">
-        <q-icon name="person" class="q-mr-xs" />
+      <div :class="isMob ? 'text-h6' : 'text-h4'">
+        <q-icon name="work" class="q-mr-xs" />
         Datos Laborales
       </div>
     </q-card-section>
@@ -18,11 +18,11 @@
           <q-tab-panel name="Rol">
             <q-card class="my-card">
               <q-card-section>
-                <q-select v-model="roles.areas.val" :options="roles.areas.opts" label="Area" filled option-label="name"  @update:model-value="roles.puesto.val = null" />
+                <q-select v-model="roles.areas.val" :options="roles.areas.opts" label="Area" filled option-label="name"  @update:model-value="roles.puesto.val = null" dense />
                 <q-separator spaced inset vertical dark/>
                 <div v-if="roles.areas.val">
                   <q-select v-model="roles.puesto.val" :options="roles.areas.val.roles" label="Puesto" filled
-                    class="q-my-md" option-label="name" />
+                    class="q-my-md" option-label="name" dense />
                 </div>
               </q-card-section>
             </q-card>
@@ -32,11 +32,11 @@
             <q-card class="my-card">
               <q-card-section>
                 <q-select v-model="workpoints.valfav" :options="workpoints.opts" label="Selecciona Tienda Principal"
-                  filled @update:model-value="insfo" />
+                  filled @update:model-value="insfo" dense />
               </q-card-section>
               <q-card-section>
                 <div class="text-h6">Sucursales</div>
-                <q-option-group v-model="workpoints.val" :options="workpoints.opts" color="primary" type="toggle" />
+                <q-option-group v-model="workpoints.val" :options="workpoints.opts" color="primary" type="toggle" dense />
               </q-card-section>
             </q-card>
           </q-tab-panel>
@@ -45,7 +45,7 @@
             <q-card class="my-card">
               <q-card-section>
                 <div class="text-h6">APPS</div>
-                <q-option-group v-model="apps.val" :options="apps.opts" color="primary" type="toggle" />
+                <q-option-group v-model="apps.val" :options="apps.opts" color="primary" type="toggle" dense />
               </q-card-section>
             </q-card>
           </q-tab-panel>
@@ -57,6 +57,9 @@
 
 <script setup>
 import { ref, onMounted, computed } from 'vue';
+import { useQuasar } from 'quasar';
+const $q = useQuasar();
+
 const props = defineProps({
   roles: { type: Object },
   workpoints: { type: Object },
@@ -68,4 +71,5 @@ const insfo = () => {
   props.workpoints.val = [];
   props.workpoints.val.push(props.workpoints.valfav.value)
 }
+const isMob = computed(() => $q.platform.is.mobile);
 </script>

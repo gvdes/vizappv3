@@ -1,1 +1,0 @@
-import{Q as e}from"./QPage.2905d6db.js";import{_ as s,o as a,e as o,w as t,V as r}from"./index.96825631.js";const c={},d=r(" holissssss yo soy el dashboard pal cliente :) cd ");function _(n,i){return a(),o(e,{padding:""},{default:t(()=>[d]),_:1})}var p=s(c,[["render",_]]);export{p as default};
