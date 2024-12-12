@@ -176,12 +176,12 @@
         </q-card-section>
 
         <q-card-section class="q-pt-none">
-          <q-input dense v-model="data.RC_id" autofocus @keyup.enter="prompt = false" />
+          <q-input dense v-model="data.RC_id" autofocus @keyup.enter="prompt = false" :error="idrcvalid" error-message="El id ya esta en uso" />
         </q-card-section>
 
         <q-card-actions align="right" class="text-primary">
-          <q-btn flat label="Cancelar" v-close-popup />
-          <q-btn flat label="Ingresar" @click="insertRCid" />
+          <q-btn flat label="Cancelar" @click="resetchecador" />
+          <q-btn flat label="Ingresar" @click="insertRCid" :disable="idrcvalid" />
         </q-card-actions>
       </q-card>
     </q-dialog>
@@ -244,6 +244,11 @@ const celvalid = computed(() => {
 const nickvalid = computed(() => {
   let arr = users.value.filter((e) => e.id != data.value.id);
   let nkmil = arr.filter((e) => e.nick == data.value.nick);
+  return nkmil.length >= 1 ? true : false;
+});
+const idrcvalid = computed(() => {
+  let arr = users.value.filter((e) => e.id != data.value.id);
+  let nkmil = arr.filter((e) => e.RC_id == data.value.RC_id);
   return nkmil.length >= 1 ? true : false;
 });
 
@@ -391,7 +396,7 @@ const actualizacion = async () => {
   }else{
     notif({
       type:'positive',
-      message:`Asuario ${data.value.name} Actualizado`,
+      message:`Usuario ${data.value.name} Actualizado`,
     })
     confirm.value = false
     props.useEdit.state = false
@@ -429,6 +434,10 @@ const insertRCid = async () => {
     checador.value = !checador.value
     $q.loading.hide();
   }
+}
+const resetchecador = () => {
+  data.value.RC_id = null
+  checador.value = !checador.value
 }
 init();
 </script>
