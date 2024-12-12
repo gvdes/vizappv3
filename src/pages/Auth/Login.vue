@@ -2,16 +2,16 @@
   <q-page padding class="flex flex-center bg-grey-3">
     <transition appear enter-active-class="animated fadeInUp" leave-active-class="animated fadeOutDown">
       <div>
-        <!-- <div class="text-center q-pb-md"><q-icon name="fab fa-atlassian fa-rotate-180" color="primary" size="50px"/></div> -->
+        <div class="text-center q-pb-md"><q-icon name="fab fa-atlassian fa-rotate-180" color="primary" size="50px"/></div>
 
-        <div class="logo-container flex">
+        <!-- <div class="logo-container flex">
 
           <q-avatar size="200px">
 
             <img :src="currentCandyImage" alt="Candy Logo" class="justify-center logo-image" />
           </q-avatar>
         </div>
-        <q-separator spaced inset vertical dark />
+        <q-separator spaced inset vertical dark /> -->
         <q-card flat>
           <div v-if="failReq.state" class="q-pa-md bg-negative row items-center text-grey-2">
             <q-icon size="sm" :name="errorsBank[failReq.code].i" color="white" />
