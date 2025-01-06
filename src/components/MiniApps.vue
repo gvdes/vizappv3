@@ -1,8 +1,8 @@
 <template>
   <div>
     <q-card flat class="transparent">
-      <q-card-section>
-        <div class="text-h6">Apps</div>
+      <q-card-section v-if="!isMob">
+        <div  class="text-h6">Apps</div>
       </q-card-section>
       <q-separator />
       <q-list>
@@ -18,9 +18,13 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
+import { useQuasar, LocalStorage, Loading } from 'quasar';
+const $q = useQuasar();
 
 const $props = defineProps({
   apps:undefined
 })
+
+const isMob = computed(() => $q.platform.is.mobile);
 </script>

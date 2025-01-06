@@ -45,7 +45,7 @@ export default{
   },
   changeStatus(data){
     let burl = `store/${piniaAccount.join}/orders/changeStatus`;
-    return vizapi.post(burl,data).then( done => done.data).catch( fail => { return {error:fail.response} });
+    return vizapi.post(burl,data).then( done => done.data).catch( fail => { return {error:fail.error.response} });
   },
   changeConfig(data){
     let burl = `store/${piniaAccount.join}/orders/changeConfig`;

@@ -1,101 +1,96 @@
 <template>
-  <q-page v-if="order" >
-    <q-header class="bg-white" >
-      <div class="row items-start justify-between">
+  <q-page v-if="order">
+    <div class="row items-start justify-between bg-white">
 
-        <div class="q-pa-xs col text-center ">
+      <div class="q-pa-xs col text-center ">
 
-          <q-expansion-item popup :label="`Preventa : ${piniaAccount.joinedStore.name} `" class="text-grey-13 text-bold">
-            <q-card class="my-card">
-              <q-card-section>
-                <div class="row items-start justify-between">
-                  <q-btn color="negative" flat icon="close"
-                    @click="$router.push(`/store/${piniaAccount.join}/preorders/pedidos`)" dense />
-                  <q-btn flat color="primary" icon="settings" dense> <q-tooltip
-                      class="bg-accent">Configuracion</q-tooltip> </q-btn>
-                  <q-btn flat color="primary" icon="archive" dense><q-tooltip class="bg-accent">Importar</q-tooltip>
-                  </q-btn>
-                  <q-btn flat color="primary" icon="unarchive" dense><q-tooltip class="bg-accent">Exportar</q-tooltip>
-                  </q-btn>
-                </div>
-              </q-card-section>
-            </q-card>
-          </q-expansion-item>
-        </div>
+        <q-expansion-item popup :label="`Preventa : ${piniaAccount.joinedStore.name} `" class="text-grey-13 text-bold">
+          <q-card class="my-card">
+            <q-card-section>
+              <div class="row items-start justify-between">
+                <q-btn color="negative" flat icon="close"
+                  @click="$router.push(`/store/${piniaAccount.join}/preorders/pedidos`)" dense />
+                <q-btn flat color="primary" icon="settings" dense> <q-tooltip
+                    class="bg-primary">Configuracion</q-tooltip> </q-btn>
+                <q-btn flat color="primary" icon="archive" dense><q-tooltip class="bg-primary">Importar</q-tooltip>
+                </q-btn>
+                <q-btn flat color="primary" icon="unarchive" dense><q-tooltip class="bg-primary">Exportar</q-tooltip>
+                </q-btn>
+              </div>
+            </q-card-section>
+          </q-card>
+        </q-expansion-item>
       </div>
+    </div>
 
 
-      <div>
-        <q-list>
-          <q-item class="text-center">
-            <q-item-section>
-              <q-item-label overline>Cliente</q-item-label>
-              <q-item-label caption>{{ order.name }}</q-item-label>
-            </q-item-section>
+    <div>
+      <q-list>
+        <q-item class="text-center bg-white">
+          <q-item-section>
+            <q-item-label overline>Cliente</q-item-label>
+            <q-item-label caption>{{ order.name }}</q-item-label>
+          </q-item-section>
+          <q-separator spaced inset vertical dark />
+          <q-item-section>
+            <q-item-label overline>Folio</q-item-label>
+            <q-item-label caption>{{ order.id }}</q-item-label>
+          </q-item-section>
+          <q-separator spaced inset vertical dark />
+          <q-item-section>
+            <q-item-label overline>Precio</q-item-label>
+            <q-item-label caption>{{ order.client.id == 0 ? 'Publico' : order.client.rate.name }}</q-item-label>
+          </q-item-section>
+        </q-item>
+      </q-list>
+    </div>
 
+    <q-separator />
 
-            <q-separator spaced inset vertical dark />
+    <div>
+      <q-list>
+        <q-item class="text-center bg-white">
+          <q-item-section>
+            <q-item-label overline>Modelos</q-item-label>
+            <q-item-label caption>{{ order.bodie?.length }}</q-item-label>
+          </q-item-section>
+          <q-separator spaced inset vertical dark />
+          <q-item-section>
+            <q-item-label overline>Piezas</q-item-label>
+            <q-item-label caption>{{ order.bodie?.reduce((acc, item) => acc + item.amount_require, 0)
+              }}</q-item-label>
+          </q-item-section>
+          <q-separator spaced inset vertical dark />
+          <q-item-section>
+            <q-item-label overline>Total</q-item-label>
+            <q-item-label caption>$ {{ order.bodie?.reduce((acc, item) => acc + parseFloat(item.total), 0)
+              }}</q-item-label>
+          </q-item-section>
+        </q-item>
+      </q-list>
+    </div>
+    <q-separator />
 
-            <q-item-section>
-              <q-item-label overline>Folio</q-item-label>
-              <q-item-label caption>{{ order.id }}</q-item-label>
-            </q-item-section>
-
-
-            <q-separator spaced inset vertical dark />
-
-            <q-item-section>
-              <q-item-label overline>Precio</q-item-label>
-              <q-item-label caption>{{ order.client.id == 0 ? 'Publico' : order.client.rate.name }}</q-item-label>
-            </q-item-section>
-          </q-item>
-        </q-list>
-      </div>
-
-      <q-separator />
-
-      <div>
-        <q-list>
-          <q-item class="text-center">
-            <q-item-section>
-              <q-item-label overline>Modelos</q-item-label>
-              <q-item-label caption>{{ order.bodie?.length }}</q-item-label>
-            </q-item-section>
-            <q-separator spaced inset vertical dark />
-            <q-item-section>
-              <q-item-label overline>Piezas</q-item-label>
-              <q-item-label caption>{{ order.bodie?.reduce((acc, item) => acc + item.amount_require, 0)
-                }}</q-item-label>
-            </q-item-section>
-            <q-separator spaced inset vertical dark />
-            <q-item-section>
-              <q-item-label overline>Total</q-item-label>
-              <q-item-label caption>$ {{ order.bodie?.reduce((acc, item) => acc + parseFloat(item.total), 0)
-                }}</q-item-label>
-            </q-item-section>
-          </q-item>
-        </q-list>
-      </div>
-      <q-separator />
-    </q-header>
 
     <q-separator spaced inset vertical dark />
 
     <div v-if="order._order_by">
-      <q-card class="my-card" >
+      <q-card class="my-card">
         <q-card-section>
 
           <div class="row">
             <div class="col">Pedido {{ order.order.id }}</div>
             <div class="col">Modelos: {{ order.order.bodie.length }}</div>
-            <div class="col">Piezas: {{ order.order.bodie.reduce((acc,item) => acc + item.amount_require, 0) }}</div>
-            <div class="col">Total: {{ order.order.bodie.reduce((acc,item) => acc + parseFloat(item.total), 0) }}</div>
+            <div class="col">Piezas: {{ order.order.bodie.reduce((acc, item) => acc + item.amount_require, 0) }}</div>
+            <div class="col">Total: {{ order.order.bodie.reduce((acc, item) => acc + parseFloat(item.total), 0) }}</div>
 
 
           </div>
         </q-card-section>
       </q-card>
     </div>
+
+    <q-separator spaced inset vertical dark />
 
     <q-table :rows="products" row-key="name" class="bg-blue-2" hide-header hide-bottom :rows-per-page-options="[0]">
       <template v-slot:body="product">
@@ -136,9 +131,10 @@
     </q-table>
 
 
-    <q-dialog v-model="wndProduct" position="bottom" :style="`${isMobile ? '' : 'width: 300px'}`" >
-      <addProduct :EditProduct="EditProduct" :order="order" :products="products" :unit_measure="unit_measure" :firstProducts="firstProducts"
-        :insertPro="insertPro" @addingProd="addingProd" @delProd="delProd" @ModifyProd="ModifyProd" :rules="rules">
+    <q-dialog v-model="wndProduct" position="bottom" :style="`${isMobile ? '' : 'width: 300px'}`">
+      <addProduct :EditProduct="EditProduct" :order="order" :products="products" :unit_measure="unit_measure"
+        :firstProducts="firstProducts" :insertPro="insertPro" @addingProd="addingProd" @delProd="delProd"
+        @ModifyProd="ModifyProd" :rules="rules">
       </addProduct>
     </q-dialog>
 
@@ -147,7 +143,7 @@
         <q-card-section class=" text-center text-bold text-subtitle1">
           Selecciona Impresora
         </q-card-section>
-        <q-card-section >
+        <q-card-section>
           <q-select v-model="printers.val" :options="printers.opts" label="Impresora" option-label="name" filled />
         </q-card-section>
         <q-card-actions align="right">
@@ -163,7 +159,7 @@
       <q-card class="q-mb-md" flat bordered>
         <q-card-section class="row">
           <ProductFinder class="col" @itemtapped="finderFound" withPrices withCategories withStock />
-          <q-btn v-if="products.length > 0" color="primary" flat icon="east" @click="getPrint"  />
+          <q-btn v-if="products.length > 0" color="primary" flat icon="east" @click="getPrint" />
         </q-card-section>
       </q-card>
     </q-footer>
@@ -213,9 +209,9 @@ const insertPro = ref({
 })
 const rules = ref([]);
 const printers = ref({
-  state:false,
-  opts:[],
-  val:null
+  state: false,
+  opts: [],
+  val: null
 });
 
 
@@ -236,7 +232,7 @@ const init = async () => {
     $router.push(`/store/${piniaAccount.join}/preorders/pedidos`)
   } else {
     order.value = (resp.order)
-    if(resp.order._order_by){
+    if (resp.order._order_by) {
       firstProducts.value = resp.order.order.bodie
     }
     products.value = resp.order.bodie
@@ -250,38 +246,35 @@ const init = async () => {
 const finderFound = (item) => {
   console.log("Finder encontro lo + chido");
   console.log(item);
-  if(item){
+  if (item) {
     let inx = products.value.findIndex(i => i.product.id == item.id);
-  if (inx >= 0) {
-    $q.notify({ message: `El articulo ya esta en la lista`, type: 'warning', position: 'center' })
-  } else {
-    unit_measure.value.val = item.measure
-    wndProduct.value = true
-    EditProduct.value = item
-   }
+    if (inx >= 0) {
+      $q.notify({ message: `El articulo ya esta en la lista`, type: 'warning', position: 'center' })
+    } else {
+      unit_measure.value.val = item.measure
+      wndProduct.value = true
+      EditProduct.value = item
+    }
   }
 
 }
 
-const productEdit = (item) => {
-
-    unit_measure.value.val = item.unitsupply
-    EditProduct.value = item.product
-    EditProduct.value.measure = item.unitsupply
-    insertPro.value._order = item._order,
-    insertPro.value._product= item._product,
+const productEdit = async (item) => {
+  unit_measure.value.val = item.unitsupply
+  EditProduct.value = item.product
+  EditProduct.value.measure = item.unitsupply
+  insertPro.value._order = item._order,
+    insertPro.value._product = item._product,
     insertPro.value.amount_require = item.amount_require,
-    insertPro.value.units= item.units,
-    insertPro.value.price= item.price,
-    insertPro.value.total= item.total,
-    insertPro.value._rate= item._rate,
-    insertPro.value._state= item._state,
-    insertPro.value.notes= item.notes,
-    insertPro.value._supply_by= item._supply_by
-    console.log(insertPro.value);
-    wndProduct.value = true
-    console.log(item);
-
+    insertPro.value.units = item.units,
+    insertPro.value.price = item.price,
+    insertPro.value.total = item.total,
+    insertPro.value._rate = item._rate,
+    insertPro.value._state = item._state,
+    insertPro.value.notes = item.notes,
+    insertPro.value._supply_by = item._supply_by
+  console.log(insertPro.value);
+  wndProduct.value = true
 }
 
 const addingProd = (item) => {
@@ -291,42 +284,46 @@ const addingProd = (item) => {
 
 const delProd = (item) => {
   let inx = products.value.findIndex(e => e.product.id == item._product)
-  products.value.splice(inx,1);
+  products.value.splice(inx, 1);
   wndProduct.value = false;
 }
 
 const ModifyProd = (item) => {
-  let inx =  products.value.findIndex(e => e.product.id == item._product)
-  products.value.splice(inx,1,item);
+  console.log(item);
+  let inx = products.value.findIndex(e => e.product.id == item._product)
+  products.value.splice(inx, 1, item);
   wndProduct.value = false;
 }
 
-const getPrint = async()=>{
+const getPrint = async () => {
 
   const resp = await pvtpi.getPrints(3);
-  if(resp.error){
+  if (resp.error) {
     console.log(resp);
-  }else{
-    printers.value.state= true
+  } else {
+    printers.value.state = true
     printers.value.opts = resp
   }
 }
 
 const changeStatus = async () => {
   console.log('se termina el pedido brou')//se tiene que revisar primero la configuracion para ver a donde va primero el pedido si a por surtir o a por validar
-  $q.loading.show({message:'Guardando Pedido :p'});
+  $q.loading.show({ message: 'Guardando Pedido :p' });
   order.value.printer = printers.value.val.id
   order.value.typelog = 7//el tipo es el 7 siempre en el proceso
   const resp = await pvtpi.changeStatus(order.value);
-  if(resp.error){
+  console.log(resp)
+  if (resp.error) {
     console.log(resp)
-  }else{
+    alert(resp.error.data)
+    $q.loading.hide();
+  } else {
     $sktpvt.emit('ChangeStatusOrder', resp)
     console.log(resp)
     $q.notify({
-      message:'Pedido en cola',
-      type:'positive',
-      position:'center'
+      message: 'Pedido en cola',
+      type: 'positive',
+      position: 'center'
     })
     $router.push(`/store/${piniaAccount.join}/preorders/pedidos`)
   }

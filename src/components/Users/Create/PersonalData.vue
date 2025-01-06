@@ -28,7 +28,7 @@
         error-message="El nick ya esta en uso" :error="nickvalid" />
       <!-- {{ personaldata.avatar }} -->
       <q-uploader dense hide-upload-btn label="Fotografia" color="primary" accept="image/*" @added="insertImage"
-        @removed="() => personaldata.avatar = null" class="full-width" />
+        @removed="() => personaldata.avatar = null" class="full-width" max-file-size="8388608" @rejected="Reject" />
 
     </q-card-section>
   </q-card>
@@ -49,7 +49,7 @@ const props = defineProps({
 })
 
 const insertImage = (file) => {
-  // console.log(file)
+  console.log(file)
   // props.personaldata.avatar = file[0];
   if (file.length > 0) {
     props.personaldata.avatar = {
@@ -58,6 +58,13 @@ const insertImage = (file) => {
     };
   }
 }
+
+const Reject = (e) => {
+  console.log(e)
+  $q.notify({message:`${e[0].failedPropValidation}`,type:'negative',position:'center'})
+}
+
+
 const isMob = computed(() => $q.platform.is.mobile);
 
 </script>

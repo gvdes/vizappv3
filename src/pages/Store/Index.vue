@@ -1,7 +1,7 @@
 <template>
   <q-page padding>
 
-    <div class="row q-pa-md q-gutter-md">
+    <div v-if="!isMob" class="row q-pa-md q-gutter-md">
       <div class="col">
         <div class="text-h3 text-grey-8 text-center">
           Hola <span class="text-primary">{{ piniaAccount.account.name }}</span>
@@ -10,7 +10,8 @@
         <div class="text-center anek-lg text-h5 text-grey-6">{{ greeting }}</div>
 
         <div class="q-py-lg text-center">
-          <q-img :src="`${vizmedia}/profiles/${piniaAccount.account.id}/${piniaAccount.account.avatar}`" style="width: 170px;" />
+          <q-img :src="`${vizmedia}/profiles/${piniaAccount.account.id}/${piniaAccount.account.avatar}`"
+            style="width: 170px;" />
         </div>
       </div>
 
@@ -20,6 +21,52 @@
         </div>
         <q-separator />
         <forms :apps="form" />
+      </div>
+    </div>
+
+    <div v-else>
+      <div class="text-h5 text-center">
+        Hola <span class="text-primary">{{ piniaAccount.account.name }}</span>
+      </div>
+      <div class="text-center anek-lg  text-grey-6">{{ greeting }}</div>
+      <div class="q-py-lg text-center">
+        <q-img :src="`${vizmedia}/profiles/${piniaAccount.account.id}/${piniaAccount.account.avatar}`"
+          style="width: 100px;" />
+      </div>
+      <div>
+        <q-card class="my-card ">
+          <q-card-section class="row">
+            <div class="text-h6 col">Apps</div>
+            <q-btn color="grey" round flat dense :icon="expandedApps ? 'keyboard_arrow_up' : 'keyboard_arrow_down'"
+              @click="expandedApps = !expandedApps" />
+          </q-card-section>
+          <q-slide-transition>
+            <div v-show="expandedApps">
+              <q-separator />
+              <q-card-section class="text-subtitle2">
+                <MiniApps :apps="apps" />
+              </q-card-section>
+            </div>
+          </q-slide-transition>
+
+
+          <q-card-section class="row">
+            <div  class="text-h6 col">Formularios</div>
+            <q-btn  color="grey" round flat dense :icon="expandedForms ? 'keyboard_arrow_up' : 'keyboard_arrow_down'"
+              @click="expandedForms = !expandedForms" />
+          </q-card-section>
+
+          <q-slide-transition>
+            <div v-show="expandedForms">
+              <q-separator />
+              <q-card-section class="text-subtitle2">
+                <forms :apps="form" />
+              </q-card-section>
+            </div>
+          </q-slide-transition>
+
+
+        </q-card>
       </div>
     </div>
   </q-page>
@@ -41,73 +88,76 @@ $sktind.connect()
 $sktind.on('NotifyForm', (param) => {
   console.log(param);
 
-// Desestructuración de los parámetros
-const { _active, _responsible, _type, name, id } = param;
-const { rol } = piniaAccount.account;
-const { joinedStore } = piniaAccount;
+  // Desestructuración de los parámetros
+  const { _active, _responsible, _type, name, id } = param;
+  const { rol } = piniaAccount.account;
+  const { joinedStore } = piniaAccount;
 
-// Notificación y manipulación del formulario
-const notifyForm = (message, type) => $q.notify({ message, type });
-const addToForm = () => form.value.push(param);
-const removeFromForm = () => {
-  const index = form.value.findIndex(e => e.id === id);
-  if (index >= 0) form.value.splice(index, 1);
-};
+  // Notificación y manipulación del formulario
+  const notifyForm = (message, type) => $q.notify({ message, type });
+  const addToForm = () => form.value.push(param);
+  const removeFromForm = () => {
+    const index = form.value.findIndex(e => e.id === id);
+    if (index >= 0) form.value.splice(index, 1);
+  };
 
-// Condiciones generales
-const isAreaValid = [1, 2].includes(rol.hierarchy);
-const isRoleIdValid = [2].includes(rol.type_rol);
-const isGeneralArea = [0].includes(rol.hierarchy);
-const isResponsibleValid = [1, 2, 3].includes(_responsible);
+  // Condiciones generales
+  const isAreaValid = [1, 2].includes(rol.hierarchy);
+  const isRoleIdValid = [2].includes(rol.type_rol);
+  const isGeneralArea = [0].includes(rol.hierarchy);
+  const isResponsibleValid = [1, 2, 3].includes(_responsible);
 
-// Lógica para manejar formularios activos
-const handleActive = () => {
-  const isStoreType1 = joinedStore._type === 1;
-  const validTypes = isStoreType1 ? [2, 3] : [1, 3];
+  // Lógica para manejar formularios activos
+  const handleActive = () => {
+    const isStoreType1 = joinedStore._type === 1;
+    const validTypes = isStoreType1 ? [2, 3] : [1, 3];
 
-  if (isAreaValid && isRoleIdValid) {
-    if (([3, 1].includes(_responsible) && validTypes.includes(_type)) || (_responsible === 1 && _type === 3)) {
+    if (isAreaValid && isRoleIdValid) {
+      if (([3, 1].includes(_responsible) && validTypes.includes(_type)) || (_responsible === 1 && _type === 3)) {
+        notifyForm(`El formulario ${name} está disponible`, 'positive');
+        addToForm();
+      }
+    } else if (isGeneralArea && isResponsibleValid) {
+      notifyForm(`El formulario ${name} está disponible`, 'positive');
+      addToForm();
+    } else if (_responsible === 1) {
       notifyForm(`El formulario ${name} está disponible`, 'positive');
       addToForm();
     }
-  } else if (isGeneralArea && isResponsibleValid) {
-    notifyForm(`El formulario ${name} está disponible`, 'positive');
-    addToForm();
-  } else if (_responsible === 1) {
-    notifyForm(`El formulario ${name} está disponible`, 'positive');
-    addToForm();
-  }
-};
+  };
 
-// Lógica para manejar formularios inactivos
-const handleInactive = () => {
-  const isStoreType1 = joinedStore._type === 1;
-  const validTypes = isStoreType1 ? [2, 3] : [1, 3];
+  // Lógica para manejar formularios inactivos
+  const handleInactive = () => {
+    const isStoreType1 = joinedStore._type === 1;
+    const validTypes = isStoreType1 ? [2, 3] : [1, 3];
 
-  if (isAreaValid && isRoleIdValid) {
-    if (([3, 1].includes(_responsible) && validTypes.includes(_type)) || (_responsible === 1 && _type === 3)) {
+    if (isAreaValid && isRoleIdValid) {
+      if (([3, 1].includes(_responsible) && validTypes.includes(_type)) || (_responsible === 1 && _type === 3)) {
+        notifyForm(`El formulario ${name} ya no está disponible`, 'negative');
+        removeFromForm();
+      }
+    } else if (isGeneralArea && isResponsibleValid) {
+      notifyForm(`El formulario ${name} ya no está disponible`, 'negative');
+      removeFromForm();
+    } else if (_responsible === 1) {
       notifyForm(`El formulario ${name} ya no está disponible`, 'negative');
       removeFromForm();
     }
-  } else if (isGeneralArea && isResponsibleValid) {
-    notifyForm(`El formulario ${name} ya no está disponible`, 'negative');
-    removeFromForm();
-  } else if (_responsible === 1) {
-    notifyForm(`El formulario ${name} ya no está disponible`, 'negative');
-    removeFromForm();
-  }
-};
+  };
 
-// Validación del estado activo/inactivo
-if (_active === 1) {
-  handleActive();
-} else {
-  handleInactive();
-}
+  // Validación del estado activo/inactivo
+  if (_active === 1) {
+    handleActive();
+  } else {
+    handleInactive();
+  }
 });
 
 
 const piniaAccount = useAccountStore();
+const expandedApps = ref(false);
+const expandedForms = ref(false);
+
 
 const apps = piniaAccount.apps.map(a => a.app)
 const form = ref([])
@@ -126,7 +176,7 @@ const greetings = ref([
   "Quien tiene claro un porque? Puede superar casi cualquier cómo"
 ]);
 
-
+const isMob = computed(() => $q.platform.is.mobile);
 
 const init = async () => {
   console.log(piniaAccount.avatar)
@@ -140,7 +190,7 @@ const init = async () => {
         // console.log(piniaAccount.account.rol.id)
         // if ([15, 16, 17].includes(piniaAccount.account.rol._area)) {
         console.log(piniaAccount.rol)
-        if ([1,2].includes(piniaAccount.account.rol.hierarchy)) {
+        if ([1, 2].includes(piniaAccount.account.rol.hierarchy)) {
           if ([2].includes(piniaAccount.account.rol.type_rol)) {
             // console.log(piniaAccount.joinedStore._type)
             if (piniaAccount.joinedStore._type == 1) {

@@ -1,7 +1,7 @@
 <template>
   <div>
     <q-card flat class="transparent">
-      <q-card-section>
+      <q-card-section v-if="!isMob">
         <div class="text-h6">Formularios</div>
       </q-card-section>
       <q-separator />
@@ -18,9 +18,13 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+
+import { ref, computed } from 'vue';
+import { useQuasar, LocalStorage, Loading } from 'quasar';
+const $q = useQuasar();
 
 const $props = defineProps({
   apps:undefined
 })
+const isMob = computed(() => $q.platform.is.mobile);
 </script>

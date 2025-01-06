@@ -14,6 +14,7 @@
     <q-separator spaced inset vertical dark />
 
     <div class="row">
+      <q-separator spaced inset vertical dark />
       <q-input class="col" v-model="fechas.from" type="date" label="Desde" dense />
       <q-separator spaced inset vertical dark />
       <q-space />
@@ -25,7 +26,7 @@
 
     <q-separator spaced inset vertical dark />
 
-    <div :class="`${isMobile ? '' : 'row'}`">
+    <div v-if="!isMobile" class="row">
       <q-separator spaced inset vertical dark />
       <q-card class="my-card col">
         <q-card-section>
@@ -53,7 +54,8 @@
       <q-card class="my-card col">
         <q-card-section>
           <div class="text-h6 text-center">Orders Terminadas</div>
-          <div class="text-h4 text-center"> <q-badge color="primary" class="text-h4 text-center">{{ orders?.filter(e => e._state == 9 ).length }}</q-badge></div>
+          <div class="text-h4 text-center"> <q-badge color="primary" class="text-h4 text-center">{{ orders?.filter(e =>
+            e._state == 9).length }}</q-badge></div>
         </q-card-section>
 
       </q-card>
@@ -62,44 +64,67 @@
 
     </div>
 
+    <div v-else class="row">
+      <q-separator spaced inset vertical dark />
+      <q-card class="my-card col">
+        <q-card-section class="row">
+          <div class=" col">Total Pedidos</div>
+          <div class=" col">{{ orders.length }}</div>
+        </q-card-section>
+        <q-card-section class="row">
+          <div class=" col">Usuarios Conectados</div>
+          <div class=" col">{{ connected ? connected.length : 0 }}</div>
+        </q-card-section>
+        <q-card-section class="row">
+          <div class=" col">Pedidos Terminados</div>
+          <div class=" col">{{ orders?.filter(e => e._state == 9).length }}</div>
+        </q-card-section>
+      </q-card>
+      <q-separator spaced inset vertical dark />
+    </div>
     <q-separator spaced inset vertical dark />
 
-    <q-table :title="`Pedidos desde ${fechas.from} al ${fechas.to}`" :rows="orders" :columns="table.columns"
-      row-key="id" :filter="table.filter" v-if="orders">
-      <template v-slot:top-right>
-        <q-input borderless dense debounce="300" v-model="table.filter" placeholder="Buscar">
-          <template v-slot:append>
-            <q-icon name="search" />
-          </template>
-        </q-input>
-      </template>
-      <template v-slot:body="props">
-        <q-tr :props="props">
-          <q-td key="id" :props="props">
-            {{ props.row.id }}
-          </q-td>
-          <q-td key="client" :props="props">
-            {{ props.row.name }}
-          </q-td>
-          <q-td key="state" :props="props">
-            <q-badge
-              :class="`${colorCellState[(props.row.state.id ? parseInt(props.row.state.id) - 1 : parseInt(props.row.state.id) - 1)]}`">
-              {{ props.row.state.name }}
-            </q-badge>
-          </q-td>
-          <q-td key="created" :props="props">
-            <q-badge color="primary">
-              {{ props.row.user.nick }}
-            </q-badge>
-          </q-td>
-          <q-td key="date" :props="props">
-            {{ dayjs(props.row.created_at).format('YYYY-MM-DD HH:mm A') }}
-          </q-td>
+    <div class="row">
+      <q-separator spaced inset vertical dark />
+      <q-table class="col" :title="`Pedidos desde ${fechas.from} al ${fechas.to}`" :rows="orders"
+        :columns="table.columns" row-key="id" :filter="table.filter" v-if="orders">
+        <template v-slot:top-right>
+          <q-input borderless dense debounce="300" v-model="table.filter" placeholder="Buscar">
+            <template v-slot:append>
+              <q-icon name="search" />
+            </template>
+          </q-input>
+        </template>
+        <template v-slot:body="props">
+          <q-tr :props="props">
+            <q-td key="id" :props="props">
+              {{ props.row.id }}
+            </q-td>
+            <q-td key="client" :props="props">
+              {{ props.row.name }}
+            </q-td>
+            <q-td key="state" :props="props">
+              <q-badge
+                :class="`${colorCellState[(props.row.state.id ? parseInt(props.row.state.id) - 1 : parseInt(props.row.state.id) - 1)]}`">
+                {{ props.row.state.name }}
+              </q-badge>
+            </q-td>
+            <q-td key="created" :props="props">
+              <q-badge color="primary">
+                {{ props.row.user.nick }}
+              </q-badge>
+            </q-td>
+            <q-td key="date" :props="props">
+              {{ dayjs(props.row.created_at).format('YYYY-MM-DD HH:mm A') }}
+            </q-td>
 
-        </q-tr>
-      </template>
+          </q-tr>
+        </template>
 
-    </q-table>
+      </q-table>
+      <q-separator spaced inset vertical dark />
+    </div>
+
     <q-page-sticky position="bottom-right" :offset="[20, 20]">
       <q-fab color="primary" text-color="white" icon="keyboard_arrow_left" :direction="isMobile ? 'up' : 'left'">
         <template v-slot:label="{ opened }">
@@ -132,7 +157,6 @@ const piniaAccount = useAccountStore();
 const $q = useQuasar();
 const $router = useRouter();
 
-//eventos socket
 
 $sktpvt.connect();
 
@@ -148,7 +172,7 @@ $sktpvt.on('updateUserList', (users) => {
   connected.value = users
 })
 
-$sktpvt.on('updOrder', (params)=>{
+$sktpvt.on('updOrder', (params) => {
   console.log(params)
   let inx = orders.value.findIndex(e => e.id == params.id)
   orders.value[inx].state = params.state
@@ -234,4 +258,5 @@ const getOrders = async () => {
 }
 
 init()
+
 </script>

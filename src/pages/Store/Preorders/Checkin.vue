@@ -104,7 +104,7 @@ const init = async () => {
 }
 
 const getOrders = async() => {
-  console.log('pbteniendo ordenes :) ')
+  console.log('obteniendo ordenes :) ')
   const resp = await pvtpi.index()
   if(resp.error){
     console.log(resp)
