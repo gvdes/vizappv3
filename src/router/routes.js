@@ -165,7 +165,7 @@ const routes = [
           { path: 'create', name: 'create', component: () => import('pages/Cluster/RRHH/Create.vue') },
           { path: 'report', name: 'repot', component: () => import('pages/Cluster/RRHH/Report.vue') },
           { path: 'justification', name: 'justification', component: () => import('pages/Cluster/RRHH/Justification.vue') },
-
+          { path: 'roster', name: 'roster', component: () => import('pages/Cluster/RRHH/Roster.vue') },
         ]
       },
       {

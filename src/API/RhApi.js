@@ -46,5 +46,19 @@ export default{
     let burl = `cluster/Assist/changeStatus`
     return vizapi.post(burl,data).then( done => done.data).catch( fail => { return {error:fail.error.response} });
   },
+  getRegisDevice(device){
+    let burl = `cluster/Assist/getRegisDevice/${device}`;
+    return vizapi.post(burl).then( done => done.data).catch( fail => { return {error:fail.error.response} });
+  },
+  changeDate(device){
+    let burl = `cluster/Assist/changeDate/${device}`;
+    return vizapi.post(burl).then( done => done.data).catch( fail => { return {error:fail.error.response} });
+  },
+  deleteAttendance(device){
+    let burl = `cluster/Assist/deleteAttendance/${device}`;
+    return vizapi.delete(burl).then( done => done.data).catch( fail => { return {error:fail.error.response} });
+  }
+
+
 
 }
