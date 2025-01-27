@@ -1,1 +1,0 @@
-import{g as e,h as r,aH as o}from"./index.3b82a6e7.js";var d=e({name:"QUploaderAddTrigger",setup(){return r(o,()=>{console.error("QUploaderAddTrigger needs to be child of QUploader")})}});export{d as Q};

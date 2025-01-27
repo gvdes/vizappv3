@@ -51,8 +51,8 @@
 
 
           <q-card-section class="row">
-            <div  class="text-h6 col">Formularios</div>
-            <q-btn  color="grey" round flat dense :icon="expandedForms ? 'keyboard_arrow_up' : 'keyboard_arrow_down'"
+            <div class="text-h6 col">Formularios</div>
+            <q-btn color="grey" round flat dense :icon="expandedForms ? 'keyboard_arrow_up' : 'keyboard_arrow_down'"
               @click="expandedForms = !expandedForms" />
           </q-card-section>
 
@@ -102,25 +102,34 @@ $sktind.on('NotifyForm', (param) => {
   };
 
   // Condiciones generales
-  const isAreaValid = [1, 2].includes(rol.hierarchy);
-  const isRoleIdValid = [2].includes(rol.type_rol);
-  const isGeneralArea = [0].includes(rol.hierarchy);
-  const isResponsibleValid = [1, 2, 3].includes(_responsible);
+  const isAreaValid = [1, 2].includes(rol.hierarchy);// herarquia baja
+  const isRoleIdValid = [2].includes(rol.type_rol);// rol operativo
+  const isGeneralArea = [0].includes(rol.hierarchy);// geranquia alta
+  const isResponsibleValid = [1, 2, 3].includes(_responsible); //responsables de formulario
 
   // Lógica para manejar formularios activos
   const handleActive = () => {
-    const isStoreType1 = joinedStore._type === 1;
-    const validTypes = isStoreType1 ? [2, 3] : [1, 3];
+    const isStoreType1 = joinedStore._type === 1; // sucursal es tipo cedis
+    const validTypes = isStoreType1 ? [2, 3] : [1, 3]; // si la sucursal es tipo cedis devuelveme tipos 2 y 3 si no 1 y 3
 
     if (isAreaValid && isRoleIdValid) {
       if (([3, 1].includes(_responsible) && validTypes.includes(_type)) || (_responsible === 1 && _type === 3)) {
         notifyForm(`El formulario ${name} está disponible`, 'positive');
         addToForm();
       }
-    } else if (isGeneralArea && isResponsibleValid) {
+      // } else if (isGeneralArea && isResponsibleValid) {
+      //   notifyForm(`El formulario ${name} está disponible`, 'positive');
+      //   addToForm();
+      // }
+    } else if (isGeneralArea && isRoleIdValid && [2].includes(_responsible)) {//para que solo aparezca auditoria
       notifyForm(`El formulario ${name} está disponible`, 'positive');
       addToForm();
-    } else if (_responsible === 1) {
+    // }
+    // else if (isGeneralArea &&  isResponsibleValid) {
+    //   notifyForm(`El formulario ${name} está disponible`, 'positive');
+    //   addToForm();
+    }
+    else if (_responsible === 1) {
       notifyForm(`El formulario ${name} está disponible`, 'positive');
       addToForm();
     }
@@ -136,10 +145,18 @@ $sktind.on('NotifyForm', (param) => {
         notifyForm(`El formulario ${name} ya no está disponible`, 'negative');
         removeFromForm();
       }
-    } else if (isGeneralArea && isResponsibleValid) {
+      // } else if (isGeneralArea && isResponsibleValid) {
+      //   notifyForm(`El formulario ${name} ya no está disponible`, 'negative');
+      //   removeFromForm();
+      // }
+    } else if (isGeneralArea && isRoleIdValid && [2].includes(_responsible)) {
       notifyForm(`El formulario ${name} ya no está disponible`, 'negative');
       removeFromForm();
-    } else if (_responsible === 1) {
+    // } else if (isGeneralArea &&  isResponsibleValid) {
+    //   notifyForm(`El formulario ${name} ya no está disponible`, 'negative');
+    //   removeFromForm();
+    }
+    else if (_responsible === 1) {
       notifyForm(`El formulario ${name} ya no está disponible`, 'negative');
       removeFromForm();
     }
@@ -204,7 +221,11 @@ const init = async () => {
           }
         } else if ([0].includes(piniaAccount.account.rol.hierarchy)) {
           console.log(piniaAccount.joinedStore)
-          return e._responsible == 2 || e._responsible == 1 || e._responsible == 3;
+          if ([2].includes(piniaAccount.account.rol.type_rol)) {
+            return e._responsible == 2;
+          } else {
+            return e._responsible == 1 || e._responsible == 3;
+          }
         } else {
           return e._responsible == 1;
         }
