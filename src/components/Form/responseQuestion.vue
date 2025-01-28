@@ -34,7 +34,7 @@
 
               <template v-slot:list="scope">
 
-                <q-table :rows="scope.files" grid hide-bottom :pagination="{rowsPerPage: 0}">
+                <q-table :rows="scope.files" grid hide-bottom :pagination="{ rowsPerPage: 0 }">
                   <template v-slot:item="props">
                     <div style="position: relative; border: 1px solid #EEEEEE;
                        border-radius: 10px;
@@ -81,8 +81,8 @@
             @submit="() => { response.push({ col: selectColaborator, qualified: selectBreach }); selectColaborator = null; selectBreach = null; question._response = response }"
             @reset="() => { selectColaborator = null; selectBreach = null }">
             <div class="row">
-              <q-select class="col" v-model="selectColaborator" :options="colaborators" label="Colaborador" filled
-                :option-label="i => (`${i.name} ${i.surnames}`)" dense />
+              <q-select class="col" v-model="selectColaborator" :options="optsColaborator" label="Colaborador" filled
+                :option-label="i => (`${i.name} ${i.surnames}`)" dense  @filter="filterFn" />
               <q-separator spaced inset vertical dark />
               <q-select class="col" v-model="selectBreach" :options="question.options" label="Que no cumplio?" filled
                 option-label="option" :disable="!selectColaborator" multiple use-chips dense />
@@ -98,8 +98,8 @@
 
         </div>
         <div v-else>
-          <q-select v-model="question._response" :options="colaborators" multiple use-chips use-input
-            :label="question.question" filled :option-label="i => (`${i.name} ${i.surnames}`)" dense />
+          <q-select v-model="question._response" :options="optsColaborator" multiple use-chips use-input
+            :label="question.question" filled :option-label="i => (`${i.name} ${i.surnames}`)" dense  @filter="filterFn" />
         </div>
 
 
@@ -146,8 +146,8 @@
                   @submit="() => { response.push({ col: selectColaborator, qualified: selectBreach }); selectColaborator = null; selectBreach = null; condition.response = response }"
                   @reset="() => { selectColaborator = null; selectBreach = null }">
                   <div class="row">
-                    <q-select class="col" v-model="selectColaborator" :options="colaborators" label="Colaborador" filled
-                      :option-label="i => (`${i.name} ${i.surnames}`)" dense />
+                    <q-select class="col" v-model="selectColaborator" :options="optsColaborator" label="Colaborador" filled
+                      :option-label="i => (`${i.name} ${i.surnames}`)" dense  @filter="filterFn" use-input />
                     <q-separator spaced inset vertical dark />
                     <q-select class="col" v-model="selectBreach" :options="condition.options" label="Que no cumplio?"
                       filled option-label="option" :disable="!selectColaborator" dense multiple use-chips />
@@ -162,8 +162,9 @@
                 </q-form>
               </div>
               <div v-else>
-                <q-select v-model="condition.response" :options="colaborators" multiple use-chips use-input
-                  :label="question.question" filled :option-label="i => (`${i.name} ${i.surnames}`)" dense />
+                <q-select v-model="condition.response" :options="optsColaborator" multiple use-chips use-input
+                  :label="question.question" filled :option-label="i => (`${i.name} ${i.surnames}`)" dense
+                  @filter="filterFn" />
               </div>
             </div>
           </q-card-section>
@@ -200,6 +201,7 @@ const reference = ref(null)
 const headers = ref([{ name: 'Authorization', value: `Bearer ${piniaAccount.token}` }])
 const formFields = ref([{ name: 'idms', value: null }])
 const selectColaborator = ref(null);
+const optsColaborator = ref(props.colaborators)
 const selectBreach = ref(null);
 const response = ref([]);
 const hoveredItem = ref(null)
@@ -241,6 +243,13 @@ const removeEvidence = (scope, rows) => {
       props.question._response = null
     }
   }
+}
+
+const filterFn = (val, update, abort) => {
+  update(() => {
+    const needle = val.toLowerCase()
+    optsColaborator.value = props.colaborators.filter(v => `${v.name} ${v.surnames}`.toLowerCase().indexOf(needle) > -1)
+  })
 }
 
 onMounted(() => {

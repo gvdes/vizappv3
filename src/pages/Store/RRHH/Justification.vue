@@ -7,8 +7,8 @@
         </q-card-section>
         <q-card-section>
           <q-form @submit="onSubmit" @reset="onReset" class="q-gutter-md">
-            <q-select v-model="justification.user" :options="users" label="Colaborador" option-label="complete_name"
-              filled />
+            <q-select v-model="justification.user" :options="optsUser" label="Colaborador" option-label="complete_name"
+              filled use-input @filter="filterFn" />
             <div class="row">
               <q-input v-model="justification.start_date" type="date" class="col" filled label="Fecha Inicio"
                 :stack-label=true :error="validfech" error-message="La fecha de inicio es mayor que la fecha de fin" />
@@ -95,6 +95,7 @@ const user = ref([]);
 const types = ref([]);
 const hoveredItem = ref(null)
 const reference = ref(null)
+const optsUser = ref(user.value)
 const headers = ref([{ name: 'Authorization', value: `Bearer ${piniaAccount.token}` }])
 const formFields = ref([{ name: 'idms', value: null }])
 const justification = ref({
@@ -132,28 +133,47 @@ const init = async () => {
   }
 };
 
-const onSubmit = async () => {
-  $q.loading.show({ message: 'Enviando formulario' })
+const filterFn = (val, update, abort) => {
+  update(() => {
+    const needle = val.toLowerCase()
+    optsUser.value = users.value.filter(v => `${v.name} ${v.surnames}`.toLowerCase().indexOf(needle) > -1)
+  })
+}
 
-  const formData = new FormData();
-  formData.append('user', justification.value.user.id);
-  formData.append('start_date', justification.value.start_date);
-  formData.append('final_date', justification.value.final_date);
-  formData.append('_type', justification.value._type.id);
-  formData.append('notes', justification.value.notes);
-  justification.value.evidence.forEach((file, index) => {
-    formData.append(`evidence[${index}]`, file);
-  });
-  console.log(formData);
+  const onSubmit = async () => {
+    $q.loading.show({ message: 'Enviando formulario' })
 
-  const resp = await rhpi.addForm(formData)
-  if (resp.error) {
-    console.log(resp)
-  } else {
-    console.log(resp)
-    $q.notify({ message: 'Formulario Enviado', type: 'positive', position: 'center' })
-    $q.loading.hide()
+    const formData = new FormData();
+    formData.append('user', justification.value.user.id);
+    formData.append('start_date', justification.value.start_date);
+    formData.append('final_date', justification.value.final_date);
+    formData.append('_type', justification.value._type.id);
+    formData.append('notes', justification.value.notes);
+    justification.value.evidence.forEach((file, index) => {
+      formData.append(`evidence[${index}]`, file);
+    });
+    console.log(formData);
 
+    const resp = await rhpi.addForm(formData)
+    if (resp.error) {
+      console.log(resp)
+    } else {
+      console.log(resp)
+      $q.notify({ message: 'Formulario Enviado', type: 'positive', position: 'center' })
+      $q.loading.hide()
+
+      justification.value = {
+        user: null,
+        start_date: null,
+        final_date: null,
+        notes: null,
+        evidence: [],
+      };
+      reference.value.reset();
+
+    }
+  };
+  const onReset = () => {
     justification.value = {
       user: null,
       start_date: null,
@@ -161,35 +181,23 @@ const onSubmit = async () => {
       notes: null,
       evidence: [],
     };
-    reference.value.reset();
 
-  }
-};
-const onReset = () => {
-  justification.value = {
-    user: null,
-    start_date: null,
-    final_date: null,
-    notes: null,
-    evidence: [],
   };
 
-};
+  const onRejected = () => {
+    $q.notify({ message: 'No se acepta este archivo', type: 'negative', position: 'center' })
+  };
 
-const onRejected = () => {
-  $q.notify({ message: 'No se acepta este archivo', type: 'negative', position: 'center' })
-};
-
-const insertimage = (file) => {
-  justification.value.evidence = file;
-}
-const removeEvidence = (scope, rows) => {
-  scope.removeFile(rows.row);
-  let inx = justification.value.evidence.findIndex(e => e.__key == rows.row.__key);
-
-  if (inx >= 0) {
-    justification.value.evidence.splice(inx, 1);
+  const insertimage = (file) => {
+    justification.value.evidence = file;
   }
-}
-init();
+  const removeEvidence = (scope, rows) => {
+    scope.removeFile(rows.row);
+    let inx = justification.value.evidence.findIndex(e => e.__key == rows.row.__key);
+
+    if (inx >= 0) {
+      justification.value.evidence.splice(inx, 1);
+    }
+  }
+  init();
 </script>

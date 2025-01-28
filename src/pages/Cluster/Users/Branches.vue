@@ -6,8 +6,13 @@
           <q-icon size="30px" name="arrow_back" />
         </div>
         <div class="col anek-bld text-grey-9 q-pl-sm">Usuarios X Sucursal</div>
-        <div>
-          <q-btn flat rounded icon="autorenew" @click="init" />
+        <div class="row">
+          <q-btn  flat rounded icon="autorenew" @click="init" />
+          <q-input dense class="col" v-model="search"  type="search">
+            <template v-slot:append>
+              <q-icon name="search" />
+            </template>
+          </q-input>
         </div>
       </div>
     </div>
@@ -57,54 +62,54 @@
     <q-dialog v-model="drop">
       <q-card style="width: 700px; max-width: 80vw;">
 
-          <q-card-section>
-            <q-splitter v-model="splitter" style="height: 305px">
-              <template v-slot:before>
-                <q-tabs v-model="tab2" vertical class="text-primary">
-                  <q-tab name="workpoints" icon="store" label="Sucursales" />
-                  <q-tab name="positions" icon="lock" label="Rol" />
-                  <q-tab name="apps" icon="app_registration" label="Apps" />
-                </q-tabs>
-              </template>
-              <template v-slot:after>
-                <q-tab-panels v-model="tab2" animated swipeable vertical transition-prev="jump-up"
-                  transition-next="jump-up">
-                  <q-tab-panel name="workpoints">
-                    <div class="text-h6">Sucursal Principal</div>
-                    <div class="row">
-                      <q-select class="col" dense v-model="change.item.store" :options="filter.branches.opts"
-                        option-label="name" label="Sucursal" filled :disable="true" />
-                      <q-separator spaced inset vertical dark />
-                      <q-icon name="trending_flat" size="lg" />
-                      <q-separator spaced inset vertical dark />
-                      <q-select class="col" dense v-model="change.l[0]" :options="filter.branches.opts"
-                        option-label="name" label="Sucursal" filled :disable="true" />
-                    </div>
-                    <div class="text-h6">Sucursales</div>
-                    <q-option-group v-model="filter.branches.val" :options="filter.branches.opts" color="primary"
-                      type="toggle" @update:model-value="changework(filter.branches.val)" />
-                  </q-tab-panel>
-                  <q-tab-panel name="positions">
-                    <q-select dense option-label="name" v-model="change.item.rol.area" :options="filter.area.opts"
-                      label="Area" filled />
+        <q-card-section>
+          <q-splitter v-model="splitter" style="height: 305px">
+            <template v-slot:before>
+              <q-tabs v-model="tab2" vertical class="text-primary">
+                <q-tab name="workpoints" icon="store" label="Sucursales" />
+                <q-tab name="positions" icon="lock" label="Rol" />
+                <q-tab name="apps" icon="app_registration" label="Apps" />
+              </q-tabs>
+            </template>
+            <template v-slot:after>
+              <q-tab-panels v-model="tab2" animated swipeable vertical transition-prev="jump-up"
+                transition-next="jump-up">
+                <q-tab-panel name="workpoints">
+                  <div class="text-h6">Sucursal Principal</div>
+                  <div class="row">
+                    <q-select class="col" dense v-model="change.item.store" :options="filter.branches.opts"
+                      option-label="name" label="Sucursal" filled :disable="true" />
                     <q-separator spaced inset vertical dark />
-                    <q-select dense option-label="name" v-model="change.item.rol" :options="filpos" label="Puesto"
-                      filled />
-                  </q-tab-panel>
+                    <q-icon name="trending_flat" size="lg" />
+                    <q-separator spaced inset vertical dark />
+                    <q-select class="col" dense v-model="change.l[0]" :options="filter.branches.opts"
+                      option-label="name" label="Sucursal" filled :disable="true" />
+                  </div>
+                  <div class="text-h6">Sucursales</div>
+                  <q-option-group v-model="filter.branches.val" :options="filter.branches.opts" color="primary"
+                    type="toggle" @update:model-value="changework(filter.branches.val)" />
+                </q-tab-panel>
+                <q-tab-panel name="positions">
+                  <q-select dense option-label="name" v-model="change.item.rol.area" :options="filter.area.opts"
+                    label="Area" filled />
+                  <q-separator spaced inset vertical dark />
+                  <q-select dense option-label="name" v-model="change.item.rol" :options="filpos" label="Puesto"
+                    filled />
+                </q-tab-panel>
 
-                  <q-tab-panel name="apps">
-                    <div class="text-h6">Apps</div>
-                    <q-option-group v-model="filter.apps.val" :options="filter.apps.opts" color="primary" type="toggle"
-                      @update:model-value="changeapps(filter.apps.val)" />
-                  </q-tab-panel>
-                </q-tab-panels>
-              </template>
-            </q-splitter>
-          </q-card-section>
-          <q-card-actions align="right">
-            <q-btn flat label="Cancelar" color="negative" @click="reset"/>
-            <q-btn flat label="Continuar" color="positive" @click="afterDrop" />
-          </q-card-actions>
+                <q-tab-panel name="apps">
+                  <div class="text-h6">Apps</div>
+                  <q-option-group v-model="filter.apps.val" :options="filter.apps.opts" color="primary" type="toggle"
+                    @update:model-value="changeapps(filter.apps.val)" />
+                </q-tab-panel>
+              </q-tab-panels>
+            </template>
+          </q-splitter>
+        </q-card-section>
+        <q-card-actions align="right">
+          <q-btn flat label="Cancelar" color="negative" @click="reset" />
+          <q-btn flat label="Continuar" color="positive" @click="afterDrop" />
+        </q-card-actions>
       </q-card>
     </q-dialog>
 
@@ -121,7 +126,7 @@ import uapi from "src/API/UserApi";
 import viewUser from 'src/components/Users/Index/UserView.vue';
 const $q = useQuasar();
 
-const users = ref(null);
+const getUser = ref(null);
 const branch = ref(null);
 const splitter = ref(25)
 const filter = ref({
@@ -136,20 +141,30 @@ const change = ref({
   item: null,
   l: null
 });
-const getlist = (list) => {
-  return users.value.filter((e) => e._store == list);
-};
+const search = ref('');
+
 const drop = ref(false);
 const table = ref({
   pagination: { rowsPerPage: [0] }
 })
 
 const filpos = computed(() => filter.value.position.optsdb.filter((e) => e._area == change.value?.item.rol.area.id))
+
+const users = computed(() => getUser.value.filter(e => {
+    return `${e.name} ${e.surnames}`.toLowerCase().includes(search.value.toLowerCase())
+  }
+))
+
+
 const startDrag = (e, i) => {
   console.log(i);
   e.dataTransfer.dropEffect = "move";
   e.dataTransfer.effectAllowed = "move";
   e.dataTransfer.setData("itemID", i.id);
+};
+
+const getlist = (list) => {
+  return users.value.filter((e) => e._store == list);
 };
 
 const onDrop = async (e, l) => {
@@ -161,7 +176,7 @@ const onDrop = async (e, l) => {
   change.value.item = item
   change.value.l = branch.value.filter(b => b.id == l)
   change.value.item.use_store.map(e => e._store == l ? e._state = 1 : e._state = 2)
-  filter.value.branches.opts.forEach(e => e.value == l ? e.disable = true : e.disable = false )
+  filter.value.branches.opts.forEach(e => e.value == l ? e.disable = true : e.disable = false)
   item.apps.forEach(e => filter.value.apps.val.push(e._app))
   filter.value.branches.val.push(l)
   drop.value = true
@@ -229,7 +244,7 @@ const init = async () => {
     console.log(resp);
   } else {
     console.log(resp);
-    users.value = resp.users;
+    getUser.value = resp.users;
     filter.value.area.opts = resp.area
     filter.value.position.optsdb = resp.position
     filter.value.branches.opts = resp.workpoints

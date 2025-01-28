@@ -13,7 +13,7 @@
         <q-form @submit="onSubmit" @reset="onReset" class="q-gutter-md ">
 
           <div class="flex justify-center" v-for="(question, index) in form.question" :key="index">
-            <responses :question="question" :colaborators="colaborators"></responses>
+            <responses :question="question" :colaborators="usersBranch"></responses>
 
           </div>
           <div class="flex justify-center">
@@ -45,7 +45,7 @@ const piniaAccount = useAccountStore();
 
 const form = ref([]);
 const colaborators = ref([])
-const usersBranch = computed(() => colaborators.value.filter(e => e._store == piniaAccount.account._store && e._state == 2 && e.id != piniaAccount.account.id))
+const usersBranch = computed(() => colaborators.value.filter(e => e._store == piniaAccount.account._store && [1,2,5].includes(e._state) && e.id != piniaAccount.account.id))
 
 
 const validFormQuestion = computed(() => form.value?.question?.filter(e => e._required == 1 && e._response == null));
