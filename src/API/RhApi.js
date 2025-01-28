@@ -57,8 +57,10 @@ export default{
   deleteAttendance(device){
     let burl = `cluster/Assist/deleteAttendance/${device}`;
     return vizapi.delete(burl).then( done => done.data).catch( fail => { return {error:fail.error.response} });
+  },
+  getReportWeek(){
+    let burl = `cluster/Assist/getReportWeek`;
+    return vizapi.get(burl).then( done => done.data).catch( fail => { return {error:fail.error.response} });
   }
-
-
 
 }

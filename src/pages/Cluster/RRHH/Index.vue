@@ -5,6 +5,8 @@
         <div class="col anek-bld text-grey-9 q-pl-sm">Recursos Humanos</div>
         <div>
           <q-btn flat rounded icon="autorenew" @click="init" />
+          <q-btn flat rounded  icon="album" @click="replyRegisters" title="Obtener Registros" />
+
         </div>
       </div>
     </div>
@@ -129,10 +131,7 @@
         <q-btn color="primary" label="Cambiar Horario" @click="changeDate" outline class="full-width" />
         <q-separator spaced inset vertical dark />
         <q-btn color="primary" label="Eliminar Registros" @click="deleteConfirm.state = !deleteConfirm.state" outline
-          class="full-width"  />
-
-
-
+          class="full-width" :disable="device._att < 1000" />
       </q-card-section>
       <q-card-actions align="center">
         <q-btn flat label="Cancel" color="negative" v-close-popup />
@@ -150,6 +149,22 @@
         <q-card-actions align="right">
           <q-btn flat label="Cancelar" color="positive" v-close-popup />
           <q-btn flat label="Aceptar" color="negative" @click="deleteRegister" />
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
+
+    <q-dialog v-model="replyState.state" persistent>
+      <q-card>
+        <q-card-section >
+         <div class="text-h5 text-center">ASISTENCIAS GRABADAS</div>
+         <div v-for="(reply, index) in replyState.body" :key="index">
+            <div class="text-bold">{{ reply.name }}</div>
+            <div class="text-overline">{{ reply.data }}</div>
+          <q-separator spaced inset vertical dark />
+          </div>
+        </q-card-section>
+        <q-card-actions align="right">
+          <q-btn flat label="OK" color="primary" @click="replyState.body = [], replyState.state = false" />
         </q-card-actions>
       </q-card>
     </q-dialog>
@@ -183,6 +198,11 @@ const piniaAccount = useAccountStore();
 
 
 const devices = ref([]);
+const replyState = ref({
+  state:false,
+  body:[],
+  bodyfalse:[]
+})
 const device = ref(null);
 const wndView = ref(false)
 const deleteConfirm = ref({state:false})
@@ -327,6 +347,53 @@ const deleteRegister = async () => {
     deleteConfirm.value.state = !deleteConfirm.value.state
   }
 }
+
+const replyRegisters =  () => {
+  $q.loading.show({message:'Obteniendo Registros'})
+  devices.value.forEach((e, index) => {
+    setTimeout( async () =>  {
+      $q.loading.show({ message: `Replicando Checadas de ${e.nick_name}` })
+      replyState.value.state = true;
+      const resp = await rhpi.getRegisDevice(e.id)
+      if(resp.error){
+        console.error(`Error pinging ${e.ip_address}:`, resp.error);
+        let dat = {name:e.nick_name, data: `${e.nick_name} Sin Conexion` }
+        replyState.value.body.push(dat)
+      }else{
+        let dat  = {name: e.nick_name, data: resp.goals}
+        replyState.value.body.push(dat)
+        $q.loading.hide();
+      }
+    }, index * 1000)
+  });
+}
+
+
+const sync = async () => {
+  console.log("Sincronizando Checadas");
+  // $q.loading.show({message:'Sincronizando Checadas'})
+  sucursales.value.opts.forEach((e, index) => {
+    setTimeout(() => {
+      if (e.label != 'All') {
+        $q.loading.show({ message: `Replicando Checadas de ${e.name}` })
+        api.get(`/zkt/getRegisDevice/${e.id}`)
+          .then(i => {
+            console.log(i.data)
+            $q.loading.hide();
+            let data = {name: e.name, message:i.data}
+            checadas.value.goals.push(data);
+            $q.notify({message:`${e.name} OK :):`,type:'positive',position:'center'})
+          })
+          .catch(error => {
+            console.error(`Error pinging ${e.ip_address}:`, error);
+            $q.loading.hide();
+            $q.notify({message:`Error checador ${e.name}:`,type:'negative',position:'center'})
+          });
+      }
+
+    }, index * 1000)
+  })
+  checadas.value.state = true;}
 
 
 init()
