@@ -68,7 +68,7 @@ const init = async () => {
 
 const exportTable = () => {
   const workbook = new ExcelJS.Workbook();
-  const targetColumns = ['G', 'H', 'I', 'J', 'K', 'L','M'];
+  const targetColumns = ['H', 'I', 'J', 'K', 'L','M','N'];
 
   const worksheet = workbook.addWorksheet(`Reporte`);
   worksheet.addRow(Object.keys(mosconfil.value[0]).map(i => i));
@@ -80,6 +80,7 @@ const exportTable = () => {
       row.NOMBRE,
       row.SUCURSAL,
       row.DISPOSITIVO,
+      row.TURNO,
       row.SABADO,
       row.DOMINGO,
       row.LUNES,

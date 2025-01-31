@@ -1,7 +1,7 @@
 <template>
   <q-page padding>
 
-    <q-table title="Pedidos" :rows="orders" row-key="id" :columns="table.columns" :filter="table.filter" v-if="orders">
+    <q-table title="Pedidos" :rows="orders" row-key="id" :columns="table.columns" :pagination="table.pagination" :filter="table.filter" v-if="orders">
       <template v-slot:top-right>
         <q-input borderless dense debounce="300" v-model="table.filter" placeholder="Buscar">
           <template v-slot:append>
@@ -32,7 +32,7 @@
             </q-badge>
           </q-td>
           <q-td key="date" :props="props">
-            {{ dayjs(props.row.created_at).format('YYYY-MM-DD HH:mm A') }}
+            {{ dayjs(props.row.created_at).format('HH:mm A') }}
           </q-td>
         </q-tr>
       </template></q-table>
@@ -141,15 +141,20 @@ $sktpvt.on('connect', () => {
   $sktpvt.emit('ParametrosConexion', piniaAccount)
 });
 $sktpvt.on('PedidoCreado', (param) => {
-  orders.value.push(param)
+  if(piniaAccount.account.id == param._created_by){
+    orders.value.push(param)
+  }
   console.log(`${param.user.nick} creo el pedido ${param.id} :)`)
 })
 
 $sktpvt.on('updOrder', (params) => {
-  console.log(params)
-  let inx = orders.value.findIndex(e => e.id == params.id)
-  orders.value[inx].state = params.state
-  orders.value[inx]._state = params._state
+  // console.log(params)
+  if(piniaAccount.account.id == params._created_by){
+    let inx = orders.value.findIndex(e => e.id == params.id)
+    orders.value[inx].state = params.state
+    orders.value[inx]._state = params._state
+  }
+  console.log(`${params.user.nick} termino el pedido ${params.id} :)`)
 })
 const anexo = ref({
   state: false,
@@ -175,7 +180,8 @@ const table = ref({
     { id: 'created', name: 'created', label: 'Realizo', field: row => row.user.nick },
     { id: 'date', name: 'date', label: 'Fecha', field: row => dayjs(row.created_at).format('YYYY-MM-DD HH:mm A') }
   ],
-  filter: ''
+  filter: '',
+  pagination:{rowsPerPage:10}
 })
 const colorCellState = [
   'bg-blue-14 ',

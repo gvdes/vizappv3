@@ -105,7 +105,7 @@ const init = async () => {
 
 const getOrders = async() => {
   console.log('obteniendo ordenes :) ')
-  const resp = await pvtpi.index()
+  const resp = await pvtpi.getOrdersCheckin()
   if(resp.error){
     console.log(resp)
   }else{
@@ -129,9 +129,8 @@ const onSubmit = () => {
 }
 
 const changeStatus = async (pedido) => {
+  $q.loading.show({message:'Cambiando Estado'})
   console.log(pedido)//se tiene que revisar primero la configuracion para ver a donde va primero el pedido si a por surtir o a por validar
-  // $q.loading.show({message:'Guardando Pedido :p'});
-  //el tipo es el 7 siempre en el proceso
   const resp = await pvtpi.changeStatus(pedido);
   if(resp.error){
     console.log(resp)
@@ -140,13 +139,13 @@ const changeStatus = async (pedido) => {
     console.log(resp)
     let inx = orders.value.findIndex(e => e.id == resp.id)
     orders.value.splice(inx,1)
-
     order.value = null
     $q.notify({
       message:'Pedido enviado',
       type:'positive',
       position:'center'
     })
+    $q.loading.hide()
   }
 }
 

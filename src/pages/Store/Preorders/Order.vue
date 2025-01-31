@@ -231,7 +231,8 @@ const init = async () => {
     $q.loading.hide();
     $router.push(`/store/${piniaAccount.join}/preorders/pedidos`)
   } else {
-    order.value = (resp.order)
+    if(resp.order._created_by === piniaAccount.account.id){
+      order.value = (resp.order)
     if (resp.order._order_by) {
       firstProducts.value = resp.order.order.bodie
     }
@@ -241,6 +242,15 @@ const init = async () => {
     rules.value = resp.rules;
     console.log(resp);
     $q.loading.hide();
+    }else{
+      $router.push(`/store/${piniaAccount.join}/preorders/pedidos`)
+      $q.notify({
+      message: 'No puedes ingresar a este Pedido',
+      type: 'negative',
+      position: 'center'
+    })
+    }
+
   }
 }
 const finderFound = (item) => {

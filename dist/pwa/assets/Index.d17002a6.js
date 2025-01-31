@@ -1,0 +1,1 @@
+import{Q as e}from"./QPage.f0dd8fcd.js";import{_ as o,o as r,e as a}from"./index.b942e2e7.js";const t={};function s(c,n,p,_,d,f){return r(),a(e,{padding:""})}var u=o(t,[["render",s]]);export{u as default};

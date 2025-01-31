@@ -27,7 +27,9 @@
         <q-form @submit="openignBox" @reset="reset" class="q-gutter-md">
           <q-select v-model="cash_cashier._cashier" :options="cashier" label="Cajero" filled option-label="name"
             option-value="id" dense />
-          <q-select v-model="cash_cashier._printer" :options="printers" label="Impresora" filled option-label="name"
+          <q-select v-model="cash_cashier._printer_tck" :options="printers" label="Impresora Tickets" filled option-label="name"
+            option-value="id" dense />
+            <q-select v-model="cash_cashier._printer_order" :options="commandPrint" label="Impresora Pedidos" filled option-label="name"
             option-value="id" dense />
           <q-input v-model="cash_cashier.initial_cash" type="number" label="Efectivo Inicial" filled dense />
           <div>
@@ -51,7 +53,9 @@
       <q-card-section>
         <q-select v-model="editBox.val.cashier.user.name" label="Cajero" filled dense disable />
         <q-separator spaced inset vertical dark />
-        <q-select v-model="editBox.val.cashier.printer.name" label="Impresora" filled dense disable />
+        <q-select v-model="editBox.val.cashier.printer.name" label="Impresora TCK" filled dense disable />
+        <q-separator spaced inset vertical dark />
+        <q-select v-model="editBox.val.cashier.printer_order.name" label="Impresora Pedidos" filled dense disable />
         <q-separator spaced inset vertical dark />
         <q-input v-model="editBox.val.cashier.initial_cash" type="number" label="Efectivo Inicial" filled dense
           disable />
@@ -244,7 +248,8 @@ const automate = ref({
 })
 const state = ref([]);
 const cashier = ref([]);
-const printers = ref([])
+const printers = ref([]);
+const commandPrint = ref([])
 const cash_cashier = ref({
   _cashier: null,
   _state: null,
@@ -271,7 +276,7 @@ const table = ref({
 })
 
 const validOpening = computed(() => {
-  if (cash_cashier.value._cashier && cash_cashier.value._printer && cash_cashier.value.initial_cash) {
+  if (cash_cashier.value._cashier && cash_cashier.value._printer_tck && cash_cashier.value._printer_order && cash_cashier.value.initial_cash) {
     return true
   } else {
     return false
@@ -289,7 +294,8 @@ const init = async () => {
     cash.value = resp.cash
     cashier.value = resp.cashier
     state.value = resp.state
-    printers.value = resp.printers
+    printers.value = resp.printers?.filter( e => e._type == 1);
+    commandPrint.value = resp.printers?.filter( e => e._type == 2);
     automate.value.values = resp.automate
     $q.loading.hide()
   }
@@ -349,6 +355,7 @@ const deleteAutomate = (caj) => {
 }
 
 const boxClose = async () => {
+  $q.loading.show({message:'Cerrando Caja :) '})
   console.log('cerrar caja')
   closeBox.value.total = closeBox.value.Monedas.reduce((a = 0, v) => a + v.key * v.val, 0) + closeBox.value.Billetes.reduce((a = 0, v) => a + v.key * v.val, 0)
   const data = {
@@ -357,10 +364,34 @@ const boxClose = async () => {
   }
   console.log(data)
   const resp = await cashApi.closeBox(data);
-  if(resp.error){
+  if (resp.error) {
     console.log(resp)
-  }else{
+  } else {
     console.log(resp)
+    editBox.value = {
+      state: false,
+      val: null
+    }
+    closeBox.value = {
+      state: false,
+      Monedas: [
+        { key: 10, val: 0 },
+        { key: 5, val: 0 },
+        { key: 2, val: 0 },
+        { key: 1, val: 0 },
+        { key: .50, val: 0 },
+      ],
+      Billetes: [
+        { key: 20, val: 0 },
+        { key: 50, val: 0 },
+        { key: 100, val: 0 },
+        { key: 200, val: 0 },
+        { key: 500, val: 0 },
+        // { key: 1000, val: 0 },
+      ]
+    }
+    $q.loading.hide();
+    init();
   }
 }
 

@@ -126,14 +126,14 @@
     </div>
 
     <q-page-sticky position="bottom-right" :offset="[20, 20]">
-      <q-fab color="primary" text-color="white" icon="keyboard_arrow_left" :direction="isMobile ? 'up' : 'left'">
-        <template v-slot:label="{ opened }">
+      <q-fab  vertical-actions-align="right" color="primary" text-color="white" icon="keyboard_arrow_left" :direction="isMobile ? 'up' : 'left'">
+        <!-- <template v-slot:label="{ opened }" v-if="!isMobile" >
           <div :class="{ 'example-fab-animate--hover': opened !== true }">
             {{ opened !== true ? 'Opciones' : 'Cerrar' }}
           </div>
-        </template>
+        </template> -->
         <div v-for="(modulo, index) in permissions" :key="index">
-          <q-fab-action color="primary" :icon="modulo.module.icon" :to="`${modulo.module.path}`"
+          <q-fab-action color="primary" label-position="left" :icon="modulo.module.icon" :to="`${modulo.module.path}`"
             :label="modulo.module.name" />
         </div>
       </q-fab>

@@ -50,6 +50,10 @@ export default{
   changeConfig(data){
     let burl = `store/${piniaAccount.join}/orders/changeConfig`;
     return vizapi.post(burl,data).then( done => done.data).catch( fail => { return {error:fail.response} });
+  },
+  getOrdersCheckin(){
+    let burl = `store/${piniaAccount.join}/orders/getOrdersCheckin`;
+    return vizapi.get(burl).then( done => done.data).catch( fail => { return {error:fail.response} });
   }
 }
 
