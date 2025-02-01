@@ -10,9 +10,9 @@ const pdf = async (data) => {
   doc.text("ACTA ADMINISTRATIVA", 105, 15, { align: "center" });
   doc.setFont("helvetica", "normal");
   // Logo y marca de agua
-  doc.addImage('../src/assets/avatares/logo/tipelog.png', 'PNG', 3, 3, 40, 20);
+  doc.addImage('src/assets/avatares/logo/tipelog.png', 'PNG', 3, 3, 40, 20);
   doc.setGState(new doc.GState({ opacity: 0.2 }));
-  doc.addImage('../src/assets/avatares/logo/tipelog.png', "PNG", 20, 100, 170, 100, "", "FAST");
+  doc.addImage('src/assets/avatares/logo/tipelog.png', "PNG", 20, 100, 170, 100, "", "FAST");
   doc.setGState(new doc.GState({ opacity: 1 }));
 
   let y = 30; // Define la posición inicial de y
