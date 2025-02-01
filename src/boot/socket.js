@@ -3,8 +3,8 @@ import { io } from "socket.io-client";
 
 
 // const URLSocket = 'http://localhost:7171/';
-const URLSocket = 'http://192.168.10.160:3000/';
-// const URLSocket = 'http://192.168.10.238:3000/';
+// const URLSocket = 'http://192.168.10.160:3000/';
+const URLSocket = 'http://192.168.10.238:3000/';
 
 
 const $socket = io(URLSocket, { autoConnect: false });
