@@ -61,6 +61,10 @@ export default{
   getReportWeek(){
     let burl = `cluster/Assist/getReportWeek`;
     return vizapi.get(burl).then( done => done.data).catch( fail => { return {error:fail.error.response} });
+  },
+  addProceeding(data){
+    let burl = `cluster/Assist/addProceedings`;
+    return vizapi.post(burl,data).then( done => done.data).catch( fail => { return {error:fail.error.response} });
   }
 
 }

@@ -104,7 +104,7 @@ const routes = [
         children: [
           { path: '', name: 'inx', component: () => import('pages/Store/RRHH/Index.vue')},
           { path: 'justifications', name: 'jst', component: () => import('pages/Store/RRHH/Justification.vue')},
-
+          { path: 'turns', name: 'jst', component: () => import('pages/Store/RRHH/Turn.vue')},
         ],
       },
       {
@@ -165,6 +165,7 @@ const routes = [
           { path: 'create', name: 'create', component: () => import('pages/Cluster/RRHH/Create.vue') },
           { path: 'report', name: 'repot', component: () => import('pages/Cluster/RRHH/Report.vue') },
           { path: 'justification', name: 'justification', component: () => import('pages/Cluster/RRHH/Justification.vue') },
+          { path: 'proceedings', name: 'actas_admon', component: () => import('pages/Cluster/RRHH/proceedings.vue') },
           { path: 'roster', name: 'roster', component: () => import('pages/Cluster/RRHH/Roster.vue') },
         ]
       },
