@@ -65,6 +65,10 @@ export default{
   addProceeding(data){
     let burl = `cluster/Assist/addProceedings`;
     return vizapi.post(burl,data).then( done => done.data).catch( fail => { return {error:fail.error.response} });
-  }
+  },
+  getTurnsWeek(){
+    let burl = `store/${piniaAccount.join}/rrhh/getTurnsWeek`
+    return vizapi.get(burl).then( done => done.data).catch( fail => { return {error:fail.error.response} });
+  },
 
 }
