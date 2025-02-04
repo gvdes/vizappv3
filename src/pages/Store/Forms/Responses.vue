@@ -45,7 +45,7 @@ const piniaAccount = useAccountStore();
 
 const form = ref([]);
 const colaborators = ref([])
-const usersBranch = computed(() => colaborators.value.filter(e => e._store == piniaAccount.account._store && [1,2,5].includes(e._state) && e.id != piniaAccount.account.id))
+const usersBranch = computed(() => colaborators.value.filter(e => e._store == piniaAccount.join && [1,2,5].includes(e._state) && e.id != piniaAccount.account.id))
 
 
 const validFormQuestion = computed(() => form.value?.question?.filter(e => e._required == 1 && e._response == null));

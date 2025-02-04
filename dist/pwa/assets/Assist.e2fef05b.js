@@ -1,1 +1,0 @@
-import{Q as e}from"./QPage.b8b19dfc.js";import{_ as s,o as t,e as a,w as o,J as r}from"./index.a795a724.js";const c={},n=r("h1",null,"ASISTENCIAS",-1);function _(p,d,i,f,l,u){return t(),a(e,{padding:""},{default:o(()=>[n]),_:1})}var x=s(c,[["render",_]]);export{x as default};

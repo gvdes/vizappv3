@@ -104,7 +104,7 @@ const routes = [
         children: [
           { path: '', name: 'inx', component: () => import('pages/Store/RRHH/Index.vue')},
           { path: 'justifications', name: 'jst', component: () => import('pages/Store/RRHH/Justification.vue')},
-          // { path: 'turns', name: 'jst', component: () => import('pages/Store/RRHH/Turn.vue')},
+          { path: 'turns', name: 'trn', component: () => import('pages/Store/RRHH/Turn.vue')},
         ],
       },
       {
