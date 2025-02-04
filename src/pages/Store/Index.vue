@@ -214,11 +214,19 @@ const init = async () => {
               return (e._responsible == 3 || e._responsible == 1) && e._type == 2 || e._type == 3;
             } else {
               return (e._responsible == 3 || e._responsible == 1) && e._type == 1 || e._type == 3;
-
             }
           } else {
             return e._responsible == 1 && e._type == 3;
           }
+        } else if ([3].includes(piniaAccount.account.rol.hierarchy)){
+
+          if ([2].includes(piniaAccount.account.rol.type_rol)) {
+            // console.log(piniaAccount.joinedStore._type)
+            if (piniaAccount.joinedStore._type == 1) {
+              return (e._responsible == 3 || e._responsible == 1) && e._type == 2 || e._type == 3;
+            }
+          }
+
         } else if ([0].includes(piniaAccount.account.rol.hierarchy)) {
           console.log(piniaAccount.joinedStore)
           if ([2].includes(piniaAccount.account.rol.type_rol)) {
