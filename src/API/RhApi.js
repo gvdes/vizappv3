@@ -70,5 +70,9 @@ export default{
     let burl = `store/${piniaAccount.join}/rrhh/getTurnsWeek`
     return vizapi.get(burl).then( done => done.data).catch( fail => { return {error:fail.error.response} });
   },
+  addTurnsWeek(data){
+    let burl = `store/${piniaAccount.join}/rrhh/addTurnsWeek`
+    return vizapi.post(burl,data).then( done => done.data).catch( fail => { return {error:fail.error.response} });
+  },
 
 }
