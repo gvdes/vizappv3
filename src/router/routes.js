@@ -103,10 +103,18 @@ const routes = [
         path: 'manpower',
         children: [
           { path: '', name: 'inx', component: () => import('pages/Store/RRHH/Index.vue')},
+          { path: 'report', name: 'rpt', component: () => import('pages/Store/RRHH/Report.vue')},
           { path: 'justifications', name: 'jst', component: () => import('pages/Store/RRHH/Justification.vue')},
           { path: 'turns', name: 'trn', component: () => import('pages/Store/RRHH/Turn.vue')},
         ],
       },
+      {
+        path: 'usuarios',
+        children: [
+          { path: '', name: 'usr', component: () => import('pages/Store/Users/Index.vue')},
+        ],
+      },
+
       {
         path: 'resp',
         children: [

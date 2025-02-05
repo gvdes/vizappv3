@@ -69,6 +69,10 @@ const init = async () => {
   const resp = await useApi.index()
   if (resp.error) {
     console.log(resp)
+    if(resp.error.status == 405){
+      $router.push('/')
+      $q.notify({message:'No tienes acceso a esta pagina',type:'negative',position:'center'})
+    }
   } else {
     users.value = resp.usuarios
     $q.loading.hide()

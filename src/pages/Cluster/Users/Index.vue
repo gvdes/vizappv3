@@ -205,6 +205,10 @@ const init = async () => {
   const resp = await uapi.index();
   if (resp.error) {
     console.log(resp);
+    if(resp.error.status == 405){
+      $router.push('/')
+      $q.notify({message:'No tienes acceso a esta pagina',type:'negative',position:'center'})
+    }
   } else {
     usuarios.value = resp.usuarios
     console.log(resp.usuarios)

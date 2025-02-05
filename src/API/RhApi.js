@@ -17,7 +17,7 @@ export default{
   },
   newD(){
     let burl = `cluster/Assist/new`;
-    return vizapi.get(burl).then( done => done.data).catch( fail => { return {error:fail.errpr.response} });
+    return vizapi.get(burl).then( done => done.data).catch( fail => { return {error:fail.error.response} });
   },
   pingN(device){
     let burl = `cluster/Assist/pingNew/${device}`;
@@ -73,6 +73,26 @@ export default{
   addTurnsWeek(data){
     let burl = `store/${piniaAccount.join}/rrhh/addTurnsWeek`
     return vizapi.post(burl,data).then( done => done.data).catch( fail => { return {error:fail.error.response} });
+  },
+  indexStore(){
+    let burl = `store/${piniaAccount.join}/rrhh/index`;
+    return vizapi.get(burl).then( done => done.data).catch( fail => { return {error:fail.error.response} });
+  },
+  pingStore(device){
+    let burl = `store/${piniaAccount.join}/rrhh/pingStore/${device}`;
+    return vizapi.get(burl).then( done => done.data).catch( fail => { return {error:fail.error.response} });
+  },
+  getRegisDeviceStore(device){
+    let burl = `store/${piniaAccount.join}/rrhh/getRegisDevice/${device}`;
+    return vizapi.post(burl).then( done => done.data).catch( fail => { return {error:fail.error.response} });
+  },
+  changeDateStore(device){
+    let burl = `store/${piniaAccount.join}/rrhh/changeDate/${device}`;
+    return vizapi.post(burl).then( done => done.data).catch( fail => { return {error:fail.error.response} });
+  },
+  getReportWeekStore(){
+    let burl = `store/${piniaAccount.join}/rrhh/getReportWeek`;
+    return vizapi.get(burl).then( done => done.data).catch( fail => { return {error:fail.error.response} });
   },
 
 }

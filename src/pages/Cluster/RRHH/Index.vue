@@ -226,6 +226,10 @@ const init = async () => {
   const resp = await rhpi.index()
   if (resp.error) {
     console.log('No hay conexion');
+    if(resp.error.status == 405){
+      $router.push('/')
+      $q.notify({message:'No tienes acceso a esta pagina',type:'negative',position:'center'})
+    }
   } else {
     console.log(resp);
     devices.value = resp

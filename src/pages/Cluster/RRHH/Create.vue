@@ -94,6 +94,10 @@ const init = async () => {
   const resp = await rhpi.newD();
   if (resp.error) {
     console.log(resp)
+    if(resp.error.status == 405){
+      $router.push('/')
+      $q.notify({message:'No tienes acceso a esta pagina',type:'negative',position:'center'})
+    }
   } else {
     console.log(resp)
     devices.value = resp.devices;

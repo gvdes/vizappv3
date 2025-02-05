@@ -6,7 +6,7 @@ export default{
   // ala(){return piniaAccount.account.id},
   index(){
     let burl = `cluster/accounts/users`;
-    return vizapi.get(burl).then( done => done.data ).catch( fail => { return {error:fail.response} });
+    return vizapi.get(burl).then( done => done.data ).catch( fail => { return {error:fail.error.response} });
   },
 
   opts(){
@@ -59,5 +59,13 @@ export default{
   InsertRCid(data){
     let burl = `cluster/accounts/InsertRCid`;
     return vizapi.post(burl,data).then( done => done.data ).catch( fail => { return {error:fail.error.response} });
-  }
+  },
+  getUserForStore(data){
+    let burl = `store/${piniaAccount.join}/users/getUserForStore`;
+    return vizapi.get(burl).then( done => done.data ).catch( fail => { return {error:fail.error.response} });
+  },
+  changePass(uid){
+    let burl = `store/${piniaAccount.join}/users/changePass/${uid}`;
+    return vizapi.get(burl).then( done => done.data ).catch( fail => { return {error:fail.error.response} });
+  },
 }
