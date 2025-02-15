@@ -70,6 +70,9 @@ const BonsPdf = async (data, week) => {
   const fecha = new Date(week[0].fecha);
   const mes = fecha.toLocaleString("es-ES", { month: "long" });
   console.log(mes.toUpperCase())
+  const firstDate = week.length > 0 ? week[0].fecha : '';
+const lastDate = week.length > 1 ? week[week.length - 1].fecha : firstDate;
+
 
   const doc = new jsPDF();
   const pageWidth = doc.internal.pageSize.width;
@@ -101,7 +104,7 @@ const BonsPdf = async (data, week) => {
       doc.setFontSize(headerFontSize);
       doc.setFont("helvetica", "bold");
       doc.setTextColor('D84040');
-      doc.text(`Semana -- Del ${week[0].fecha} al ${week[5].fecha} `, margin, 30);
+      doc.text(`Semana -- Del ${firstDate} al ${lastDate} `, margin, 30);
       doc.text(`Semana Actual ${week[0].week}`, margin, 35);
       doc.setTextColor('1D1616');
 

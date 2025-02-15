@@ -1,1 +1,0 @@
-import{Q as a}from"./QPage.34e9610a.js";import{_ as s,o as t,e as o,w as r,J as e}from"./index.946761dc.js";const c={},n=e("div",{class:"q-pa-md"},[e("div",{class:"text-h4 q-ma-md"},"Hello from Channel")],-1);function l(_,d){return t(),o(a,null,{default:r(()=>[n]),_:1})}var i=s(c,[["render",l]]);export{i as default};
