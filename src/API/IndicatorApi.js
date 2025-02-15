@@ -75,9 +75,9 @@ export default{
     let burl = `cluster/Indicators/changeUserBonues`
     return vizapi.post(burl,data).then( done => done.data ).catch( fail => { return {error:fail.error.response} });
   },
-  getformResponses(){
+  getformResponses(data){
     let burl = `cluster/Indicators/getformResponses`
-    return vizapi.get(burl).then( done => done.data ).catch( fail => { return {error:fail.error.response} });
+    return vizapi.post(burl,data).then( done => done.data ).catch( fail => { return {error:fail.error.response} });
   },
   viewResponseForm(id){
     let burl = `cluster/Indicators/${id}/viewResponseForm`

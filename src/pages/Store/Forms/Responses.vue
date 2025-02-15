@@ -44,6 +44,7 @@ const $router = useRouter()
 const piniaAccount = useAccountStore();
 
 const form = ref([]);
+
 const colaborators = ref([])
 const usersBranch = computed(() => colaborators.value.filter(e => e._store == piniaAccount.join && [1,2,5].includes(e._state) && e.id != piniaAccount.account.id))
 

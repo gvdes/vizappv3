@@ -7,9 +7,13 @@
             <div @click="$router.push('/cluster/indicators')"> <q-icon size="30px" name="arrow_back" /></div>
           </div>
         </div>
-        <div class="col anek-bld text-grey-9 q-pl-sm">Reportes</div>
+        <div class="col anek-bld text-grey-9 q-pl-sm">
+          <div>Reportes</div>
+          <div class="text-caption">{{`Formulario desde ${fechas.from} al ${fechas.to}`}}</div>
+        </div>
         <div>
-
+          <q-btn rounded flat  icon="download" title="Descargar Excel" />
+          <q-btn rounded flat  icon="event"  title="Fecha" @click="date = !date" />
         </div>
       </div>
     </div>
@@ -37,6 +41,24 @@
     <q-separator spaced inset vertical dark />
     <q-table :columns="table.columns" :rows="responseBascket" @row-click="viewResponseForm" />
 
+    <q-dialog v-model="date">
+      <q-card class="my-card">
+        <q-card-section>
+          <div class="q-pa-md">
+            <div class="q-pb-sm">
+            </div>
+            <q-date v-model="fec" range minimal />
+          </div>
+        </q-card-section>
+        <q-card-section>
+          <q-card-actions align="right">
+            <q-btn flat icon="close" color="negative" @click="date = !date" />
+            <q-btn flat icon="check" color="positive" @click="buscas" />
+          </q-card-actions>
+        </q-card-section>
+      </q-card>
+    </q-dialog>
+
 
   </q-page>
 </template>
@@ -55,10 +77,16 @@ const piniaAccount = useAccountStore();
 const $q = useQuasar();
 const $router = useRouter();
 
-// fecha: dayjs(date).format('YYYY-MM-DD'),
-// hora: dayjs(date).format('HH:mm:ss')
+
+const today = new Date();
+const date = ref(false);
+const fec = ref(null);
 
 
+const fechas = ref({
+  to:dayjs(today.value).format("YYYY/MM/DD"),
+  from:dayjs(today.value).format("YYYY/MM/DD")
+});
 
 const forms = ref([]);
 const responses = ref([]);
@@ -71,10 +99,12 @@ const filters = ref({
 const table = ref({
   columns: [
     { name: 'id', label: 'ID', field: r => r.id, align: 'center' },
-    { name: 'fecha', label: 'FECHA', field: r => dayjs(r.created_at).format('DD/MM/YYYY'), align: 'left' },
+    { name: 'fecha', label: 'FECHA', field: r => dayjs(r.created_at).format('DD/MM/YYYY HH:mm:ss'), align: 'left' },
     { name: 'store', label: 'SUCURSAL', field: r => r.store.name, align: 'left' },
     { name: 'form', label: 'FORMULARIO', field: r => r.form.name, align: 'left' },
     { name: 'user', label: 'USUARIO', field: r => r.user.name, align: 'left' },
+    { name: 'points', label: 'PUNTOS', field: r => r.total_score, align: 'center' },
+
   ]
 })
 
@@ -91,9 +121,11 @@ const responseBascket = computed(() => responses.value.filter(e => {
 }))
 
 
-const init = async () => {
+const init = async (fechas) => {
   $q.loading.show({ message: 'Obteniendo Checklists' })
-  const resp = await indpi.getformResponses();
+
+
+  const resp = await indpi.getformResponses(fechas);
   if (resp.error) {
     console.log(resp)
   } else {
@@ -110,9 +142,22 @@ const viewResponseForm = async (a,b) => {
 }
 
 
+const buscas = () => {
+  if(typeof fec.value === 'string'){
+    fechas.value.from = fec.value;
+    fechas.value.to = fec.value
+  }else{
+    fechas.value.from = fec.value.from;
+    fechas.value.to = fec.value.to
+  }
+  init(fechas.value)
+  date.value = false
+  console.log(fechas.value)
+}
 
 
 
-init()
+
+init(fechas.value)
 
 </script>
