@@ -108,7 +108,7 @@
         <q-separator spaced inset vertical dark />
         <q-input v-model="device.ip" type="text" label="IP" filled>
           <template v-slot:append>
-            <q-btn color="primary" icon="sensors" @click="ping(device.ip)" flat />
+            <q-btn color="primary" icon="sensors" @click="ping(device.id)" flat />
           </template>
         </q-input>
         <q-separator spaced inset vertical dark />

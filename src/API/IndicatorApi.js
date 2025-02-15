@@ -29,7 +29,7 @@ export default{
   },
   changeStatusForm(data){
     let burl = `cluster/Indicators/changeStatus`;
-    return vizapi.post(burl,data).then( done => done.data ).catch( fail => { return {error:fail.response} });
+    return vizapi.post(burl,data).then( done => done.data ).catch( fail => { return {error:fail.error.response} });
   },
   editQuest(data){
     let burl = `cluster/Indicators/editQuest`;
@@ -41,6 +41,46 @@ export default{
   },
   addResponse(data,sid){
     let burl = `store/${sid}/resp/form/addResponse`
-    return vizapi.post(burl,data).then( done => done.data ).catch( fail => { return {error:fail.response} });
-  }
+    return vizapi.post(burl,data).then( done => done.data ).catch( fail => { return {error:fail.error.response} });
+  },
+  getClass(){
+    let burl = `cluster/Indicators/getClass`
+    return vizapi.get(burl).then( done => done.data ).catch( fail => { return {error:fail.error.response} });
+  },
+  editClass(data){
+    let burl = `cluster/Indicators/editClass`
+    return vizapi.post(burl,data).then( done => done.data ).catch( fail => { return {error:fail.error.response} });
+  },
+  getClassStore(){
+    let burl = `cluster/Indicators/getClassStore`
+    return vizapi.get(burl).then( done => done.data ).catch( fail => { return {error:fail.error.response} });
+  },
+  editClassStore(data){
+    let burl = `cluster/Indicators/editClassStore`
+    return vizapi.post(burl,data).then( done => done.data ).catch( fail => { return {error:fail.error.response} });
+  },
+  getUserClass(){
+    let burl = `cluster/Indicators/getUserClass`
+    return vizapi.get(burl).then( done => done.data ).catch( fail => { return {error:fail.error.response} });
+  },
+  editUserClass(data){
+    let burl = `cluster/Indicators/editUserClass`
+    return vizapi.post(burl,data).then( done => done.data ).catch( fail => { return {error:fail.error.response} });
+  },
+  editUserStore(data){
+    let burl = `cluster/Indicators/editUserStore`
+    return vizapi.post(burl,data).then( done => done.data ).catch( fail => { return {error:fail.error.response} });
+  },
+  changeUserBonues(data){
+    let burl = `cluster/Indicators/changeUserBonues`
+    return vizapi.post(burl,data).then( done => done.data ).catch( fail => { return {error:fail.error.response} });
+  },
+  getformResponses(){
+    let burl = `cluster/Indicators/getformResponses`
+    return vizapi.get(burl).then( done => done.data ).catch( fail => { return {error:fail.error.response} });
+  },
+  viewResponseForm(id){
+    let burl = `cluster/Indicators/${id}/viewResponseForm`
+    return vizapi.get(burl).then( done => done.data ).catch( fail => { return {error:fail.error.response} });
+  },
 }

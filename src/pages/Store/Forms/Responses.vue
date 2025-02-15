@@ -99,7 +99,7 @@ const init = async () => {
 }
 
 const onSubmit = async () => {
-
+  $q.loading.show({message:'Enviando Formulario'});
   const formData = new FormData();
   console.log(form.value.question)
   formData.append('_user', piniaAccount.account.id);
@@ -151,6 +151,7 @@ const onSubmit = async () => {
   } else {
     $q.notify({ message: 'El formulario fue enviado', type: 'positive', position: 'center' })
     $router.push(`/`)
+    $q.loading.hide()
   }
 
 }

@@ -43,14 +43,14 @@ const routes = [
           {
             path: 'preventa',
             children: [
-              { path:'', component: () => import('src/pages/Store/Warehouses/Orders.vue') },
+              { path: '', component: () => import('src/pages/Store/Warehouses/Orders.vue') },
               // { path:':oid', component: () => import('src/pages/Store/Warehouses/Order.vue') } //descomentar al merge
             ]
           },
           {
             path: ':wid',
             children: [
-              { path:'', name: 'wrh', component: () => import('pages/Store/Warehouses/Warehouse.vue') },
+              { path: '', name: 'wrh', component: () => import('pages/Store/Warehouses/Warehouse.vue') },
               { path: 'inicio', name: 'wrhresume', component: () => import('src/pages/Store/Warehouses/Resume.vue') },
             ]
             // children: [
@@ -76,49 +76,49 @@ const routes = [
       {
         path: 'resurtido',
         children: [
-          { path:'', component: () => import('src/pages/Store/Warehouses/Restock/Index.vue') },
-          { path:':resid', component: () => import('src/pages/Store/Warehouses/Restock/Order.vue') }
+          { path: '', component: () => import('src/pages/Store/Warehouses/Restock/Index.vue') },
+          { path: ':resid', component: () => import('src/pages/Store/Warehouses/Restock/Order.vue') }
         ]
       },
       {
         path: 'preorders',
         children: [
-          { path: '', name: 'pvt', component: () => import('pages/Store/Preorders/Index.vue')},
-          { path:'config', name: 'cfg', component: () => import('pages/Store/Preorders/Config.vue') },
-          { path:'pedidos', name: 'ped', component: () => import('pages/Store/Preorders/ListOrders.vue') },
-          { path:'checkin', name: 'chckin', component: () => import('pages/Store/Preorders/Checkin.vue') },
-          { path:'dashboard', name: 'dsh', component: () => import('pages/Store/Preorders/Dashboard.vue') },
-          { path:'warehouse', name: 'wrhp', component: () => import('pages/Store/Preorders/Warehouse.vue') },
-          { path:'pedidos/:oid', name: 'oid', component: () => import('pages/Store/Preorders/Order.vue') },
+          { path: '', name: 'pvt', component: () => import('pages/Store/Preorders/Index.vue') },
+          { path: 'config', name: 'cfg', component: () => import('pages/Store/Preorders/Config.vue') },
+          { path: 'pedidos', name: 'ped', component: () => import('pages/Store/Preorders/ListOrders.vue') },
+          { path: 'checkin', name: 'chckin', component: () => import('pages/Store/Preorders/Checkin.vue') },
+          { path: 'dashboard', name: 'dsh', component: () => import('pages/Store/Preorders/Dashboard.vue') },
+          { path: 'warehouse', name: 'wrhp', component: () => import('pages/Store/Preorders/Warehouse.vue') },
+          { path: 'pedidos/:oid', name: 'oid', component: () => import('pages/Store/Preorders/Order.vue') },
         ],
       },
       {
         path: 'sales',
         children: [
-          { path: '', name: 'sles', component: () => import('pages/Store/Sale/Index.vue')},
-          { path: 'cashdesks', name: 'cashR', component: () => import('pages/Store/Sale/CasherRegister.vue')},
+          { path: '', name: 'sles', component: () => import('pages/Store/Sale/Index.vue') },
+          { path: 'cashdesks', name: 'cashR', component: () => import('pages/Store/Sale/CasherRegister.vue') },
         ],
       },
       {
         path: 'manpower',
         children: [
-          { path: '', name: 'inx', component: () => import('pages/Store/RRHH/Index.vue')},
-          { path: 'report', name: 'rpt', component: () => import('pages/Store/RRHH/Report.vue')},
-          { path: 'justifications', name: 'jst', component: () => import('pages/Store/RRHH/Justification.vue')},
-          { path: 'turns', name: 'trn', component: () => import('pages/Store/RRHH/Turn.vue')},
+          { path: '', name: 'inx', component: () => import('pages/Store/RRHH/Index.vue') },
+          { path: 'report', name: 'rpt', component: () => import('pages/Store/RRHH/Report.vue') },
+          { path: 'justifications', name: 'jst', component: () => import('pages/Store/RRHH/Justification.vue') },
+          { path: 'turns', name: 'trn', component: () => import('pages/Store/RRHH/Turn.vue') },
         ],
       },
       {
         path: 'usuarios',
         children: [
-          { path: '', name: 'usr', component: () => import('pages/Store/Users/Index.vue')},
+          { path: '', name: 'usr', component: () => import('pages/Store/Users/Index.vue') },
         ],
       },
 
       {
         path: 'resp',
         children: [
-          { path: 'form/:fid', name: 'sles', component: () => import('pages/Store/Forms/Responses.vue')},
+          { path: 'form/:fid', name: 'sles', component: () => import('pages/Store/Forms/Responses.vue') },
         ],
       },
       // { path: 'resurtido', component: () => import('pages/Store/Restock/Index.vue') }, //descomentar al merge
@@ -178,34 +178,39 @@ const routes = [
         ]
       },
       {
-      path: 'indicators',
-      component: () => import('layouts/indicatorLYT.vue'),
-      children: [
-        { path: '', name: 'rht', component: () => import('pages/Cluster/Indicator/Index.vue') },
-        { path: 'forms', name: 'frm', component: () => import('pages/Cluster/Indicator/Forms.vue') },
-        { path: 'forms/:fid', name: 'fid', component: () => import('pages/Cluster/Indicator/ViewForm.vue') },
-        { path: 'reports', name: 'rus', component: () => import('pages/Cluster/Indicator/Report.vue') },
-      ]
-    },
+        path: 'indicators',
+        component: () => import('layouts/indicatorLYT.vue'),
+        children: [
+          { path: '', name: 'rht', component: () => import('pages/Cluster/Indicator/Index.vue') },
+          { path: 'forms', name: 'frm', component: () => import('pages/Cluster/Indicator/Forms.vue') },
+          { path: 'forms/:fid', name: 'fid', component: () => import('pages/Cluster/Indicator/ViewForm.vue') },
+          { path: 'reports', name: 'rus', component: () => import('pages/Cluster/Indicator/Report.vue') },
+          { path: 'reports/:fid', name: 'rfi', component: () => import('pages/Cluster/Indicator/ViewFormResponse.vue') },
+          { path: 'classifications', name: 'cls', component: () => import('pages/Cluster/Indicator/Classification/Index.vue')},
+          { path: 'classifications/stores', name: 'clw', component: () => import('pages/Cluster/Indicator/Classification/Stores.vue'), }
+
+
+        ]
+      },
     ]
   },
 
   {
-    path:'/apps',
-    children:[
+    path: '/apps',
+    children: [
       {
-        path:'transfers',
+        path: 'transfers',
         component: () => import('src/layouts/Apps/TransfersLYT.vue'),
-        children:[
-          { path:'', name:'transfers_index', component: () => import('src/pages/Apps/Transfers/Index.vue') },
-          { path:':tid', name:'transfers_basket', component: () => import('pages/Apps/Transfers/Transfer.vue') },
+        children: [
+          { path: '', name: 'transfers_index', component: () => import('src/pages/Apps/Transfers/Index.vue') },
+          { path: ':tid', name: 'transfers_basket', component: () => import('pages/Apps/Transfers/Transfer.vue') },
         ]
       },
       {
-        path:'locator',
+        path: 'locator',
         component: () => import('src/layouts/Apps/LocatorLYT.vue'),
-        children:[
-          { path:'', name:'locator_index', component: () => import('src/pages/Apps/Locator/Index.vue') },
+        children: [
+          { path: '', name: 'locator_index', component: () => import('src/pages/Apps/Locator/Index.vue') },
           // { path:'', name:'locator_index', component: () => import('src/pages/Apps/Locator/Index.vue') },
         ]
       }

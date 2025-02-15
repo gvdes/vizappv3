@@ -58,7 +58,7 @@ import { useRouter } from 'vue-router';
 import { useQuasar } from 'quasar';
 import rhpi from 'src/API/RhApi';
 import dayjs from 'dayjs';
-import pdf from 'src/PDF/proceeding';
+import pdf from 'src/PDF/RRHH/proceeding';
 import useApi from 'src/API/UserApi';
 import { useAccountStore } from 'stores/Account';
 const $q = useQuasar();
