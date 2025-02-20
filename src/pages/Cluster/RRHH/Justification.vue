@@ -16,13 +16,13 @@
     <q-separator spaced inset vertical dark />
 
 
-    <ViewJustification :Justification="jsenespera" :State="states" :Payment="payment" :Type="types" @change="change" :filter="filter" />
+    <ViewJustification :Justification="jsenespera" :State="states" :Payment="payment" :Type="types" @change="change" />
 
     <q-dialog v-model="aproved" full-width>
       <q-card>
         <q-card-section>
           <ViewJustification :Justification="jsaceptadas" :State="states" :Payment="payment" :Type="types"
-            @change="change" :filter="filter"  />
+            @change="change"  />
         </q-card-section>
       </q-card>
     </q-dialog>
@@ -31,7 +31,7 @@
       <q-card>
         <q-card-section>
           <ViewJustification :Justification="jsrechazadas" :State="states" :Payment="payment" :Type="types"
-            @change="change"  :filter="filter" />
+            @change="change"   />
         </q-card-section>
       </q-card>
     </q-dialog>
@@ -59,7 +59,6 @@ const types = ref([]);
 const payment = ref([]);
 const rechazed = ref(false);
 const aproved = ref(false);
-const filter = ref('')
 
 const jsrechazadas = computed(() => justificaciones.value.filter(j => j._state == 3));
 const jsaceptadas = computed(() => justificaciones.value.filter(j => j._state == 1));

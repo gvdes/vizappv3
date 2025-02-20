@@ -103,14 +103,15 @@ const props = defineProps({
   State: { type: Array, default: [] },
   Payment: { type: Array, default: [] },
   Type: { type: Array, default: [] },
-  filter: { type: String, default: '' }
 })
+
+const filter = ref('');
 
 
 const optsVal = ref(null);
 
 const bascket = computed(() => props.Justification.filter(e =>
-  `${e.user?.name || ''} ${e.user?.surnames || ''}`.toLowerCase().includes(props.filter.toLowerCase())
+  `${e.user?.name || ''} ${e.user?.surnames || ''}`.toLowerCase().includes(filter.value.toLowerCase())
 ))
 
 const filRow = computed(() => {
