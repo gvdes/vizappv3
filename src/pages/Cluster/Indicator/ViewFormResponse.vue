@@ -1,5 +1,5 @@
 <template>
-  <q-page padding v-if="response != null">
+  <q-page padding v-if="responses != null">
     <div class="bg-white">
       <div class="q-pa-sm row items-center text-center text-h6">
         <div class="bg-white">
@@ -7,30 +7,30 @@
             <div @click="$router.push('/cluster/indicators/reports')"> <q-icon size="30px" name="arrow_back" /></div>
           </div>
         </div>
-        <div class="col anek-bld text-grey-9 q-pl-sm text-bold text-h5">{{ response.form.name }}</div>
+        <div class="col anek-bld text-grey-9 q-pl-sm text-bold text-h5">{{ responses.form.name }}</div>
         <div>
+          <q-btn  icon="download"   @click="downloadExcel" flat />
         </div>
       </div>
     </div>
-
     <q-card class="my-card">
       <q-card-section class="row">
-        <div class="col text-center text-bold ">RESPONDIO: {{ response.user.name }}</div>
-        <div class="col text-center text-bold ">SUCURSAL: {{ response.store.name }}</div>
-        <div class="col text-center text-bold ">CREADO: {{ dayjs(response.created_at).format('DD/MM/YYYY HH:mm:ss') }}
+        <div class="col text-center text-bold ">RESPONDIO: {{ `${responses.user.name} ${responses.user.surnames} ` }}</div>
+        <div class="col text-center text-bold ">SUCURSAL: {{ responses.store.name }}</div>
+        <div class="col text-center text-bold ">CREADO: {{ dayjs(responses.created_at).format('DD/MM/YYYY HH:mm:ss') }}
         </div>
-        <div class="col text-center text-bold ">PUNTOS: {{ totalPoints }} </div>
+        <div class="col text-center text-bold " v-if="responses.form._qualified">PUNTOS: {{ totalPoints }} </div>
       </q-card-section>
     </q-card>
-
     <q-separator spaced inset vertical dark />
 
     <q-card class="my-card">
-      <q-card-section v-for="(response, index) in response.responses">
+      <q-card-section v-for="(response, index) in responses.responses">
         <div class="text-left text-bold row">
           <div class="col"> {{ `${index + 1} .-` }} {{ response.question.question }} </div>
-          <div class="col text-right text-caption "> P. {{ response.question.options.filter(e => e.id ==
-            response._option)[0]?._correct == 1 ? response.question._points : 0 }} </div>
+          <div class="col text-right text-caption " v-if="responses.form._qualified"> P. {{
+            response.question.options.filter(e => e.id ==
+              response._option)[0]?._correct == 1 ? response.question._points : 0 }} </div>
         </div>
         <q-separator spaced inset vertical dark />
         <div v-if="response.question._type == 1" class="text-bold">{{ response.text }}</div>
@@ -84,11 +84,27 @@
             </div>
           </div>
         </div>
-        <div v-else-if="response.question._type == 4"></div>
+        <div v-else-if="response.question._type == 4">
+          <q-card-section>
+            <div v-if="Array.isArray(JSON.parse(response.text))" class="text-bold">
+              <div v-for="(respon, index) in JSON.parse(response.text)" :key="index">
+                <div v-if="typeof respon === 'object'" class="row">
+                  <div class="col"> {{ getUserName(respon) }}</div>
+                  <div class="col">{{ respon.qualified }}</div>
+                </div>
+                <div v-else-if="typeof respon === 'number'">
+                  {{ getUserName(respon) }}
+                </div>
 
+              </div>
+            </div>
+            <div v-else class="text-bold">
+              {{ response.text }}
+            </div>
+          </q-card-section>
+        </div>
         <q-separator />
       </q-card-section>
-
     </q-card>
     <q-dialog v-model="image.state">
       <q-card style="width: 700px; max-width: 80vw;">
@@ -102,10 +118,6 @@
         </q-card-section>
       </q-card>
     </q-dialog>
-
-
-
-
   </q-page>
 </template>
 
@@ -117,6 +129,7 @@ import { useAccountStore } from 'stores/Account';
 import indpi from 'src/API/IndicatorApi.js'
 import dayjs from 'dayjs';
 import { vizmedia } from 'boot/axios'
+import excel from 'src/EXCEL/Indicators/checklists.js';
 
 
 const $q = useQuasar();
@@ -124,7 +137,7 @@ const $route = useRoute();
 const $router = useRouter()
 const piniaAccount = useAccountStore();
 
-const response = ref(null)
+const responses = ref(null)
 const image = ref({
   state: false,
   files: null
@@ -135,7 +148,7 @@ const users = ref([])
 
 
 const totalPoints = computed(() => {
-  return response.value.responses.reduce((sum, res) => {
+  return responses.value.responses.reduce((sum, res) => {
     const selectedOption = res.question.options.find(e => e.id === res._option);
     return sum + (selectedOption?._correct === 1 ? res.question._points || 0 : 0);
   }, 0);
@@ -158,17 +171,35 @@ const init = async () => {
     console.log(resp)
   } else {
     console.log(resp)
-    response.value = resp.responses
+    responses.value = resp.responses
     users.value = resp.usuarios
     $q.loading.hide();
   }
 }
 
 const mosImages = (files) => {
-  // console.log(files)
   image.value.state = true
   image.value.files = files
 }
+
+const downloadExcel = async () => {
+
+try {
+  $q.loading.show({ message: 'Generando archivo...' });
+
+  await excel.excel([responses.value]); // Espera a que termine
+  $q.notify({message:'Archivo Creado', type:'positive',position:'center'})
+  $q.loading.hide();
+} catch (error) {
+  console.error('Error al generar el archivo:', error);
+  $q.loading.hide();
+  $q.notify({
+    type: 'negative',
+    message: 'Error al generar el archivo'
+  });
+}
+}
+
 
 init();
 </script>

@@ -12,7 +12,7 @@
           <div class="text-caption">{{`Formulario desde ${fechas.from} al ${fechas.to}`}}</div>
         </div>
         <div>
-          <q-btn rounded flat  icon="download" title="Descargar Excel" />
+          <q-btn rounded flat  icon="download" title="Descargar Excel" @click="downloadExcel" />
           <q-btn rounded flat  icon="event"  title="Fecha" @click="date = !date" />
         </div>
       </div>
@@ -70,6 +70,7 @@ import { useRouter } from 'vue-router';
 import { useQuasar } from 'quasar';
 import indpi from 'src/API/IndicatorApi';
 import pdf from 'src/PDF/Indicators/userclass.js';
+import excel from 'src/EXCEL/Indicators/checklists.js';
 import dayjs from 'dayjs';
 import { vizmedia } from 'boot/axios'
 import { Column } from 'jspdf-autotable';
@@ -99,11 +100,12 @@ const filters = ref({
 const table = ref({
   columns: [
     { name: 'id', label: 'ID', field: r => r.id, align: 'center' },
-    { name: 'fecha', label: 'FECHA', field: r => dayjs(r.created_at).format('DD/MM/YYYY HH:mm:ss'), align: 'left' },
-    { name: 'store', label: 'SUCURSAL', field: r => r.store.name, align: 'left' },
-    { name: 'form', label: 'FORMULARIO', field: r => r.form.name, align: 'left' },
-    { name: 'user', label: 'USUARIO', field: r => r.user.name, align: 'left' },
-    { name: 'points', label: 'PUNTOS', field: r => r.total_score, align: 'center' },
+    { name: 'fecha', label: 'FECHA', field: r => dayjs(r.created_at).format('DD/MM/YYYY HH:mm:ss'), align: 'left', sortable:true },
+    { name: 'store', label: 'SUCURSAL', field: r => r.store.name, align: 'left', sortable:true },
+    { name: 'form', label: 'FORMULARIO', field: r => r.form.name, align: 'left', sortable:true },
+    { name: 'user', label: 'USUARIO', field: r => `${r.user.name} ${r.user.surnames}`, align: 'left', sortable:true },
+    { name: 'position', label: 'PUESTO', field: r => r.user.rol.name, align: 'left', sortable:true },
+    { name: 'points', label: 'PUNTOS', field: r => r.total_score, align: 'center', sortable:true },
 
   ]
 })
@@ -155,7 +157,23 @@ const buscas = () => {
   console.log(fechas.value)
 }
 
+const downloadExcel = async () => {
 
+  try {
+    $q.loading.show({ message: 'Generando archivo...' });
+
+    await excel.excel(responseBascket.value); // Espera a que termine
+    $q.notify({message:'Archivo Creado', type:'positive',position:'center'})
+    $q.loading.hide();
+  } catch (error) {
+    console.error('Error al generar el archivo:', error);
+    $q.loading.hide();
+    $q.notify({
+      type: 'negative',
+      message: 'Error al generar el archivo'
+    });
+  }
+}
 
 
 init(fechas.value)

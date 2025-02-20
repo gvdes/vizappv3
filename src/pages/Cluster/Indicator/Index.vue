@@ -40,7 +40,7 @@
           <q-item clickable v-ripple @click="editUser(use)">
             <q-item-section>
               <q-card flat class="mycard" bordered
-                :style="`width: 250px; max-width: 230vw; height: 400px; border: 2px solid ${color(use)};`">
+                :style="`width: 250px; max-width: 230vw; height: 425px; border: 2px solid ${color(use)};`">
                 <q-card-section>
                   <div class="text-subtitle1 text-center">{{ use.name.toUpperCase() }}
                   </div>
@@ -65,11 +65,11 @@
                   <q-separator spaced inset vertical dark />
                   <div class="row q-mt-md">
                     <div class=" col">Clasificacion:</div>
-                    <div class=" col text-bold text-h4">{{ use.classification?.classification.name }}</div>
+                    <div class=" col text-bold text-h6">{{ use.classification?.classification.name }}</div>
                   </div>
                   <q-separator spaced inset vertical dark />
                   <div class="flex justify-center" v-if="use.avatar">
-                    <q-avatar size="170px"> <q-img :src="`${vizmedia}/profiles/${use.id}/${use.avatar}`" /> </q-avatar>
+                    <q-avatar size="170px"><q-img :src="`${vizmedia}/profiles/${use.id}/${use.avatar}`"/></q-avatar>
                   </div>
                   <!-- <div class="flex justify-center" v-else>
                   <q-avatar size="170px"> <q-img :src="`src/assets/avatares/pokesnorlax.png`" /> </q-avatar>

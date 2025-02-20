@@ -1,6 +1,23 @@
 <template>
-  <q-table title="Justificationes" :rows="Justification" row-key="id" :rows-per-page-options="[0]" separator="cell"
+  <q-table title="Justificaciones" :rows="filRow" row-key="id" :rows-per-page-options="[0]" separator="cell"
     :columns="table.columns">
+    <template v-slot:top-right>
+      <div class="row">
+        <q-input dense v-model="filter" filled type="text" label="Buscar" class="col">
+
+          <template v-if="filter" v-slot:append>
+            <q-btn round dense flat icon="close" @click="filter = ''" />
+          </template>
+
+          <template v-slot:prepend><q-icon name="search" /></template></q-input>
+        <q-separator spaced inset vertical dark class />
+        <q-select dense v-model="optsVal" label="Tipo" filled class="col" :options="Type" option-label="name">
+          <template v-if="optsVal" v-slot:append>
+            <q-btn round dense flat icon="close" @click="optsVal = null" />
+          </template>
+        </q-select>
+      </div>
+    </template>
     <template v-slot:body="props">
       <q-tr :props="props">
         <q-td key="id" :props="props">
@@ -8,6 +25,9 @@
         </q-td>
         <q-td key="user" :props="props">
           <div class="text-bold text-left">{{ props.row.user.name }} {{ props.row.user.surnames }}</div>
+        </q-td>
+        <q-td key="creacion" :props="props">
+          <div class="text-bold text-left"> {{ props.row.created_at }}</div>
         </q-td>
         <q-td key="start_date" :props="props">
           <div class="text-bold text-left"> {{ props.row.start_date }}</div>
@@ -57,7 +77,8 @@
       <q-card-section>
         <div class="q-pa-md">
           <q-carousel swipeable animated v-model="slide" thumbnails infinite>
-            <q-carousel-slide :name="index" :img-src="`${vizmedia}/${file}`" v-for="(file, index) in row.files" :key="index" />
+            <q-carousel-slide :name="index" :img-src="`${vizmedia}/${file}`" v-for="(file, index) in row.files"
+              :key="index" />
           </q-carousel>
         </div>
       </q-card-section>
@@ -82,20 +103,42 @@ const props = defineProps({
   State: { type: Array, default: [] },
   Payment: { type: Array, default: [] },
   Type: { type: Array, default: [] },
+  filter: { type: String, default: '' }
 })
+
+
+const optsVal = ref(null);
+
+const bascket = computed(() => props.Justification.filter(e =>
+  `${e.user?.name || ''} ${e.user?.surnames || ''}`.toLowerCase().includes(props.filter.toLowerCase())
+))
+
+const filRow = computed(() => {
+  if (optsVal.value) {
+    return bascket.value.filter(bs => bs._type == optsVal.value.id)
+  } else {
+    return bascket.value
+  }
+})
+
+
+
+
+
 const slide = ref(0)
 const emit = defineEmits(['change'])
 const table = ref({
   columns: [
-    { name: 'id', label: 'Id', field: row => row.id },
-    { name: 'user', label: 'Colaborador', field: row => row.user },
-    { name: 'start_date', label: 'Fecha Inicio', field: row => row.start_date },
-    { name: 'final_date', label: 'Fecha Final', field: row => row.final_date },
-    { name: 'notes', label: 'Motivo', field: row => row.notes },
-    { name: 'evidence', label: 'Comprobante', field: row => row.evidence },
-    { name: 'type', label: 'Tipo', field: row => row.type },
-    { name: 'paymen', label: 'Porcetaje', field: row => row.paymen },
-    { name: 'state', label: 'Estado', field: row => row.state },
+    { name: 'id', label: 'Id', field: row => row.id, sortable: true },
+    { name: 'user', label: 'Colaborador', field: row => row.user, sortable: true },
+    { name: 'creacion', label: 'Creacion', field: row => row.created_at, sortable: true },
+    { name: 'start_date', label: 'Fecha Inicio', field: row => row.start_date, sortable: true },
+    { name: 'final_date', label: 'Fecha Final', field: row => row.final_date, sortable: true },
+    { name: 'notes', label: 'Motivo', field: row => row.notes, sortable: true },
+    { name: 'evidence', label: 'Comprobante', field: row => row.evidence, sortable: true },
+    { name: 'type', label: 'Tipo', field: row => row.type, sortable: true },
+    { name: 'paymen', label: 'Porcetaje', field: row => row.paymen, sortable: true },
+    { name: 'state', label: 'Estado', field: row => row.state, sortable: true },
   ]
 })
 const image = ref(false);
