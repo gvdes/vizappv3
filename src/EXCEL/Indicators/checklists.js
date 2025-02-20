@@ -16,7 +16,9 @@ const excel = async (data) => {
             console.log(resp);
             const response = resp.responses;
             const users = resp.usuarios;
-            const worksheet = workbook.addWorksheet(`${i}-${e.store.name}`);
+            const sheetName = `${i}-${e.store.name}`.replace(/[/\\?*:[\]]/g, '_');
+            const worksheet = workbook.addWorksheet(sheetName);
+            // const worksheet = workbook.addWorksheet(`${i}-${e.store.name}`);
 
             const nameChecklist = worksheet.addRow([response.form.name]);
             worksheet.mergeCells(`A${nameChecklist.number}:B${nameChecklist.number}`);
@@ -127,8 +129,12 @@ const excel = async (data) => {
 };
 
 const downloadExcel = async (workbook, name) => {
-  const buffer = await workbook.xlsx.writeBuffer();
-  const blob = new Blob([buffer], { type: 'application/octet-stream' });
+  const buffer = await workbook.xlsx.writeBuffer().catch(err => {
+    console.error('Error al escribir el buffer:', err);
+    return null;
+  });
+  if (!buffer) return;
+  const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
   const url = URL.createObjectURL(blob);
 
   const a = document.createElement('a');
