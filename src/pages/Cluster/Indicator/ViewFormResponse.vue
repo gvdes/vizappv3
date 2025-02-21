@@ -19,7 +19,7 @@
         <div class="col text-center text-bold ">SUCURSAL: {{ responses.store.name }}</div>
         <div class="col text-center text-bold ">CREADO: {{ dayjs(responses.created_at).format('DD/MM/YYYY HH:mm:ss') }}
         </div>
-        <div class="col text-center text-bold " v-if="responses.form._qualified">PUNTOS: {{ totalPoints }} </div>
+        <div class="col text-center text-bold " v-if="responses.form._qualified">PUNTOS: {{ totalPoints }}</div>
       </q-card-section>
     </q-card>
     <q-separator spaced inset vertical dark />
@@ -95,7 +95,6 @@
                 <div v-else-if="typeof respon === 'number'">
                   {{ getUserName(respon) }}
                 </div>
-
               </div>
             </div>
             <div v-else class="text-bold">

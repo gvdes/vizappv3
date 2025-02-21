@@ -11,18 +11,18 @@
       </q-card-section>
       <q-card-section>
         <q-form @submit="onSubmit" @reset="onReset" class="q-gutter-md ">
-
           <div class="flex justify-center" v-for="(question, index) in form.question" :key="index">
             <responses :question="question" :colaborators="usersBranch"></responses>
-
+          </div>
+          <div class="text-overline text-center text-bold text-red" v-if="comp > 30 ">
+            {{ `Los archivos superan el tamano permitido 30 => ${comp} MB` }}
           </div>
           <div class="flex justify-center">
             <q-btn label="Enviar" type="submit" color="positive" flat
-              :disable="validFormQuestion?.length > 0 || validFormCondition?.length > 0" />
+              :disable="validFormQuestion?.length > 0 || validFormCondition?.length > 0 || comp > 30"  />
             <q-btn label="Cancelar" type="reset" color="negative" flat class="q-ml-sm" />
           </div>
         </q-form>
-
       </q-card-section>
     </q-card>
   </q-page>
@@ -46,11 +46,14 @@ const piniaAccount = useAccountStore();
 const form = ref([]);
 
 const colaborators = ref([])
-const usersBranch = computed(() => colaborators.value.filter(e => e._store == piniaAccount.join && [1,2,5].includes(e._state) && e.id != piniaAccount.account.id))
+const usersBranch = computed(() => colaborators.value.filter(e => e._store == piniaAccount.join && [1, 2, 5].includes(e._state) && e.id != piniaAccount.account.id))
 
+const comp = computed(() => {
+  let mb = form.value?.question?.filter(e => e._type == 3).map(e => e.evidence ? e.evidence.reduce((a, v) => a + parseSizeLabel(v.__sizeLabel), 0) : 0).reduce((a, v) => a + v, 0)
+  return (mb / (1024 * 1024)).toFixed(2)
+})
 
-const validFormQuestion = computed(() => form.value?.question?.filter(e => e._required == 1 && e._response == null));
-
+const validFormQuestion = computed(() => form.value?.question?.filter(e => e._required == 1 && e._response == null)  );
 const validFormCondition = computed(() => {
   if (!form.value?.question) return [];
 
@@ -84,12 +87,12 @@ const validFormCondition = computed(() => {
 
 const init = async () => {
   console.log($route.params.fid)
-  let sid =  piniaAccount.join
+  let sid = piniaAccount.join
 
-  const resp = await indpi.getFormResp($route.params.fid,sid)
+  const resp = await indpi.getFormResp($route.params.fid, sid)
   if (resp.error) {
     console.log(resp.error)
-    $q.notify({message:resp.error.data, type:'negative', position:'center'})
+    $q.notify({ message: resp.error.data, type: 'negative', position: 'center' })
     $router.push(`/`)
   } else {
     console.log(resp)
@@ -99,7 +102,21 @@ const init = async () => {
   }
 }
 
+const parseSizeLabel = (sizeLabel) => {
+  const units = { "B": 1, "KB": 1024, "MB": 1024 * 1024 };
+  const match = sizeLabel.match(/([\d.]+)(\wB)/); // Extrae número y unidad
+
+  if (match) {
+    const size = parseFloat(match[1]); // Número (ej. 246.9)
+    const unit = match[2]; // Unidad (ej. KB)
+    return size * units[unit]; // Convertir a bytes
+  }
+
+  return 0; // Retornar 0 si no se puede leer
+};
+
 const onSubmit = async () => {
+
   $q.loading.show({message:'Enviando Formulario'});
   const formData = new FormData();
   console.log(form.value.question)

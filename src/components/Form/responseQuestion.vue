@@ -69,7 +69,7 @@
             <q-list dense>
               <q-item>
                 <q-item-section class="text-caption">{{ `${col.col.name} ${col.col.surnames}` }}</q-item-section>
-                <q-item-section class="text-caption">{{ `(${col.qualified?.map(e => e.option).join(", ")})`
+                <q-item-section class="text-caption">{{`(${col.qualified?.map(e => e.option).join(", ")})`
                   }}</q-item-section>
                 <q-item-section> <q-btn color="primary" icon="close"
                     @click="() => { question._response.splice(index, 1) }" flat title="eliminar" /></q-item-section>
@@ -82,7 +82,7 @@
             @reset="() => { selectColaborator = null; selectBreach = null }">
             <div class="row">
               <q-select class="col" v-model="selectColaborator" :options="optsColaborator" label="Colaborador" filled
-                :option-label="i => (`${i.name} ${i.surnames}`)" dense  @filter="filterFn" />
+                :option-label="i => (`${i.name} ${i.surnames}`)" dense @filter="filterFn" />
               <q-separator spaced inset vertical dark />
               <q-select class="col" v-model="selectBreach" :options="question.options" label="Que no cumplio?" filled
                 option-label="option" :disable="!selectColaborator" multiple use-chips dense />
@@ -99,7 +99,8 @@
         </div>
         <div v-else>
           <q-select v-model="question._response" :options="optsColaborator" multiple use-chips use-input
-            :label="question.question" filled :option-label="i => (`${i.name} ${i.surnames}`)" dense  @filter="filterFn" />
+            :label="question.question" filled :option-label="i => (`${i.name} ${i.surnames}`)" dense
+            @filter="filterFn" />
         </div>
 
 
@@ -133,7 +134,7 @@
                   <q-list dense>
                     <q-item>
                       <q-item-section class="text-caption">{{ `${col.col.name} ${col.col.surnames}` }}</q-item-section>
-                      <q-item-section class="text-caption">{{ `(${col.qualified?.map(e => e.option).join(", ")})`
+                      <q-item-section class="text-caption">{{`(${col.qualified?.map(e => e.option).join(", ")})`
                         }}</q-item-section>
                       <q-item-section> <q-btn color="primary" icon="close"
                           @click="() => { condition.response.splice(index, 1) }" flat
@@ -146,8 +147,8 @@
                   @submit="() => { response.push({ col: selectColaborator, qualified: selectBreach }); selectColaborator = null; selectBreach = null; condition.response = response }"
                   @reset="() => { selectColaborator = null; selectBreach = null }">
                   <div class="row">
-                    <q-select class="col" v-model="selectColaborator" :options="optsColaborator" label="Colaborador" filled
-                      :option-label="i => (`${i.name} ${i.surnames}`)" dense  @filter="filterFn" use-input />
+                    <q-select class="col" v-model="selectColaborator" :options="optsColaborator" label="Colaborador"
+                      filled :option-label="i => (`${i.name} ${i.surnames}`)" dense @filter="filterFn" use-input />
                     <q-separator spaced inset vertical dark />
                     <q-select class="col" v-model="selectBreach" :options="condition.options" label="Que no cumplio?"
                       filled option-label="option" :disable="!selectColaborator" dense multiple use-chips />
@@ -193,7 +194,6 @@ const props = defineProps({
   isCondit: { type: Boolean, default: true }
 })
 
-
 // const conditionResponse = ref([])
 
 const conditions = ref([]);
@@ -214,6 +214,10 @@ const insertimage = (files) => {
   console.log(files);
   props.question._response = files[0].name
   props.question.evidence = files;
+  props.question.evidence.forEach(r => {
+    console.log(r)
+  });
+
 }
 
 const remove = () => {

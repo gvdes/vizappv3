@@ -361,6 +361,8 @@ const changeBonus = async () => {
     console.log(resp);
   } else {
     console.log(resp)
+    let inx = users.value.findIndex(e => e.id == viewUser.value.val.id);
+    users.value[inx] = viewUser.value.val
     changeValue.value = false
     viewUser.value.state = false
     $q.loading.hide()
