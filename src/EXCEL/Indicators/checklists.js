@@ -57,7 +57,13 @@ const excel = async (data) => {
                     let row;
                     if (Array.isArray(condition.response)) {
                       condition.response.forEach(c => {
-                        row = worksheet.addRow(['', getUserName(c.col, users), c.qualified]);
+                        console.log(typeof c)
+                        if (typeof c === 'object') {
+                          row = worksheet.addRow(['', getUserName(c.col, users), c.qualified]);
+                        } else if (typeof c === 'number') {
+                          row = worksheet.addRow(['', getUserName(c, users)]);
+                        }
+                        // row = worksheet.addRow(['', getUserName(c.col, users), c.qualified]);
                       });
                     } else {
                       row = worksheet.addRow(['', condition.response]);

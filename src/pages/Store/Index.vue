@@ -225,6 +225,9 @@ const init = async () => {
             if (piniaAccount.joinedStore._type == 1) {
               return (e._responsible == 3 || e._responsible == 1) && e._type == 2 || e._type == 3;
             }
+            if (piniaAccount.joinedStore._type == 2) {
+              return e._responsible == 1  && e._type == 3;
+            }
           }
 
         } else if ([0].includes(piniaAccount.account.rol.hierarchy)) {
