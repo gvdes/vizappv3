@@ -190,7 +190,17 @@ const deleteQuest = async (q) => {
 }
 
 const changeQualified = async () => {
+  $q.loading.show({message:'Cambiando :)'});
   console.log(form.value)
+  const resp = await indpi.changeQualified(form.value);
+  if(resp.error){
+    console.log(resp)
+  }else{
+    $q.notify({message:'Cambio Realizado',type:'positive',position:'center'})
+    $q.loading.hide()
+  }
+
+
 }
 
 init()

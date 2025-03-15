@@ -11,6 +11,10 @@ export default{
     let burl = `cluster/Indicators/getForms`;
     return vizapi.get(burl).then( done => done.data ).catch( fail => { return {error:fail.response} });
   },
+  changeQualified(data){
+    let burl = `cluster/Indicators/changeQualified`;
+    return vizapi.post(burl,data).then( done => done.data ).catch( fail => { return {error:fail.response} });
+  },
   addForm(data){
     let burl = `cluster/Indicators/addForm`;
     return vizapi.post(burl,data).then( done => done.data ).catch( fail => { return {error:fail.response} });
@@ -83,4 +87,12 @@ export default{
     let burl = `cluster/Indicators/${id}/viewResponseForm`
     return vizapi.get(burl).then( done => done.data ).catch( fail => { return {error:fail.error.response} });
   },
+  getCalculateClassUser(user){
+    let burl = `cluster/Indicators/getCalculateClassUser`
+    return vizapi.post(burl,user).then( done => done.data ).catch( fail => { return {error:fail.error.response} });
+  },
+  compareUserClassification(userId){
+    let burl = `cluster/Indicators/compareUserClassification/${userId}`
+    return vizapi.get(burl).then( done => done.data ).catch( fail => { return {error:fail.error.response} });
+  }
 }

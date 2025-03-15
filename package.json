@@ -2,7 +2,7 @@
   "name": "vizapp_zent",
   "version": "0.0.1",
   "description": "App concentradora de servicios enVizcarra",
-  "productName": "VizApp Zent",
+  "productName": "EVA",
   "author": "Eduardo Lopez <lalo.kob@gmail.com>",
   "private": true,
   "scripts": {

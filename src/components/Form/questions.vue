@@ -73,7 +73,10 @@
       <q-btn flat icon="add_circle" title="Agregar Condicion"
         v-if="(question.type?.id == 2 && !expanded && question.options ? question.options.filter(e => JSON.parse(e.condition).length > 0).length <= 0 : null) && !isCondit"
         @click="expanded = !expanded" />
-      <q-input v-model="question._points" type="number" label="Puntos" v-if="qualified == 1 && question.type?.id == 2"  filled dense />
+      <q-input v-model="question._points" type="number" label="Puntos Calificacion" v-if="qualified == 1 && question.type?.id == 2"  filled dense />
+      <q-separator spaced inset vertical dark />
+      <q-input v-model="question._retained" type="number" label="Puntos Retenidos" v-if="qualified == 1 && question.type?.id == 2"  filled dense />
+
       <q-btn flat icon="delete" title="eliminar"
         @click="isCondit ? deleteCondition(question) : deleteQuestion(question)" />
       <q-toggle v-model="question._required" color="primay" label="Obligatorio" left-label :true-value="1"

@@ -157,7 +157,7 @@ const editUser = (user) => {
 
 const resetPass = async () => {
   $q.loading.show({ message: "Reseteando Contrasena de  Usuario..." });
-  console.log(viewUser.value.val)
+  console.log(viewUser.value.val.id)
   const resp = await uapi.changePass(viewUser.value.val.id);
   if (resp.error) {
     console.log(resp);

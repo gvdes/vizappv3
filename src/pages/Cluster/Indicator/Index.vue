@@ -27,9 +27,10 @@
             name="search" /></template></q-input>
       <div class="col anek-bld text-grey-9 q-pl-sm">Clasificacion Colaboradores</div>
       <div>
-        <q-btn icon="download" flat rounded />
+        <q-btn icon="download" flat rounded @click="generateExel" />
         <q-btn icon="picture_as_pdf" flat rounded @click="pdfCreate" />
         <q-btn flat rounded icon="autorenew" @click="init" />
+        <q-btn flat rounded icon="font_download" @click="updateClass" />
       </div>
     </div>
 
@@ -40,7 +41,7 @@
           <q-item clickable v-ripple @click="editUser(use)">
             <q-item-section>
               <q-card flat class="mycard" bordered
-                :style="`width: 250px; max-width: 230vw; height: 425px; border: 2px solid ${color(use)};`">
+                :style="`width: 250px; max-width: 230vw; height: 350px; border: 2px solid ${color(use)};`">
                 <q-card-section>
                   <div class="text-subtitle1 text-center">{{ use.name.toUpperCase() }}
                   </div>
@@ -69,7 +70,7 @@
                   </div>
                   <q-separator spaced inset vertical dark />
                   <div class="flex justify-center" v-if="use.avatar">
-                    <q-avatar size="170px"><q-img :src="`${vizmedia}/profiles/${use.id}/${use.avatar}`"/></q-avatar>
+                    <q-avatar size="170px"><q-img :src="`${vizmedia}/profiles/${use.id}/${use.avatar}`" /></q-avatar>
                   </div>
                   <!-- <div class="flex justify-center" v-else>
                   <q-avatar size="170px"> <q-img :src="`src/assets/avatares/pokesnorlax.png`" /> </q-avatar>
@@ -83,106 +84,63 @@
     </div>
 
 
-    <q-dialog v-model="viewUser.state" persistent>
-      <q-card style="width: 300px">
+
+    <q-dialog v-model="viewUser.state" persistent full-width>
+      <viewUserClass :viewUser="viewUser" :classifications="classifications" :stores="stores" :week="week"
+        :users="users" />
+    </q-dialog>
+
+    <q-dialog v-model="viewUpdate.state" full-width persistent>
+      <q-card>
         <q-card-section>
-          <div class="flex justify-center">
-            <q-avatar size="170px"> <q-img :src="`${vizmedia}/profiles/${viewUser.val.id}/${viewUser.val.avatar}`" />
-            </q-avatar>
-          </div>
-        </q-card-section>
-        <q-card-section>
-          <div class="text-h6 text-center">{{ viewUser.val.name.toUpperCase() + ' ' +
-            viewUser.val.surnames.toUpperCase() }}</div>
-          <div class="flex justify-center">
-            <q-badge color="primary">
-              {{ viewUser.val.nick }}
-            </q-badge>
-          </div>
-        </q-card-section>
-        <q-card-section class="items-center">
-          <q-select v-model="viewUser.val.classification.classification" :options="classifications"
-            label="Clasificacion" filled option-label="name" />
-          <q-separator spaced inset vertical dark />
-          <q-select v-model="viewUser.val.classification.store" :options="stores" label="Sucursal de Clasificacion"
-            filled :option-label="i => (`${i.store.name} (${i.clasification.name}) `)">
-            <template v-slot:option="scope">
-              <q-item v-bind="scope.itemProps">
-                <q-item-section>
-                  <q-item-label>{{ scope.opt.store.name }}</q-item-label>
-                  <q-item-label caption>{{ scope.opt.clasification.name }}</q-item-label>
-                </q-item-section>
-              </q-item>
+          <q-table :rows="viewUpdate.val" :columns="viewUpdate.table.columns">
+            <template v-slot:body="props">
+              <q-tr :props="props">
+                <q-td key="name" :props="props">
+                  {{ props.cols[0].value }}
+                </q-td>
+                <q-td :key="props.cols[1].name" :props="props">
+                  {{ props.cols[1].value }}
+                </q-td>
+                <q-td :key="props.cols[2].name" :props="props">
+                  {{ props.cols[2].value }}
+                </q-td>
+
+                <q-td :key="props.cols[3].name" :props="props">
+                  {{ dayjs(props.cols[3].value).format('DD/MM/YYYY') }}
+                </q-td>
+                <q-td :key="props.cols[4].name" :props="props">
+                  {{ props.cols[4].value }}
+                </q-td>
+                <q-td :key="props.cols[5].name" :props="props">
+                  {{ props.cols[5].value }}
+                </q-td>
+                <q-td :key="props.cols[6].name" :props="props">
+                  {{ props.cols[6].value }}
+                </q-td>
+                <q-td :key="props.cols[7].name" :props="props" class="text-bold">
+                  {{classifications.find(e => e.id == props.cols[7].value).name}}
+                </q-td>
+                <q-td :key="props.cols[8].name" :props="props" class="text-bold">
+                  {{classifications.find(e => e.id == props.cols[8].value).name}}
+                </q-td>
+                <q-td :key="props.cols[9].name" :props="props">
+                  <q-icon
+                    :name="props.cols[9].value == 'mayor' ? 'arrow_circle_up' : props.cols[9].value == 'menor' ? 'arrow_circle_down' : 'do_not_disturb_on'"
+                    size="sm"
+                    :color="props.cols[9].value == 'mayor' ? 'positive' : props.cols[9].value == 'menor' ? 'negative' : 'black'" />
+                </q-td>
+                <q-td :key="props.cols[10].name" :props="props">
+                  <q-btn color="primary" flat rounded icon="check" @click="editColaboratorClassification(props.row)" />
+                </q-td>
+              </q-tr>
             </template>
-          </q-select>
-        </q-card-section>
-        <q-card-section>
-          <q-list>
-            <q-item>
-              <q-item-section>
-                <q-item-label class="text-center">Bono Total</q-item-label>
-                <q-item-label class="text-center text-bold text-subtitle1">
-                  <q-btn flat size="lg" :label="`$ ${(viewUser.val.classification.classification.percentage / 100) *
-                    (viewUser.val.classification.import) * 4}`" @click="changeValue = !changeValue" />
-                </q-item-label>
-              </q-item-section>
-            </q-item>
-            <q-item>
-              <q-item-section>
-                <q-item-label class="text-center">Bono Semanal</q-item-label>
-                <q-item-label class="text-center text-bold text-subtitle1">$
-                  {{ (viewUser.val.classification.classification.percentage / 100) *
-                    (viewUser.val.classification.import / 2) }} </q-item-label>
-              </q-item-section>
-              <q-item-section>
-                <q-item-label class="text-center">Bono Mensual</q-item-label>
-                <q-item-label class="text-center text-bold text-subtitle1">$ {{
-                  ((viewUser.val.classification.classification.percentage / 100) *
-                    (viewUser.val.classification.import / 2)) * 4 }} </q-item-label>
-              </q-item-section>
-            </q-item>
-          </q-list>
+
+
+          </q-table>
         </q-card-section>
         <q-card-actions align="right">
-          <q-btn flat icon="close" color="negative" v-close-popup />
-          <q-btn flat icon="check" color="positive" @click="validChange" :disable="detectedChange" />
-        </q-card-actions>
-      </q-card>
-
-    </q-dialog>
-
-    <q-dialog v-model="changeValue" persistent>
-      <q-card>
-        <q-card-section class="items-center">
-          <span class="text-center text-bold text-h5">
-            Cambio total de bono
-            <div class="text-overline">Semanal</div>
-          </span>
-
-        </q-card-section>
-        <q-card-section>
-          <q-input v-model="viewUser.val.classification.import" type="number" label="Importe"
-            :error="viewUser.val.classification.import.length <= 0" filled />
-        </q-card-section>
-        <q-card-actions align="right">
-          <q-btn flat icon="close" color="negative" v-close-popup />
-          <q-btn flat icon="check" color="positive" @click="changeBonus" />
-        </q-card-actions>
-      </q-card>
-    </q-dialog>
-
-
-    <q-dialog v-model="prop" persistent>
-      <q-card>
-        <q-card-section class="row items-center">
-          <q-avatar icon="warning" color="warning" text-color="black" />
-          <span class="q-ml-sm text-bold text-center">Deseas ajustar el importe de el bono a como esta en la
-            sucursal?</span>
-        </q-card-section>
-        <q-card-actions align="right">
-          <q-btn flat label="Cancelar" color="negative" v-close-popup />
-          <q-btn flat label="No" color="warning" @click="editColaboratorStore(false)" />
-          <q-btn flat label="Si" color="positive" @click="editColaboratorStore(true)" />
+          <q-btn flat label="salir" color="positive" @click="viewUpdate.val = []; viewUpdate.state = false" />
         </q-card-actions>
       </q-card>
     </q-dialog>
@@ -211,6 +169,10 @@ import { useRouter } from 'vue-router';
 import { useQuasar } from 'quasar';
 import indpi from 'src/API/IndicatorApi';
 import pdf from 'src/PDF/Indicators/userclass.js';
+import excel from 'src/EXCEL/Indicators/bonuses.js';
+
+import dayjs from 'dayjs';
+import viewUserClass from 'src/components/Indicator/viewUserClass.vue';
 import { vizmedia } from 'boot/axios'
 const piniaAccount = useAccountStore();
 const $q = useQuasar();
@@ -258,15 +220,33 @@ const userList = computed(() => {
   }
 });
 
+const viewUpdate = ref({
+  state: false,
+  val: [],
+  percentage: 0,
+  usuarios: 0,
+  table: {
+    columns: [
+      { name: 'name', label: 'Nombre', field: r => `${r.user.name} ${r.user.surnames}`, align: 'left', sortable: true },
+      { name: 'store', label: 'Sucursal', field: r => r.user.classification.store.store.name, align: 'left', sortable: true },
+      { name: 'position', label: 'Puesto', field: r => r.user.rol.name, align: 'left', sortable: true },
+      { name: 'updated', label: 'Ult Act', field: r => r.user.classification.updated_at, align: 'left', sortable: true },
+      { name: 'pointsCheck', label: 'P-Checklist', field: r => r.calculate.puntosChecklist, align: 'center', sortable: true },
+      { name: 'pointsAssist', label: 'P-Asistencia', field: r => r.calculate.puntosAsistencia, align: 'center', sortable: true },
+      { name: 'percentage', label: 'Porcentaje', field: r => r.calculate.percentage, align: 'center', sortable: true },
+      { name: 'classAct', label: 'C-Actual', field: r => r.classAct, align: 'center', sortable: true },
+      { name: 'classCal', label: 'C-Calculada', field: r => r.classCal, align: 'center', sortable: true },
+      { name: 'icon', field: r => r.classAct > r.classCal ? 'mayor' : r.classAct < r.classCal ? 'menor' : 'igual', align: 'center', sortable: true },
+      { name: 'action', align: 'center', sortable: true },
+    ],
+  }
+})
+
 const usuarios = computed(() => userList.value.filter(e => (e.name + e.surnames).toLowerCase().includes(search.value.toLowerCase())))
 
 const isMobile = computed(() => $q.platform.is.mobile);
 const permissions = computed(() => piniaAccount.account.modules.filter((e) => e.module.root == 'v76v'))
 
-
-const changeClassifications = computed(() => JSON.stringify(users.value.filter(e => e.id == viewUser.value.val.id)[0].classification.classification) == JSON.stringify(viewUser.value.val.classification.classification));
-const changeBranch = computed(() => JSON.stringify(users.value.filter(e => e.id == viewUser.value.val.id)[0].classification.store) == JSON.stringify(viewUser.value.val.classification.store))
-const detectedChange = computed(() => JSON.stringify(users.value.filter(e => e.id == viewUser.value.val.id)[0]) == JSON.stringify(viewUser.value.val))
 
 const init = async () => {
   $q.loading.show({ message: 'Obteniendo colaboradores' });
@@ -279,32 +259,13 @@ const init = async () => {
     stores.value = resp.stores
     week.value = resp.week
     $q.loading.hide();
-
     console.log(resp);
   }
 }
 
 const editUser = (user) => {
-
   viewUser.value.state = true
   viewUser.value.val = JSON.parse(JSON.stringify(user))
-}
-
-const validChange = () => {
-  if (!changeClassifications.value && !changeBranch.value) {
-    console.log('SE MODIFICARON LOS DOS');
-    editColaboratorClassification()
-    prop.value = !prop.value;
-
-  } else if (!changeClassifications.value && changeBranch.value) {
-    console.log('Solo se modifico la clasificacion')
-    editColaboratorClassification()
-  } else if (!changeBranch.value && changeClassifications.value) {
-    console.log('solo se modifico la sucursal')
-    prop.value = !prop.value;
-
-  }
-
 }
 
 
@@ -318,61 +279,13 @@ const color = (e) => {
   }
 }
 
-const editColaboratorClassification = async () => {
-  console.log(viewUser.value.val.classification)
-  $q.loading.show({ message: 'Editando Clasificacion' });
-  const resp = await indpi.editUserClass(viewUser.value.val.classification)
-  if (resp.error) {
-    console.log(resp);
 
-  } else {
-    console.log(resp)
-    let inx = users.value.findIndex(e => e.id == resp.id);
-    users.value[inx] = resp
-    $q.loading.hide();
-    if (changeBranch.value) {
-      viewUser.value.state = false
-    }
-  }
-}
-
-const editColaboratorStore = async (change) => {
-  viewUser.value.val.classification.chBonus = change
-  console.log(viewUser.value.val.classification)
-  $q.loading.show({ message: 'Editando Sucursal' })
-  const resp = await indpi.editUserStore(viewUser.value.val.classification)
-  if (resp.error) {
-    console.log(resp);
-  } else {
-    console.log(resp)
-    let inx = users.value.findIndex(e => e.id == resp.id);
-    users.value[inx] = resp
-    $q.loading.hide();
-    viewUser.value.state = false
-    prop.value = !prop.value
-  }
-}
-
-const changeBonus = async () => {
-  $q.loading.show({ message: 'Modificando Bono' })
-  console.log(viewUser.value.val.classification)
-  const resp = await indpi.changeUserBonues(viewUser.value.val.classification)
-  if (resp.error) {
-    console.log(resp);
-  } else {
-    console.log(resp)
-    let inx = users.value.findIndex(e => e.id == viewUser.value.val.id);
-    users.value[inx] = viewUser.value.val
-    changeValue.value = false
-    viewUser.value.state = false
-    $q.loading.hide()
-  }
-}
-
-const pdfCreate = () => {
+const pdfCreate = async () => {
   let sucursales = new Map();
-  usuarios.value.forEach(user => {
-
+  const totalUsers = usuarios.value.length;
+  let index = 0;
+  $q.loading.show({ message: `Progreso: 0/${totalUsers} (0%)` });
+  for (const user of usuarios.value) {
     if (user.classification?.store) {
       let store = user.classification.store;
       let storeId = store.id;
@@ -381,13 +294,131 @@ const pdfCreate = () => {
       }
       sucursales.get(storeId).users.push(user);
     }
-  });
+
+    try {
+      const resp = await indpi.getCalculateClassUser(user);
+      if (resp.error) {
+        console.log(resp);
+      } else {
+        user.class = resp;
+        // console.log(user);
+      }
+      index++
+      $q.loading.show({
+        message: `Progreso: ${index}/${totalUsers} (${((index / totalUsers) * 100).toFixed(2)}%)`
+      });
+    } catch (error) {
+      console.error("Error al obtener la clasificación:", error);
+    }
+  }
+
+  $q.loading.hide()
   let sucursalesArray = [...sucursales.values()];
-  pdf.firmasPdf(sucursalesArray,week.value)
-  pdf.BonsPdf(sucursalesArray,week.value)
+  pdf.firmasPdf(sucursalesArray, week.value);
+  pdf.BonsPdf(sucursalesArray, week.value);
+};
+
+const updateClass = async () => {
+  console.time("Tiempo total"); // Inicia el cronómetro
+  const startTime = performance.now(); // Guarda el tiempo de inicio
+
+  viewUpdate.value.state = true;
+  viewUpdate.value.usuarios = 0; // Inicializa el contador correctamente
+  const totalUsers = usuarios.value.length;
+
+  $q.loading.show({ message: `Progreso: 0/${totalUsers} (0%)` });
+
+  for (const e of usuarios.value) {
+    const userStartTime = performance.now();
+
+    const resp = await indpi.compareUserClassification(e.id);
+
+    const userEndTime = performance.now();
+    console.log(`Tiempo para ${e.id}: ${(userEndTime - userStartTime).toFixed(2)} ms`);
+
+    if (!resp.error && !resp.match) {
+      viewUpdate.value.val.push(resp);
+      console.log(resp);
+    }
+
+    viewUpdate.value.usuarios++;
+
+    $q.loading.show({
+      message: `Progreso: ${viewUpdate.value.usuarios}/${totalUsers} (${((viewUpdate.value.usuarios / totalUsers) * 100).toFixed(2)}%)`
+    });
+  }
+
+  $q.loading.hide(); // Oculta la carga cuando termine el proceso
+
+  const endTime = performance.now();
+  console.log(`Tiempo total de ejecución: ${(endTime - startTime).toFixed(2)} ms`);
+  console.timeEnd("Tiempo total");
+};
+
+
+const editColaboratorClassification = async (user) => {
+  console.log(user)
+  let data = {
+    _user: user.user.id,
+    classification: { id: user.calculate.classification }
+  }
+  console.log(data);
+  $q.loading.show({ message: 'Editando Clasificacion' });
+  const resp = await indpi.editUserClass(data)
+  if (resp.error) {
+    console.log(resp);
+
+  } else {
+    console.log(resp)
+    let inx = users.value.findIndex(e => e.id == resp.id);
+    if (inx >= 0) {
+      users.value[inx] = resp
+    }
+    let inex = viewUpdate.value.val.findIndex(e => e.user.id == resp.id)
+    if (inex >= 0) {
+      viewUpdate.value.val.splice(inex, 1)
+    }
+    $q.notify({ message: 'Clasificacion Actualizada', type: 'positive', position: 'center' })
+    $q.loading.hide();
+  }
 }
 
+const generateExel = async () => {
+  let sucursales = new Map();
+  const totalUsers = usuarios.value.length;
+  let index = 0;
+  $q.loading.show({ message: `Progreso: 0/${totalUsers} (0%)` });
+  for (const user of usuarios.value) {
+    if (user.classification?.store) {
+      let store = user.classification.store;
+      let storeId = store.id;
+      if (!sucursales.has(storeId)) {
+        sucursales.set(storeId, { ...store, users: [] });
+      }
+      sucursales.get(storeId).users.push(user);
+    }
 
+    try {
+      const resp = await indpi.getCalculateClassUser(user);
+      if (resp.error) {
+        console.log(resp);
+      } else {
+        user.class = resp;
+        // console.log(user);
+      }
+      index++
+      $q.loading.show({
+        message: `Progreso: ${index}/${totalUsers} (${((index / totalUsers) * 100).toFixed(2)}%)`
+      });
+    } catch (error) {
+      console.error("Error al obtener la clasificación:", error);
+    }
+  }
+
+  $q.loading.hide()
+  let sucursalesArray = [...sucursales.values()];
+  excel.generateExcel(sucursalesArray, week.value);
+}
 
 init()
 </script>

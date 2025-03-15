@@ -71,7 +71,7 @@ const BonsPdf = async (data, week) => {
   const mes = fecha.toLocaleString("es-ES", { month: "long" });
   console.log(mes.toUpperCase())
   const firstDate = week.length > 0 ? week[0].fecha : '';
-const lastDate = week.length > 1 ? week[week.length - 1].fecha : firstDate;
+  const lastDate = week.length > 1 ? week[week.length - 1].fecha : firstDate;
 
 
   const doc = new jsPDF();
@@ -81,10 +81,17 @@ const lastDate = week.length > 1 ? week[week.length - 1].fecha : firstDate;
   const headerFontSize = 10;
 
   data.forEach((sucursal, index) => {
-
+    console.log(sucursal.users.map(user => user.class))
     if (index > 0) doc.addPage();
     let chunks = [];
-    const arreglo = sucursal.users.map(user => [user.name + " " + user.surnames, user.classification.classification.name, (user.classification.classification.percentage / 100) * (user.classification.import / 2), 'observaciones'])
+    const arreglo = sucursal.users.map(user =>
+      [user.name + " " + user.surnames, user.classification.classification.name,
+      (user.classification.classification.percentage / 100) * (user.classification.import / 2),
+      user.class.percentage,
+      user.class.puntosAsistencia,
+      user.class.puntosChecklist,
+      user.class.responses
+      ])
     const paginas = Math.ceil(arreglo.length / 27);
     for (var i = 0; i < arreglo.length; i += 27) {
       chunks.push(arreglo.slice(i, i + 27));
@@ -110,22 +117,58 @@ const lastDate = week.length > 1 ? week[week.length - 1].fecha : firstDate;
 
       doc.text("Esta hoja, asi como la hoja de las firmas deben de regresarse el mismo dia en su corte.", margin, 40);
       doc.setFont("helvetica", "normal");
+
       autoTable(doc, {
         startY: 45,
-        head: [["NOMBRE", "CLASIFICACION", 'BONO SEMANA', 'OBSERVACIONES']],
-        body: [...chunk.map(row => [
-            { content: row[0], styles: { halign: 'left' } },
-            { content: row[1], styles: { halign: 'center' } },
-            { content: `$ ${row[2]}`, styles: { halign: 'center' } },
-            row[3]
-          ]),
+        head: [[
+          { content:"NOMBRE", styles: { haling: 'left', fontStyle: "bold" } },
+          { content:"CLASIFICACION", styles: { haling: 'center', fontStyle: "bold" } },
+          { content:"BONO SEMANA", styles: { haling: 'center', fontStyle: "bold" } },
+          { content:"%", styles: { haling: 'center', fontStyle: "bold" } },
+          { content:"PA", styles: { haling: 'center', fontStyle: "bold" } },
+          { content:"PC", styles: { haling: 'center', fontStyle: "bold" } }
+        ]],
+        body: chunk.flatMap(row => {
+          let rows = [
+            [
+              { content: row[0], styles: { haling: 'left', fontStyle: "bold", fillColor: [224, 231, 255 ] } },
+              { content: row[1], styles: { haling: "center", fontStyle: "bold", fillColor: [224, 231, 255 ] } },
+              { content: `$ ${row[2]}`, styles: { haling: "center", fontStyle: "bold", fillColor: [224, 231, 255 ] } },
+              { content: `${row[3]}%`, styles: { haling: "center", fontStyle: "bold", fillColor: [224, 231, 255 ] } },
+              { content: row[4], styles: { haling: "center", fontStyle: "bold", fillColor: [224, 231, 255 ] } },
+              { content: row[5], styles: { haling: "center", fontStyle: "bold", fillColor: [224, 231, 255 ] } }
+            ],
+          ];
+          if (row[6] && row[6].length > 0) {
+            rows.push([
+              { content: "OBSERVACIONES", colSpan: 6, styles: { halign: "center", fontStyle: "bold", fillColor: [192, 192, 192], fontSize: 8 } },
+            ]);
+
+            rows.push([
+              { content: "Form / Fecha", styles: { halign: "center", fontStyle: "bold",fillColor: [220, 220, 220], fontSize: 8 } },
+              { content: "Observacion", colSpan: 4, styles: { halign: "center", fontStyle: "bold",fillColor: [220, 220, 220], fontSize: 8 } },
+              { content: "Calificación", styles: { halign: "center", fontStyle: "bold",fillColor: [220, 220, 220], fontSize: 8 } },
+            ]);
+
+            row[6].forEach(obs => {
+              rows.push([
+                { content: `${obs.form} / ${obs.fecha_hora}` || "-", styles: { halign: "left",fillColor: [220, 220, 220], fontSize: 8 } },
+                { content: obs.observacion || "-", colSpan: 4, styles: { halign: "left",fillColor: [220, 220, 220], fontSize: 8 } },
+                { content: obs.qualified || "-", styles: { halign: "left",fillColor: [220, 220, 220], fontSize: 8 } },
+              ]);
+            });
+          }
+
+          return rows;
+        }),
+        foot: [
           [
             { content: "TOTAL", styles: { halign: "right", fontStyle: "bold" }, colSpan: 2 },
-            { content: `$ ${totalBono.toFixed(2)}`, styles: { halign: "center", fontStyle: "bold", } }
+            { content: `$ ${totalBono.toFixed(2)}`, styles: { halign: "center", fontStyle: "bold" } }
           ]
         ],
-        styles: { fontSize: 10, cellPadding: 2 },
-        theme: 'plain',
+        styles: { fontSize: 8, cellPadding: 0.5, lineHeight: 1 },
+        theme: "grid",
       });
     })
   });

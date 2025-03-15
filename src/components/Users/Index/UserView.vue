@@ -394,6 +394,7 @@ const actualizacion = async () => {
       message:'Error al actualizar'
     })
   }else{
+    console.log(resp)
     notif({
       type:'positive',
       message:`Usuario ${data.value.name} Actualizado`,

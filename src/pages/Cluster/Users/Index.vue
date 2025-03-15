@@ -98,7 +98,7 @@
 import { ref, onMounted, computed } from 'vue';
 import { useAccountStore } from 'stores/Account';
 import { useRouter } from 'vue-router';
-import { useQuasar } from 'quasar';
+import { useQuasar, useMeta } from 'quasar';
 import listuser from 'src/components/Users/Index/UserList.vue';
 import uapi from 'src/API/UserApi';
 const piniaAccount = useAccountStore();
@@ -116,7 +116,9 @@ const filter = ref({
   position: { val: null, optsdb: null, opts: [] },
 });
 
-
+// useMeta(() => {
+//   return { title:'Usuarios'}
+// })
 
 const userListArchived =  computed(() => {
   if (
