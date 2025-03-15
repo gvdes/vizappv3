@@ -1,1 +1,0 @@
-import{Q as a}from"./QPage.9439412b.js";import{_ as e,o as s,e as o,w as t,J as r}from"./index.3accb674.js";const c={},n=r("h1",null,"change password",-1);function p(_,d,f,i,l,u){return s(),o(a,{padding:""},{default:t(()=>[n]),_:1})}var x=e(c,[["render",p]]);export{x as default};
