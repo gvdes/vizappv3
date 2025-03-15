@@ -1,8 +1,13 @@
 <template>
   <q-page padding>
-   <h1>info personal</h1>
-
-   {{ rol.name }}
+    <q-card class="my-card">
+      <q-card-section class="text-h6">
+        <div>NOMBRE: <span class="text-bold">{{ `${account.name} ${account.surnames}` }}</span></div>
+        <div>FECHA NACIMIENTO: <span class="text-bold">{{ account.dob }}</span></div>
+        <div>TELEFONO: <span class="text-bold">{{ account.celphone }}</span></div>
+        <div>EMAIL: <span class="text-bold">{{ account.email }}</span></div>
+      </q-card-section>
+    </q-card>
   </q-page>
 </template>
 
@@ -29,10 +34,6 @@ const accverified = computed(() => piniaAccount.verified);
 
 const toggle = () => { state.value = !state.value };
 
-const sessionDestroy = () => {
-  LocalStorage.clear();
-  $router.replace('/login');
-};
 
 defineExpose({ toggle });
 

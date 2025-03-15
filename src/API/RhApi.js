@@ -74,6 +74,10 @@ export default{
     let burl = `store/${piniaAccount.join}/rrhh/addTurnsWeek`
     return vizapi.post(burl,data).then( done => done.data).catch( fail => { return {error:fail.error.response} });
   },
+  deleteTurnUser(data){
+    let burl = `store/${piniaAccount.join}/rrhh/deleteTurnUser`
+    return vizapi.post(burl,data).then( done => done.data).catch( fail => { return {error:fail.error.response} });
+  },
   indexStore(){
     let burl = `store/${piniaAccount.join}/rrhh/index`;
     return vizapi.get(burl).then( done => done.data).catch( fail => { return {error:fail.error.response} });

@@ -334,8 +334,7 @@ const pdfCreate = async () => {
         message: `Progreso: ${index}/${totalUsers} (${((index / totalUsers) * 100).toFixed(2)}%)`
       });
 
-      // Espera de 500ms entre peticiones para evitar sobrecargar el servidor
-      await sleep(500); // Puedes ajustar el tiempo de espera en milisegundos
+      await sleep(500);
     } catch (error) {
       console.error("Error al obtener la clasificación:", error);
     }
@@ -371,8 +370,7 @@ const updateClass = async () => {
       message: `Progreso: ${viewUpdate.value.usuarios}/${totalUsers} (${((viewUpdate.value.usuarios / totalUsers) * 100).toFixed(2)}%)`
     });
 
-    // Espera de 500ms entre peticiones
-    await sleep(500); // Ajusta el tiempo de espera según sea necesario
+    await sleep(500);
   }
 
   $q.loading.hide();
@@ -408,8 +406,8 @@ const generateExel = async () => {
         message: `Progreso: ${index}/${totalUsers} (${((index / totalUsers) * 100).toFixed(2)}%)`
       });
 
-      // Espera de 500ms entre peticiones
-      await sleep(500); // Ajusta el tiempo de espera según sea necesario
+
+      await sleep(500);
     } catch (error) {
       console.error("Error al obtener la clasificación:", error);
     }

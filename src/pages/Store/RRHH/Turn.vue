@@ -113,11 +113,23 @@ const assignUser = (turnoKey, user) => {
   turnos.value[turnoKey].colab = null
 };
 
-const deleteUser = (turnoKey, user) => {
-  if(turnos.value[turnoKey].users.some(u => u.id === user.id)){
+const deleteUser = async (turnoKey, user) => {
+  let dat = {
+    key:turnoKey,
+    user:user.id,
+  }
+  const resp = await rhpi.deleteTurnUser(dat)
+  if(resp.error){
+    console.log(resp)
+    alert(resp.error.data.message)
+  }else{
+    console.log(resp);
+    if(turnos.value[turnoKey].users.some(u => u.id === user.id)){
     user = turnos.value[turnoKey].users.findIndex(u => u.id === user.id)
     turnos.value[turnoKey].users.splice(user,1);
   }
+  }
+
 
 }
 

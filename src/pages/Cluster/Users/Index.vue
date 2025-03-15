@@ -7,6 +7,7 @@
               name="search" /></template></q-input>
         <div class="col anek-bld text-grey-9 q-pl-sm">Usuarios</div>
         <div>
+          <q-btn flat rounded icon="download"  @click="exportExcel" />
           <q-btn flat rounded icon="autorenew" @click="init" />
           <q-btn flat rounded color="negative" icon="archive" @click="archived.state = !archived.state" />
         </div>
@@ -99,6 +100,7 @@ import { ref, onMounted, computed } from 'vue';
 import { useAccountStore } from 'stores/Account';
 import { useRouter } from 'vue-router';
 import { useQuasar, useMeta } from 'quasar';
+import excel from 'src/EXCEL/Users/userList.js';
 import listuser from 'src/components/Users/Index/UserList.vue';
 import uapi from 'src/API/UserApi';
 const piniaAccount = useAccountStore();
@@ -116,9 +118,6 @@ const filter = ref({
   position: { val: null, optsdb: null, opts: [] },
 });
 
-// useMeta(() => {
-//   return { title:'Usuarios'}
-// })
 
 const userListArchived =  computed(() => {
   if (
@@ -229,6 +228,9 @@ const delfil = () => {
   filter.value.position.val = null
 }
 
+const exportExcel = () => {
+  excel.generateExcel(users.value);
+}
 
 onMounted(() => { init(); });
 const isMob = computed(() => $q.platform.is.mobile);

@@ -4,16 +4,12 @@
       <q-header>
         <q-card class="my-card">
           <q-card-section class="text-center bg-blue text-white text-weight-medium">
-            <div @click="$router.push('/')" class="row" >
+            <div @click="$router.push('/')" class="row">
               <q-icon size="30px" name="arrow_back" />
             </div>
-            <!-- <q-btn flat round @click="avatar" class="q-mt-md">
-              <div @mouseover="change" @mouseout="hide"> -->
-            <q-avatar size="150px">
-              <q-img :src="piniaAccount.avatar" />
-            </q-avatar>
-            <!-- </div>
-            </q-btn> -->
+            <div class="flex justify-center" v-if="account.avatar">
+              <q-avatar size="170px"><q-img :src="`${vizmedia}/profiles/${account.id}/${account.avatar}`" /></q-avatar>
+            </div>
             <div class="text-h4">{{ account.name }} {{ account.surnames }}</div>
 
             <div class="text-h5">{{ account.nick }} </div>
@@ -49,6 +45,7 @@ import { useRouter } from 'vue-router';
 import { useQuasar, LocalStorage } from 'quasar';
 import { useAccountStore } from 'stores/Account';
 import treeModulesApp from 'src/components/TreeModulesApp.vue';
+import { vizmedia } from 'boot/axios'
 // import addPersonImage from "@/assets/avatares/add-person.png";
 const $q = useQuasar();
 const $router = useRouter();
