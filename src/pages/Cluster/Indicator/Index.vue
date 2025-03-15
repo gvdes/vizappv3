@@ -41,7 +41,7 @@
           <q-item clickable v-ripple @click="editUser(use)">
             <q-item-section>
               <q-card flat class="mycard" bordered
-                :style="`width: 250px; max-width: 230vw; height: 350px; border: 2px solid ${color(use)};`">
+                :style="`width: 250px; max-width: 230vw; height: 410px; border: 2px solid ${color(use)};`">
                 <q-card-section>
                   <div class="text-subtitle1 text-center">{{ use.name.toUpperCase() }}
                   </div>
@@ -243,7 +243,7 @@ const viewUpdate = ref({
 })
 
 const usuarios = computed(() => userList.value.filter(e => (e.name + e.surnames).toLowerCase().includes(search.value.toLowerCase())))
-
+const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 const isMobile = computed(() => $q.platform.is.mobile);
 const permissions = computed(() => piniaAccount.account.modules.filter((e) => e.module.root == 'v76v'))
 
@@ -280,82 +280,6 @@ const color = (e) => {
 }
 
 
-const pdfCreate = async () => {
-  let sucursales = new Map();
-  const totalUsers = usuarios.value.length;
-  let index = 0;
-  $q.loading.show({ message: `Progreso: 0/${totalUsers} (0%)` });
-  for (const user of usuarios.value) {
-    if (user.classification?.store) {
-      let store = user.classification.store;
-      let storeId = store.id;
-      if (!sucursales.has(storeId)) {
-        sucursales.set(storeId, { ...store, users: [] });
-      }
-      sucursales.get(storeId).users.push(user);
-    }
-
-    try {
-      const resp = await indpi.getCalculateClassUser(user);
-      if (resp.error) {
-        console.log(resp);
-      } else {
-        user.class = resp;
-        // console.log(user);
-      }
-      index++
-      $q.loading.show({
-        message: `Progreso: ${index}/${totalUsers} (${((index / totalUsers) * 100).toFixed(2)}%)`
-      });
-    } catch (error) {
-      console.error("Error al obtener la clasificación:", error);
-    }
-  }
-
-  $q.loading.hide()
-  let sucursalesArray = [...sucursales.values()];
-  pdf.firmasPdf(sucursalesArray, week.value);
-  pdf.BonsPdf(sucursalesArray, week.value);
-};
-
-const updateClass = async () => {
-  console.time("Tiempo total"); // Inicia el cronómetro
-  const startTime = performance.now(); // Guarda el tiempo de inicio
-
-  viewUpdate.value.state = true;
-  viewUpdate.value.usuarios = 0; // Inicializa el contador correctamente
-  const totalUsers = usuarios.value.length;
-
-  $q.loading.show({ message: `Progreso: 0/${totalUsers} (0%)` });
-
-  for (const e of usuarios.value) {
-    const userStartTime = performance.now();
-
-    const resp = await indpi.compareUserClassification(e.id);
-
-    const userEndTime = performance.now();
-    console.log(`Tiempo para ${e.id}: ${(userEndTime - userStartTime).toFixed(2)} ms`);
-
-    if (!resp.error && !resp.match) {
-      viewUpdate.value.val.push(resp);
-      console.log(resp);
-    }
-
-    viewUpdate.value.usuarios++;
-
-    $q.loading.show({
-      message: `Progreso: ${viewUpdate.value.usuarios}/${totalUsers} (${((viewUpdate.value.usuarios / totalUsers) * 100).toFixed(2)}%)`
-    });
-  }
-
-  $q.loading.hide(); // Oculta la carga cuando termine el proceso
-
-  const endTime = performance.now();
-  console.log(`Tiempo total de ejecución: ${(endTime - startTime).toFixed(2)} ms`);
-  console.timeEnd("Tiempo total");
-};
-
-
 const editColaboratorClassification = async (user) => {
   console.log(user)
   let data = {
@@ -383,11 +307,12 @@ const editColaboratorClassification = async (user) => {
   }
 }
 
-const generateExel = async () => {
+const pdfCreate = async () => {
   let sucursales = new Map();
   const totalUsers = usuarios.value.length;
   let index = 0;
   $q.loading.show({ message: `Progreso: 0/${totalUsers} (0%)` });
+
   for (const user of usuarios.value) {
     if (user.classification?.store) {
       let store = user.classification.store;
@@ -397,19 +322,94 @@ const generateExel = async () => {
       }
       sucursales.get(storeId).users.push(user);
     }
-
     try {
       const resp = await indpi.getCalculateClassUser(user);
       if (resp.error) {
         console.log(resp);
       } else {
         user.class = resp;
-        // console.log(user);
       }
       index++
       $q.loading.show({
         message: `Progreso: ${index}/${totalUsers} (${((index / totalUsers) * 100).toFixed(2)}%)`
       });
+
+      // Espera de 500ms entre peticiones para evitar sobrecargar el servidor
+      await sleep(500); // Puedes ajustar el tiempo de espera en milisegundos
+    } catch (error) {
+      console.error("Error al obtener la clasificación:", error);
+    }
+  }
+
+  $q.loading.hide()
+  let sucursalesArray = [...sucursales.values()];
+  pdf.firmasPdf(sucursalesArray, week.value);
+  pdf.BonsPdf(sucursalesArray, week.value);
+};
+
+const updateClass = async () => {
+  console.time("Tiempo total");
+  const startTime = performance.now();
+  viewUpdate.value.state = true;
+  viewUpdate.value.usuarios = 0;
+  const totalUsers = usuarios.value.length;
+  $q.loading.show({ message: `Progreso: 0/${totalUsers} (0%)` });
+
+  for (const e of usuarios.value) {
+    const userStartTime = performance.now();
+    const resp = await indpi.compareUserClassification(e.id);
+    const userEndTime = performance.now();
+    console.log(`Tiempo para ${e.id}: ${(userEndTime - userStartTime).toFixed(2)} ms`);
+
+    if (!resp.error && !resp.match) {
+      viewUpdate.value.val.push(resp);
+      console.log(resp);
+    }
+
+    viewUpdate.value.usuarios++;
+    $q.loading.show({
+      message: `Progreso: ${viewUpdate.value.usuarios}/${totalUsers} (${((viewUpdate.value.usuarios / totalUsers) * 100).toFixed(2)}%)`
+    });
+
+    // Espera de 500ms entre peticiones
+    await sleep(500); // Ajusta el tiempo de espera según sea necesario
+  }
+
+  $q.loading.hide();
+  const endTime = performance.now();
+  console.log(`Tiempo total de ejecución: ${(endTime - startTime).toFixed(2)} ms`);
+  console.timeEnd("Tiempo total");
+};
+
+const generateExel = async () => {
+  let sucursales = new Map();
+  const totalUsers = usuarios.value.length;
+  let index = 0;
+  $q.loading.show({ message: `Progreso: 0/${totalUsers} (0%)` });
+
+  for (const user of usuarios.value) {
+    if (user.classification?.store) {
+      let store = user.classification.store;
+      let storeId = store.id;
+      if (!sucursales.has(storeId)) {
+        sucursales.set(storeId, { ...store, users: [] });
+      }
+      sucursales.get(storeId).users.push(user);
+    }
+    try {
+      const resp = await indpi.getCalculateClassUser(user);
+      if (resp.error) {
+        console.log(resp);
+      } else {
+        user.class = resp;
+      }
+      index++
+      $q.loading.show({
+        message: `Progreso: ${index}/${totalUsers} (${((index / totalUsers) * 100).toFixed(2)}%)`
+      });
+
+      // Espera de 500ms entre peticiones
+      await sleep(500); // Ajusta el tiempo de espera según sea necesario
     } catch (error) {
       console.error("Error al obtener la clasificación:", error);
     }
@@ -418,7 +418,7 @@ const generateExel = async () => {
   $q.loading.hide()
   let sucursalesArray = [...sucursales.values()];
   excel.generateExcel(sucursalesArray, week.value);
-}
+};
 
 init()
 </script>
