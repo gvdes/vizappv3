@@ -42,6 +42,10 @@ export default{
     let burl = `cluster/Assist/getJustifications`
     return vizapi.get(burl).then( done => done.data).catch( fail => { return {error:fail.error.response} });
   },
+  getFiltJustifications(data){
+    let burl = `cluster/Assist/getFiltJustifications`
+    return vizapi.post(burl,data).then( done => done.data).catch( fail => { return {error:fail.error.response} });
+  },
   changeStatus(data){
     let burl = `cluster/Assist/changeStatus`
     return vizapi.post(burl,data).then( done => done.data).catch( fail => { return {error:fail.error.response} });
@@ -61,6 +65,10 @@ export default{
   getReportWeek(){
     let burl = `cluster/Assist/getReportWeek`;
     return vizapi.get(burl).then( done => done.data).catch( fail => { return {error:fail.error.response} });
+  },
+  getFiltReport(data){
+    let burl = `cluster/Assist/getFiltReport`;
+    return vizapi.post(burl,data).then( done => done.data).catch( fail => { return {error:fail.error.response} });
   },
   addProceeding(data){
     let burl = `cluster/Assist/addProceedings`;
