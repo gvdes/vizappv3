@@ -153,7 +153,7 @@ const users = computed(() =>
   })
 );
 
-const validform = computed(() => justification.value.user && justification.value.start_date && justification.value.final_date && justification.value._type && justification.value.notes && justification.value.evidence.length > 0 && !validfech.value && exostJusti.length > 0)
+const validform = computed(() => (justification.value.user && justification.value.start_date && justification.value.final_date && justification.value._type && justification.value.notes && justification.value.evidence.length > 0 && !validfech.value) && exostJusti.value.length <= 0)
 
 
 const exostJusti = computed(() => { return justifications.value.filter(e => e.user.id ==justification.value.user?.id && e.start_date == justification.value.start_date && e.final_date == justification.value.final_date )})
