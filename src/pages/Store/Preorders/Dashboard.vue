@@ -11,7 +11,7 @@
       <q-table class="col bg-yellow-1" title="Surtiendo" row-key="name" hide-bottom :rows="Surtiendo"
       :columns="table.columns" :pagination="table.pagination" dense  />
       <q-separator spaced inset vertical dark />
-      <q-table class="col bg-green-1" title="Por Validar" row-key="name" hide-bottom :rows="Xvalidar"
+      <q-table class="col bg-green-1" title="Pase a Caja" row-key="name" hide-bottom :rows="Xvalidar"
       :columns="table.columns" :pagination="table.pagination" dense  />
       <q-separator spaced inset vertical dark />
     </div>
@@ -41,12 +41,12 @@ $sktpvt.on('connect', () => {
   $sktpvt.emit('ParametrosConexion', piniaAccount)
 });
 
-$sktpvt.on('Checkin', (params) => {
+$sktpvt.on('warehouse', (params) => {
   console.log(params)
-  let inx = orders.value.findIndex(e => e.id == params.id)
-  if(inx >= 0 ){
+  // let inx = orders.value.findIndex(e => e.id == params.id)
+  // if(inx >= 0 ){
     orders.value.push(params)
-  }
+  // }
 })
 
 $sktpvt.on('updOrder', (params) => {

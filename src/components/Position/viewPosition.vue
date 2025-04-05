@@ -50,7 +50,8 @@
 
         </div>
         <q-separator />
-        <q-tree :nodes="modulesP" node-key="id" label-key="name" :filter="search" children-key="children">
+        Cluster
+        <q-tree :nodes="modulesClu" node-key="id" label-key="name" :filter="search" children-key="children">
           <template v-slot:default-header="prop">
             <div class="row items-center" style="width: 228px;">
               <q-icon :name="prop.node.icon || 'list'" color="primary" size="15px" class="q-mr-xs" />
@@ -63,6 +64,24 @@
             </div>
           </template>
         </q-tree>
+
+        Operativo
+        <q-tree :nodes="modulesBof" node-key="id" label-key="name" :filter="search" children-key="children">
+          <template v-slot:default-header="prop">
+            <div class="row items-center" style="width: 228px;">
+              <q-icon :name="prop.node.icon || 'list'" color="primary" size="15px" class="q-mr-xs" />
+              <div class="text-weight-bold  text-left ">{{ prop.node.name }}</div>
+            </div>
+            <div class="row  flex justify-center" v-for="(permission, index) in permissions" :key="index">
+              <q-radio class="col q-mr-xl" dense v-model="prop.node._permission" :val="permission.id"
+                :color="permission.id == 1 ? 'positive' : permission.id == 2 ? 'warning' : permission.id == 3 ? 'orange' : 'negative'"
+                keep-color />
+            </div>
+          </template>
+        </q-tree>
+
+
+
       </q-tab-panel>
     </q-tab-panels>
     <q-card-actions v-if="exist" align="center">
@@ -105,6 +124,10 @@ const modulesP = props.modulesC
 const addPuesto = props.addPuesto
 const area = props.area
 const permissions = props.permissions
+
+const modulesClu = computed(() => modulesP.filter(e => e.root == 'CLU'));
+const modulesBof = computed(() => modulesP.filter(e => e.root == 'BOF'));
+
 
 const optionHierarchy = computed(() => {
   if (addPuesto.hierarchy.valP) {

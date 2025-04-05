@@ -54,6 +54,10 @@ export default{
   getOrdersCheckin(){
     let burl = `store/${piniaAccount.join}/orders/getOrdersCheckin`;
     return vizapi.get(burl).then( done => done.data).catch( fail => { return {error:fail.response} });
+  },
+  reprintOrderWarehouse(data){
+      let burl = `store/${piniaAccount.join}/orders/reprintOrderWarehouse`;
+      return vizapi.post(burl,data).then( done => done.data).catch( fail => {return {error:fail.error}}) ;
   }
 }
 

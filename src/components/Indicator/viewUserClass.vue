@@ -5,8 +5,7 @@
         <q-avatar size="170px"> <q-img :src="`${vizmedia}/profiles/${viewUser.val.id}/${viewUser.val.avatar}`" />
         </q-avatar>
       </div>
-    </q-card-section>
-    <q-card-section>
+
       <div class="text-h6 text-center">{{ viewUser.val.name.toUpperCase() + ' ' +
         viewUser.val.surnames.toUpperCase() }}</div>
       <div class="flex justify-center">
@@ -17,10 +16,11 @@
     </q-card-section>
     <q-card-section class="items-center">
       <!-- <q-input v-model="" type="date" label="Label" /> -->
-       <div class="bg-grey-3">
+      <div class="bg-grey-3 col">
         <div class="q-px-sm text-grey-7 ">Ultima Actualizacion</div>
-        <span class="text-bold q-px-sm">{{ dayjs(viewUser.val.classification.updated_at).format('DD/MM/YYYY HH:mm:ss') }}</span>
-       </div>
+        <span class="text-bold q-px-sm">{{ dayjs(viewUser.val.classification.updated_at).format('DD/MM/YYYY HH:mm:ss')
+        }}</span>
+      </div>
 
       <q-separator spaced inset vertical dark />
       <q-select v-model="viewUser.val.classification.classification" :options="classifications" label="Clasificacion"
@@ -65,77 +65,140 @@
         </q-item>
       </q-list>
     </q-card-section>
+    <q-card-section>
+      <div class="row">
+        <q-btn  outline rounded icon="event" color="primary" class="col">
+          <q-menu fit>
+            <q-card class="my-card">
+              <q-card-section>
+                <div class="text-bold text-h6 text-center"> {{ typeof (mostDate) == 'object' ? `Del ${mostDate.from} a ${mostDate.to}` : fechas.date }}</div>
+                <!-- <q-date v-model="mostDate" landscape minimal mask="YYYY-MM-DD" disable dense /> -->
 
-    <q-card-section v-if="viewUser.val.class">
-      <q-card class="my-card">
-        <q-card-section>
-
-          <q-list bordered>
-            <q-item>
-              <q-item-section>
-                <q-item-label class="text-center">Clasificacion:</q-item-label>
-                <q-item-label class="text-center text-bold">{{classifications.find(e => e.id ==
-                  viewUser.val.class.classification).name }}</q-item-label>
-              </q-item-section>
-              <q-item-section>
-                <q-item-label class="text-center">Porcentaje:</q-item-label>
-                <q-item-label class="text-center text-bold">{{ viewUser.val.class.percentage }}</q-item-label>
-              </q-item-section>
-              <q-item-section>
-                <q-item-label class="text-center">Puntos Asistencia: </q-item-label>
-                <q-item-label class="text-center text-bold">{{ viewUser.val.class.puntosAsistencia }}</q-item-label>
-              </q-item-section>
-              <q-item-section>
-                <q-item-label class="text-center">Puntos Checklist:</q-item-label>
-                <q-item-label class="text-center text-bold">{{ viewUser.val.class.puntosChecklist }}</q-item-label>
-              </q-item-section>
-            </q-item>
-          </q-list>
-        </q-card-section>
+              </q-card-section>
+              <q-card-section>
+                <div class="row">
+                  <q-input dense class="col" v-model="range.min" type="number" label="Min" filled />
+                  <q-separator spaced inset vertical dark />
+                  <q-input dense class="col" v-model="range.max" type="number" label="Max" filled />
+                  <q-separator spaced inset vertical dark />
+                  <q-select dense v-model="anio.val" :options="anio.opts" label="Ano" filled />
+                </div>
+                <!-- <q-range :min="0" :max="53" v-model="range" :step="1" color="primary" disable /> -->
+              </q-card-section>
+              <q-card-actions align="center">
+                <q-btn flat color="primary" label="Obtener" @click="getReportFilter" />
+              </q-card-actions>
+            </q-card>
+          </q-menu>
+        </q-btn>
+        <!-- <q-separator spaced inset vertical dark />
+        <q-btn flat class="col" color="primary" icon="download" @click="downloadExcel" />
+        <q-separator spaced inset vertical dark />
+        <q-btn flat class="col" color="primary" icon="picture_as_pdf" @click="downloadPDF" /> -->
+      </div>
+    </q-card-section>
+    <q-card-section>
+      <div v-for="(seman, index) in viewUser.val.class" :key="index">
+        <q-separator spaced inset vertical dark />
         <q-card class="my-card">
           <q-card-section>
-            <q-table :rows="viewUser.val.class?.asistencia" hide-bottom separator="cell" />
-          </q-card-section>
-        </q-card>
 
-        <q-card-section v-if="viewUser.val.class.responses.length > 0">
-          <div v-for="(response, index) in viewUser.val.class.responses" :key="index">
             <q-list bordered>
               <q-item>
                 <q-item-section>
-                  <q-item-label>Formulario</q-item-label>
-                  <q-item-label>{{ response.form }}</q-item-label>
+                  <q-item-label class="text-center">Semana:</q-item-label>
+                  <q-item-label class="text-center text-bold">{{ index }}</q-item-label>
                 </q-item-section>
                 <q-item-section>
-                  <q-item-label>Fecha</q-item-label>
-                  <q-item-label>{{ response.fecha_hora }}</q-item-label>
+                  <q-item-label class="text-center">Clasificacion:</q-item-label>
+                  <q-item-label class="text-center text-bold">{{classifications.find(e => e.id ==
+                    seman.classification).name}}</q-item-label>
                 </q-item-section>
                 <q-item-section>
-                  <q-item-label>Pregunta</q-item-label>
-                  <q-item-label>{{ response.question }}</q-item-label>
+                  <q-item-label class="text-center">Porcentaje:</q-item-label>
+                  <q-item-label class="text-center text-bold">{{ seman.percentage }}</q-item-label>
                 </q-item-section>
-              </q-item>
-              <q-item v-if="response.qualified.length > 0">
                 <q-item-section>
-                  <q-item-section>
-                    <q-item-label>No Cumple</q-item-label>
-                    <q-item-label>{{ response.qualified }}</q-item-label>
-                  </q-item-section>
+                  <q-item-label class="text-center">Puntos Asistencia: </q-item-label>
+                  <q-item-label class="text-center text-bold">{{ seman.puntosAsistencia }}</q-item-label>
                 </q-item-section>
-              </q-item>
-              <q-item>
                 <q-item-section>
-                  <q-item-section>
-                    <q-item-label>Obervacion</q-item-label>
-                    <q-item-label>{{ response.observacion }}</q-item-label>
-                  </q-item-section>
+                  <q-item-label class="text-center">Puntos Checklist:</q-item-label>
+                  <q-item-label class="text-center text-bold">{{ seman.puntosChecklist }}</q-item-label>
                 </q-item-section>
               </q-item>
             </q-list>
-            <q-separator spaced inset vertical dark />
-          </div>
-        </q-card-section>
-      </q-card>
+          </q-card-section>
+
+          <q-card-section>
+            <q-list bordered>
+              <q-item>
+                <q-item-section>
+                  <q-item-label class="text-center">Turno:</q-item-label>
+                  <q-item-label class="text-center text-bold">{{ seman.asistencia.TURNO }}</q-item-label>
+                </q-item-section>
+                <q-item-section>
+                  <q-item-label class="text-center">Vacaciones:</q-item-label>
+                  <q-item-label class="text-center text-bold">{{ seman.asistencia.VACACIONES }}</q-item-label>
+                </q-item-section>
+                <q-item-section>
+                  <q-item-label class="text-center">Faltas:</q-item-label>
+                  <q-item-label class="text-center text-bold">{{ seman.asistencia.FALTAS }}</q-item-label>
+                </q-item-section>
+                <q-item-section>
+                  <q-item-label class="text-center">Retardos: </q-item-label>
+                  <q-item-label class="text-center text-bold">{{ seman.asistencia.RETARDOS }}</q-item-label>
+                </q-item-section>
+              </q-item>
+            </q-list>
+          </q-card-section>
+
+          <q-card class="my-card">
+            <q-card-section>
+              <q-table :rows="[seman.asistencia]" hide-bottom separator="cell" :columns="tableAssist.columns" />
+            </q-card-section>
+          </q-card>
+
+
+          <q-card-section v-if="seman.responses.length > 0">
+            <div v-for="(response, index) in seman.responses" :key="index">
+              <q-list bordered>
+                <q-item>
+                  <q-item-section>
+                    <q-item-label>Formulario</q-item-label>
+                    <q-item-label>{{ response.form }}</q-item-label>
+                  </q-item-section>
+                  <q-item-section>
+                    <q-item-label>Fecha</q-item-label>
+                    <q-item-label>{{ response.fecha_hora }}</q-item-label>
+                  </q-item-section>
+                  <q-item-section>
+                    <q-item-label>Pregunta</q-item-label>
+                    <q-item-label>{{ response.question }}</q-item-label>
+                  </q-item-section>
+                </q-item>
+                <q-item v-if="response.qualified.length > 0">
+                  <q-item-section>
+                    <q-item-section>
+                      <q-item-label>No Cumple</q-item-label>
+                      <q-item-label>{{ response.qualified }}</q-item-label>
+                    </q-item-section>
+                  </q-item-section>
+                </q-item>
+                <q-item>
+                  <q-item-section>
+                    <q-item-section>
+                      <q-item-label>Obervacion</q-item-label>
+                      <q-item-label>{{ response.observacion }}</q-item-label>
+                    </q-item-section>
+                  </q-item-section>
+                </q-item>
+              </q-list>
+              <q-separator spaced inset vertical dark />
+            </div>
+          </q-card-section>
+        </q-card>
+      </div>
     </q-card-section>
 
     <q-card-actions align="right">
@@ -188,6 +251,7 @@ import indpi from 'src/API/IndicatorApi';
 import { useAccountStore } from 'stores/Account';
 import dayjs from 'dayjs';
 import { vizmedia } from 'boot/axios'
+const date = new Date();
 const $q = useQuasar();
 const piniaAccount = useAccountStore();
 const changeValue = ref(false);
@@ -200,6 +264,36 @@ const props = defineProps({
   users: { type: Array }
 })
 
+const tableAssist = ref({
+  columns: [
+    // {name:'turn',label:'Turno',field: r => r.TURNO, align:'center'},s
+    { name: 'sabado', label: 'Sabado', field: r => r.SABADO, align: 'center' },
+    { name: 'domingo', label: 'Domingo', field: r => r.DOMINGO, align: 'center' },
+    { name: 'lunes', label: 'Lunes', field: r => r.LUNES, align: 'center' },
+    { name: 'martes', label: 'Martes', field: r => r.MARTES, align: 'center' },
+    { name: 'miercoles', label: 'Miercoles', field: r => r.MIERCOLES, align: 'center' },
+    { name: 'jueves', label: 'Jueves', field: r => r.JUEVES, align: 'center' },
+    { name: 'viernes', label: 'Viernes', field: r => r.VIERNES, align: 'center' },
+  ]
+})
+
+const semanas = ref([]);
+const anio = ref({
+  val: null,
+  opts: [],
+});
+const range = ref({
+  min: 0,
+  max: 0
+})
+
+const mostDate = computed(() => {
+  let simon = semanas.value.filter(e => e.week >= range.value.min && e.week <= range.value.max && e.anio == anio.value.val);
+  console.log(simon)
+  let init = 0;
+  let ultm = simon.length - 1;
+  return { from: simon[init]?.fecha, to: simon[ultm]?.fecha }
+})
 
 const changeClassifications = computed(() => JSON.stringify(props.users.filter(e => e.id == props.viewUser.val.id)[0].classification.classification) == JSON.stringify(props.viewUser.val.classification.classification));
 const changeBranch = computed(() => JSON.stringify(props.users.filter(e => e.id == props.viewUser.val.id)[0].classification.store) == JSON.stringify(props.viewUser.val.classification.store))
@@ -209,12 +303,20 @@ const detectedChange = computed(() => JSON.stringify(props.users.filter(e => e.i
 
 const init = async () => {
   $q.loading.show({ message: "Cargando Usuario..." });
+  console.log(props.viewUser.val)
   const resp = await indpi.getCalculateClassUser(props.viewUser.val);
   if (resp.error) {
     console.log(resp)
   } else {
     // console.log(resp);
-    props.viewUser.val.class = resp
+    console.log(resp.resumen);
+    props.viewUser.val.class = resp.resumen
+    semanas.value = resp.fechas;
+    let semAct = semanas.value.find(e => e.fecha == dayjs(date).format('YYYY-MM-DD'));
+    anio.value.opts = [...new Set(semanas.value.map(item => item.anio))];
+    range.value.min = semAct.week
+    range.value.max = semAct.week
+    anio.value.val = semAct.anio
     console.log(props.viewUser.val)
   }
   $q.loading.hide({ message: "Cargando Usuario..." });
@@ -285,6 +387,35 @@ const changeBonus = async () => {
     props.viewUser.state = false
     $q.loading.hide()
   }
+}
+
+const getReportFilter = async () => {
+  $q.loading.show({ message: "Cargando Usuario..." });
+  console.log(props.viewUser.val)
+  let data = {
+    "user": props.viewUser.val,
+    "min": range.value.min,
+    "max": range.value.max,
+    "year": anio.value.val
+  }
+  console.log(data);
+  const resp = await indpi.getCalculateClassUserFilter(data);
+  if (resp.error) {
+    console.log(resp)
+  } else {
+    // console.log(resp);
+    console.log(resp);
+    props.viewUser.val.class = resp.resumen
+  }
+  $q.loading.hide({ message: "Cargando Usuario..." });
+}
+
+const downloadExcel = () => {
+
+}
+
+const downloadPDF = () => {
+
 }
 
 

@@ -91,6 +91,10 @@ export default{
     let burl = `cluster/Indicators/getCalculateClassUser`
     return vizapi.post(burl,user).then( done => done.data ).catch( fail => { return {error:fail.error.response} });
   },
+  getCalculateClassUserFilter(user){
+    let burl = `cluster/Indicators/getCalculateClassUserFilter`
+    return vizapi.post(burl,user).then( done => done.data ).catch( fail => { return {error:fail.error.response} });
+  },
   compareUserClassification(userId){
     let burl = `cluster/Indicators/compareUserClassification/${userId}`
     return vizapi.get(burl).then( done => done.data ).catch( fail => { return {error:fail.error.response} });

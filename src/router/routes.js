@@ -81,6 +81,12 @@ const routes = [
         ]
       },
       {
+        path: 'printers',
+        children: [
+          { path: '', component: () => import('src/pages/Store/Prints/Printers.vue') },
+        ]
+      },
+      {
         path: 'preorders',
         children: [
           { path: '', name: 'pvt', component: () => import('pages/Store/Preorders/Index.vue') },
@@ -88,7 +94,12 @@ const routes = [
           { path: 'pedidos', name: 'ped', component: () => import('pages/Store/Preorders/ListOrders.vue') },
           { path: 'checkin', name: 'chckin', component: () => import('pages/Store/Preorders/Checkin.vue') },
           { path: 'dashboard', name: 'dsh', component: () => import('pages/Store/Preorders/Dashboard.vue') },
-          { path: 'warehouse', name: 'wrhp', component: () => import('pages/Store/Preorders/Warehouse.vue') },
+          { path: 'warehouse', name: 'wrhp', component: () => import('src/pages/Store/Preorders/Warehouse/Warehouse.vue') },
+          { path: 'warehouse/distribute', name: 'wrhd', component: () => import('src/pages/Store/Preorders/Warehouse/Distribute.vue') },
+          { path: 'warehouse/internal', name: 'wrhi', component: () => import('src/pages/Store/Preorders/Warehouse/InternalCheck.vue') },
+          { path: 'warehouse/delivery', name: 'wrhdl', component: () => import('src/pages/Store/Preorders/Warehouse/Delivery.vue') },
+          { path: 'checkout', name: 'chkout', component: () => import('src/pages/Store/Preorders/Checkout.vue') },
+          { path: 'checkout/:oid', name: 'chkoid', component: () => import('src/pages/Store/Preorders/CheckoutOrder.vue') },
           { path: 'pedidos/:oid', name: 'oid', component: () => import('pages/Store/Preorders/Order.vue') },
         ],
       },
@@ -96,6 +107,7 @@ const routes = [
         path: 'sales',
         children: [
           { path: '', name: 'sles', component: () => import('pages/Store/Sale/Index.vue') },
+          { path: 'pos', name: 'pos', component: () => import('pages/Store/Sale/POS.vue') },
           { path: 'cashdesks', name: 'cashR', component: () => import('pages/Store/Sale/CasherRegister.vue') },
         ],
       },
@@ -141,6 +153,12 @@ const routes = [
         ]
       },
       {
+        path: 'printers',
+        children: [
+          { path: '', component: () => import('src/pages/Cluster/Prints/Printers.vue') },
+        ]
+      },
+      {
         path: 'stores',
         children: [
           { path: '', name: 'stores', component: () => import('pages/Cluster/Stores/Index.vue') },
@@ -163,6 +181,15 @@ const routes = [
           { path: 'categories', name: 'categories', component: () => import('pages/Cluster/Products/Categories.vue') },
           { path: 'prices', name: 'prices', component: () => import('pages/Cluster/Products/Prices.vue') },
           { path: 'kits', name: 'kits', component: () => import('pages/Cluster/Products/Kits.vue') },
+        ]
+      },
+      {
+        path: 'cashers',
+        children: [
+          { path: '', name: 'cash', component: () => import('pages/Cluster/Cashers/index.vue') },
+          { path: 'documents', name: 'cshdoc', component: () => import('pages/Cluster/Cashers/document.vue') },
+          { path: 'tpv', name: 'cshtpv', component: () => import('pages/Cluster/Cashers/tpv.vue') },
+
         ]
       },
       {

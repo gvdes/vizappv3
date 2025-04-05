@@ -45,8 +45,6 @@ $sktpvt.on('changeStateConfig', (params)=>{
   $q.notify({message:`El Proceso ${JSON.parse(params.details)[params.active]} `})
 })
 
-
-
 const configs = ref([])
 
 const cnf = computed(() => configs.value.filter(e => e.state.require == 0))

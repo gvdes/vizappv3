@@ -4,8 +4,8 @@
 
       <div class="q-pa-xs col text-center ">
 
-        <q-expansion-item popup :label="`Preventa : ${piniaAccount.joinedStore.name} `" class="text-grey-13 text-bold">
-          <q-card class="my-card">
+        <q-expansion-item popup :label="`Preventa : ${piniaAccount.joinedStore.name} `" class="text-grey-14 text-bold">
+          <q-card>
             <q-card-section>
               <div class="row items-start justify-between">
                 <q-btn color="negative" flat icon="close"
@@ -57,14 +57,14 @@
           <q-separator spaced inset vertical dark />
           <q-item-section>
             <q-item-label overline>Piezas</q-item-label>
-            <q-item-label caption>{{ order.bodie?.reduce((acc, item) => acc + item.amount_require, 0)
-              }}</q-item-label>
+            <q-item-label caption>{{order.bodie?.reduce((acc, item) => acc + item.amount_require, 0)
+            }}</q-item-label>
           </q-item-section>
           <q-separator spaced inset vertical dark />
           <q-item-section>
             <q-item-label overline>Total</q-item-label>
-            <q-item-label caption>$ {{ order.bodie?.reduce((acc, item) => acc + parseFloat(item.total), 0)
-              }}</q-item-label>
+            <q-item-label caption>$ {{order.bodie?.reduce((acc, item) => acc + parseFloat(item.total), 0)
+            }}</q-item-label>
           </q-item-section>
         </q-item>
       </q-list>
@@ -81,8 +81,8 @@
           <div class="row">
             <div class="col">Pedido {{ order.order.id }}</div>
             <div class="col">Modelos: {{ order.order.bodie.length }}</div>
-            <div class="col">Piezas: {{ order.order.bodie.reduce((acc, item) => acc + item.amount_require, 0) }}</div>
-            <div class="col">Total: {{ order.order.bodie.reduce((acc, item) => acc + parseFloat(item.total), 0) }}</div>
+            <div class="col">Piezas: {{order.order.bodie.reduce((acc, item) => acc + item.amount_require, 0)}}</div>
+            <div class="col">Total: {{order.order.bodie.reduce((acc, item) => acc + parseFloat(item.total), 0)}}</div>
 
 
           </div>
@@ -110,7 +110,7 @@
               <div class="col q-pr-sm">
                 <div class="text-h6">{{ product.row.product.code }} -- {{ product.row.product.short_code }}</div>
                 <div class="text-caption text-grey-14 text-bold">{{ product.row.product.category.familia.seccion.name
-                  }}
+                }}
                   - {{ product.row.product.category.familia.name }} - {{ product.row.product.category.name }} (PXC {{
                     product.row.product.pieces }})</div>
                 <div class="text-caption">{{ product.row.product.description }}</div>
@@ -231,24 +231,24 @@ const init = async () => {
     $q.loading.hide();
     $router.push(`/store/${piniaAccount.join}/preorders/pedidos`)
   } else {
-    if(resp.order._created_by === piniaAccount.account.id){
+    if (resp.order._created_by === piniaAccount.account.id) {
       order.value = (resp.order)
-    if (resp.order._order_by) {
-      firstProducts.value = resp.order.order.bodie
-    }
-    products.value = resp.order.bodie
-    // insertPro.value = resp.order.id
-    unit_measure.value.opts = resp.unit_measures
-    rules.value = resp.rules;
-    console.log(resp);
-    $q.loading.hide();
-    }else{
+      if (resp.order._order_by) {
+        firstProducts.value = resp.order.order.bodie
+      }
+      products.value = resp.order.bodie
+      // insertPro.value = resp.order.id
+      unit_measure.value.opts = resp.unit_measures
+      rules.value = resp.rules;
+      console.log(resp);
+      $q.loading.hide();
+    } else {
       $router.push(`/store/${piniaAccount.join}/preorders/pedidos`)
       $q.notify({
-      message: 'No puedes ingresar a este Pedido',
-      type: 'negative',
-      position: 'center'
-    })
+        message: 'No puedes ingresar a este Pedido',
+        type: 'negative',
+        position: 'center'
+      })
     }
 
   }
@@ -266,7 +266,6 @@ const finderFound = (item) => {
       EditProduct.value = item
     }
   }
-
 }
 
 const productEdit = async (item) => {
@@ -274,15 +273,15 @@ const productEdit = async (item) => {
   EditProduct.value = item.product
   EditProduct.value.measure = item.unitsupply
   insertPro.value._order = item._order,
-    insertPro.value._product = item._product,
-    insertPro.value.amount_require = item.amount_require,
-    insertPro.value.units = item.units,
-    insertPro.value.price = item.price,
-    insertPro.value.total = item.total,
-    insertPro.value._rate = item._rate,
-    insertPro.value._state = item._state,
-    insertPro.value.notes = item.notes,
-    insertPro.value._supply_by = item._supply_by
+  insertPro.value._product = item._product,
+  insertPro.value.amount_require = item.amount_require,
+  insertPro.value.units = item.units,
+  insertPro.value.price = item.price,
+  insertPro.value.total = item.total,
+  insertPro.value._rate = item._rate,
+  insertPro.value._state = item._state,
+  insertPro.value.notes = item.notes,
+  insertPro.value._supply_by = item._supply_by
   console.log(insertPro.value);
   wndProduct.value = true
 }
@@ -317,10 +316,10 @@ const getPrint = async () => {
 }
 
 const changeStatus = async () => {
-  console.log('se termina el pedido brou')//se tiene que revisar primero la configuracion para ver a donde va primero el pedido si a por surtir o a por validar
+  console.log('se termina el pedido brou')
   $q.loading.show({ message: 'Guardando Pedido :p' });
   order.value.printer = printers.value.val.id
-  order.value.typelog = 7//el tipo es el 7 siempre en el proceso
+  order.value.typelog = 7
   const resp = await pvtpi.changeStatus(order.value);
   console.log(resp)
   if (resp.error) {
