@@ -19,7 +19,7 @@
       <div class="bg-grey-3 col">
         <div class="q-px-sm text-grey-7 ">Ultima Actualizacion</div>
         <span class="text-bold q-px-sm">{{ dayjs(viewUser.val.classification.updated_at).format('DD/MM/YYYY HH:mm:ss')
-        }}</span>
+          }}</span>
       </div>
 
       <q-separator spaced inset vertical dark />
@@ -67,13 +67,12 @@
     </q-card-section>
     <q-card-section>
       <div class="row">
-        <q-btn  outline rounded icon="event" color="primary" class="col">
+        <q-btn outline rounded icon="event" color="primary" class="col">
           <q-menu fit>
             <q-card class="my-card">
               <q-card-section>
-                <div class="text-bold text-h6 text-center"> {{ typeof (mostDate) == 'object' ? `Del ${mostDate.from} a ${mostDate.to}` : fechas.date }}</div>
-                <!-- <q-date v-model="mostDate" landscape minimal mask="YYYY-MM-DD" disable dense /> -->
-
+                <div class="text-bold text-h6 text-center"> {{ typeof (mostDate) == 'object' ? `Del ${mostDate.from} a
+                  ${mostDate.to}` : fechas.date }}</div>
               </q-card-section>
               <q-card-section>
                 <div class="row">
@@ -83,7 +82,6 @@
                   <q-separator spaced inset vertical dark />
                   <q-select dense v-model="anio.val" :options="anio.opts" label="Ano" filled />
                 </div>
-                <!-- <q-range :min="0" :max="53" v-model="range" :step="1" color="primary" disable /> -->
               </q-card-section>
               <q-card-actions align="center">
                 <q-btn flat color="primary" label="Obtener" @click="getReportFilter" />
@@ -91,113 +89,16 @@
             </q-card>
           </q-menu>
         </q-btn>
-        <!-- <q-separator spaced inset vertical dark />
-        <q-btn flat class="col" color="primary" icon="download" @click="downloadExcel" />
         <q-separator spaced inset vertical dark />
+        <q-btn  outline rounded  class="col" color="primary" icon="download" @click="downloadExcel" />
+        <!-- <q-separator spaced inset vertical dark />
         <q-btn flat class="col" color="primary" icon="picture_as_pdf" @click="downloadPDF" /> -->
       </div>
     </q-card-section>
     <q-card-section>
       <div v-for="(seman, index) in viewUser.val.class" :key="index">
         <q-separator spaced inset vertical dark />
-        <q-card class="my-card">
-          <q-card-section>
-
-            <q-list bordered>
-              <q-item>
-                <q-item-section>
-                  <q-item-label class="text-center">Semana:</q-item-label>
-                  <q-item-label class="text-center text-bold">{{ index }}</q-item-label>
-                </q-item-section>
-                <q-item-section>
-                  <q-item-label class="text-center">Clasificacion:</q-item-label>
-                  <q-item-label class="text-center text-bold">{{classifications.find(e => e.id ==
-                    seman.classification).name}}</q-item-label>
-                </q-item-section>
-                <q-item-section>
-                  <q-item-label class="text-center">Porcentaje:</q-item-label>
-                  <q-item-label class="text-center text-bold">{{ seman.percentage }}</q-item-label>
-                </q-item-section>
-                <q-item-section>
-                  <q-item-label class="text-center">Puntos Asistencia: </q-item-label>
-                  <q-item-label class="text-center text-bold">{{ seman.puntosAsistencia }}</q-item-label>
-                </q-item-section>
-                <q-item-section>
-                  <q-item-label class="text-center">Puntos Checklist:</q-item-label>
-                  <q-item-label class="text-center text-bold">{{ seman.puntosChecklist }}</q-item-label>
-                </q-item-section>
-              </q-item>
-            </q-list>
-          </q-card-section>
-
-          <q-card-section>
-            <q-list bordered>
-              <q-item>
-                <q-item-section>
-                  <q-item-label class="text-center">Turno:</q-item-label>
-                  <q-item-label class="text-center text-bold">{{ seman.asistencia.TURNO }}</q-item-label>
-                </q-item-section>
-                <q-item-section>
-                  <q-item-label class="text-center">Vacaciones:</q-item-label>
-                  <q-item-label class="text-center text-bold">{{ seman.asistencia.VACACIONES }}</q-item-label>
-                </q-item-section>
-                <q-item-section>
-                  <q-item-label class="text-center">Faltas:</q-item-label>
-                  <q-item-label class="text-center text-bold">{{ seman.asistencia.FALTAS }}</q-item-label>
-                </q-item-section>
-                <q-item-section>
-                  <q-item-label class="text-center">Retardos: </q-item-label>
-                  <q-item-label class="text-center text-bold">{{ seman.asistencia.RETARDOS }}</q-item-label>
-                </q-item-section>
-              </q-item>
-            </q-list>
-          </q-card-section>
-
-          <q-card class="my-card">
-            <q-card-section>
-              <q-table :rows="[seman.asistencia]" hide-bottom separator="cell" :columns="tableAssist.columns" />
-            </q-card-section>
-          </q-card>
-
-
-          <q-card-section v-if="seman.responses.length > 0">
-            <div v-for="(response, index) in seman.responses" :key="index">
-              <q-list bordered>
-                <q-item>
-                  <q-item-section>
-                    <q-item-label>Formulario</q-item-label>
-                    <q-item-label>{{ response.form }}</q-item-label>
-                  </q-item-section>
-                  <q-item-section>
-                    <q-item-label>Fecha</q-item-label>
-                    <q-item-label>{{ response.fecha_hora }}</q-item-label>
-                  </q-item-section>
-                  <q-item-section>
-                    <q-item-label>Pregunta</q-item-label>
-                    <q-item-label>{{ response.question }}</q-item-label>
-                  </q-item-section>
-                </q-item>
-                <q-item v-if="response.qualified.length > 0">
-                  <q-item-section>
-                    <q-item-section>
-                      <q-item-label>No Cumple</q-item-label>
-                      <q-item-label>{{ response.qualified }}</q-item-label>
-                    </q-item-section>
-                  </q-item-section>
-                </q-item>
-                <q-item>
-                  <q-item-section>
-                    <q-item-section>
-                      <q-item-label>Obervacion</q-item-label>
-                      <q-item-label>{{ response.observacion }}</q-item-label>
-                    </q-item-section>
-                  </q-item-section>
-                </q-item>
-              </q-list>
-              <q-separator spaced inset vertical dark />
-            </div>
-          </q-card-section>
-        </q-card>
+        <viewHistory :seman="seman" :index="index" :classifications="classifications" />
       </div>
     </q-card-section>
 
@@ -214,7 +115,6 @@
           Cambio total de bono
           <div class="text-overline">Semanal</div>
         </span>
-
       </q-card-section>
       <q-card-section>
         <q-input v-model="viewUser.val.classification.import" type="number" label="Importe"
@@ -249,6 +149,9 @@ import { ref, computed } from 'vue'
 import { useQuasar } from 'quasar';
 import indpi from 'src/API/IndicatorApi';
 import { useAccountStore } from 'stores/Account';
+import viewHistory from 'components/Indicator/viewHistory.vue'
+// import pdf from 'src/PDF/Indicators/userClassHistory.js';
+import excel from 'src/EXCEL/Indicators/userClassHistory.js';
 import dayjs from 'dayjs';
 import { vizmedia } from 'boot/axios'
 const date = new Date();
@@ -262,19 +165,6 @@ const props = defineProps({
   stores: { type: Array },
   week: { type: Array },
   users: { type: Array }
-})
-
-const tableAssist = ref({
-  columns: [
-    // {name:'turn',label:'Turno',field: r => r.TURNO, align:'center'},s
-    { name: 'sabado', label: 'Sabado', field: r => r.SABADO, align: 'center' },
-    { name: 'domingo', label: 'Domingo', field: r => r.DOMINGO, align: 'center' },
-    { name: 'lunes', label: 'Lunes', field: r => r.LUNES, align: 'center' },
-    { name: 'martes', label: 'Martes', field: r => r.MARTES, align: 'center' },
-    { name: 'miercoles', label: 'Miercoles', field: r => r.MIERCOLES, align: 'center' },
-    { name: 'jueves', label: 'Jueves', field: r => r.JUEVES, align: 'center' },
-    { name: 'viernes', label: 'Viernes', field: r => r.VIERNES, align: 'center' },
-  ]
 })
 
 const semanas = ref([]);
@@ -410,8 +300,8 @@ const getReportFilter = async () => {
   $q.loading.hide({ message: "Cargando Usuario..." });
 }
 
-const downloadExcel = () => {
-
+const downloadExcel = async () => {
+  excel.generateExcel(props.viewUser.val,props.classifications);
 }
 
 const downloadPDF = () => {

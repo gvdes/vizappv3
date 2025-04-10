@@ -104,6 +104,12 @@ const routes = [
         ],
       },
       {
+        path:'clients',
+        children:[
+          {path:'',name:'clientBof', component: () => import('pages/Store/Clients/Index.vue')}
+        ]
+      },
+      {
         path: 'sales',
         children: [
           { path: '', name: 'sles', component: () => import('pages/Store/Sale/Index.vue') },
@@ -150,6 +156,13 @@ const routes = [
           { path: 'branch', name: 'branches', component: () => import('pages/Cluster/Users/Branches.vue') },
           { path: 'positions', name: 'positions', component: () => import('pages/Cluster/Users/Positions.vue') },
 
+        ]
+      },
+      {
+        path: 'clients',
+        children: [
+          { path: '', name: 'client', component: () => import('pages/Cluster/Clients/Index.vue') },
+          { path: 'create', name: 'create_client', component: () => import('pages/Cluster/Clients/Create.vue') },
         ]
       },
       {
