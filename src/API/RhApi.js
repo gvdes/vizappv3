@@ -38,6 +38,14 @@ export default{
     let burl = `store/${piniaAccount.join}/rrhh/addForm`
     return vizapi.post(burl,data).then( done => done.data).catch( fail => { return {error:fail.error.response} });
   },
+  getReportUserWeek(data){
+    let burl = `store/${piniaAccount.join}/rrhh/getReportUserWeek`
+    return vizapi.post(burl,data).then( done => done.data).catch( fail => { return {error:fail.error.response} });
+  },
+  getReportUserWeekFilt(data){
+    let burl = `store/${piniaAccount.join}/rrhh/getReportUserWeekFilt`
+    return vizapi.post(burl,data).then( done => done.data).catch( fail => { return {error:fail.error.response} });
+  },
   getJustifications(){
     let burl = `cluster/Assist/getJustifications`
     return vizapi.get(burl).then( done => done.data).catch( fail => { return {error:fail.error.response} });

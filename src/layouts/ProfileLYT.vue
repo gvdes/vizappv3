@@ -23,10 +23,10 @@
             <q-tabs v-model="tab" dense inline-label class="bg-blue text-white">
               <q-route-tab name="mails" icon="person" label="Informacion personal" :to="'/profile'" />
               <q-route-tab name="estado" icon="work" label="Estado actual" :to="'/profile/status'" />
-              <q-route-tab name="password" icon="password" label="Contraseña" :to="'/profile/changepass'" />
+              <!-- <q-route-tab name="password" icon="password" label="Contraseña" :to="'/profile/changepass'" /> -->
               <q-route-tab name="asssit" icon="co_present" label="Asistencia" :to="'/profile/assist'" />
-              <q-route-tab name="sales" icon="receipt" label="Ventas" :to="'/profile/sales'" />
-              <q-route-tab name="history" icon="work_history" label="Historia Laboral" :to="'/profile/historywork'" />
+              <!-- <q-route-tab name="sales" icon="receipt" label="Ventas" :to="'/profile/sales'" /> -->
+              <!-- <q-route-tab name="history" icon="work_history" label="Historia Laboral" :to="'/profile/historywork'" /> -->
             </q-tabs>
           </div>
         </q-card>

@@ -7,4 +7,12 @@ export default{
     let burl = `cluster/Clients/getClients`;
     return vizapi.get(burl).then( done => done.data).catch( fail => { return {error:fail} });
   },
+  editClient(data){
+    let burl = `cluster/Clients/editClient`;
+    return vizapi.post(burl,data).then( done => done.data).catch( fail => { return {error:fail} });
+  },
+  syncCli(data){
+    let burl = `cluster/Clients/replyClient`;
+    return vizapi.post(burl,data).then( done => done.data).catch( fail => { return {error:fail} });
+  },
 }
