@@ -49,13 +49,14 @@
 <script setup>
 import axios from 'axios'
 import { ref, computed } from 'vue'
-import { useRouter } from 'vue-router';
+import { loadRouteLocation, useRouter } from 'vue-router';
 import { useQuasar } from 'quasar';
 import sapi from 'src/API/StoresApi';
 import liststore from 'src/components/Stores/Index/StoreList.vue';
+import { layoutCluster } from 'stores/layoutCluster'
 const $q = useQuasar();
 const $router = useRouter();
-
+const layout = layoutCluster();
 
 const stores = ref([])
 
@@ -117,4 +118,5 @@ const addStore = () => {
 
 
 init()
+layout.setTitle('Sucursales')
 </script>

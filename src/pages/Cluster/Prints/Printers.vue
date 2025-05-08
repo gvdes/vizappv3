@@ -3,7 +3,7 @@
     <div class="bg-white">
 
       <div class="q-pa-sm row items-center text-center text-h6">
-        <div @click="$router.push('/cluster/usuarios')"> <q-icon size="30px" name="arrow_back" /></div>
+        <div @click="$router.push('/')"> <q-icon size="30px" name="arrow_back" /></div>
         <div class="col anek-bld text-grey-9 q-pl-sm">Impresoras</div>
         <div>
           <q-btn flat rounded icon="autorenew" @click="init" />
@@ -101,9 +101,11 @@ import printApi from 'src/API/PrintApi.js'
 import { $sktpvt } from 'boot/socket'
 import { useQuasar } from 'quasar'
 import { useAccountStore } from 'stores/Account';
+import { layoutCluster } from 'stores/layoutCluster'
 import Accounts from 'src/API/Accounts';
 const piniaAccount = useAccountStore();
 const $q = useQuasar();
+const layout = layoutCluster();
 const $router = useRouter();
 
 
@@ -219,5 +221,6 @@ const deletePrint = async () => {
 }
 
 init()
+layout.setTitle('Impresoras')
 
 </script>

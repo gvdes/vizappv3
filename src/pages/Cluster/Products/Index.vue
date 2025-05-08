@@ -1,7 +1,11 @@
 <template>
   <q-page padding>
     <div class="row">
-      <q-select v-model="state.val" :options="state.opts" label="Estado" option-label="name" class="col" />
+      <q-select v-model="state.val" :options="state.opts" label="Estado" option-label="name" class="col">
+        <template v-slot:after v-if="state.val">
+          <q-btn icon="close" dense flat @click="() => { state.val = null }" />
+        </template>
+      </q-select>
       <q-separator spaced inset vertical dark />
       <q-select v-model="filters.secciones" :options="secciones" label="Seccion" option-label="name" class="col"
         @update:model-value="() => { filters.familias = null; filters.categorias = null }">
@@ -24,73 +28,130 @@
           <q-btn icon="close" dense flat @click="() => { filters.categorias = null }" />
         </template>
       </q-select>
-
     </div>
 
     <q-separator spaced inset vertical dark />
     <q-table dense separator="cell" flat bordered class="my-sticky-header-column-table" title="Productos" virtual-scroll
-      :rows="profil" :columns="table.columns" row-key="code" :rows-per-page-options="[50]" :filter="filter" @row-click="editrow">
+      :rows="profil" :columns="table.columns" row-key="code" :pagination="{ rowsPerPage: 50 }" :filter="filter"
+      @row-click="editrow">
       <template v-slot:top>
         <div>Producto</div>
         <q-space />
-        <q-input borderless dense debounce="300" color="primary" v-model="filter">
-          <template v-slot:append>
-            <q-icon name="search" />
-          </template>
-        </q-input>
+        <div class="row">
+          <q-input class="col" borderless dense debounce="300" color="primary" v-model="filter" placeholder="Buscar">
+            <template v-slot:append>
+              <q-icon name="search" />
+            </template>
+          </q-input>
+        </div>
+        <q-separator spaced inset vertical dark />
+        <q-btn color="primary" icon="add" flat rounded title="Agregar Articulo" />
+        <q-separator spaced inset vertical dark />
+        <q-btn color="primary" icon="upload" flat rounded title="Subir Archivo" />
+        <q-separator spaced inset vertical dark />
+        <q-btn color="primary" icon="download" flat rounded title="Descargar Datos" />
       </template>
     </q-table>
 
-    <q-dialog v-model="product.state" persistent  :position="'right'" full-height>
-      <viewproduct :product="product.body" :providers="providers" :status="state.opts" :units="units" :categories="categories" ></viewproduct>
+    <q-dialog v-model="searhProduct" persistent>
+      <q-card style="width: 700px;">
+        <q-form @submit="searching">
+          <q-card-section>
+            <div class="text-h6 text-bold text-center">Buscar</div>
+          </q-card-section>
+          <q-card-section>
+            <div class="row">
+              <div class="text-center q-mt-sm">Buscar En</div>
+              <q-separator spaced inset vertical dark />
+              <q-select class="col" v-model="query.Campo" :options="table.columns" label="Buscar En" filled dense
+                @update:model-value="() => { query.val = '' }" />
+            </div>
+            <q-separator spaced inset vertical dark />
+            <div class="row">
+              <div class="text-center q-mt-sm q-mr-md">Buscar</div>
+              <q-separator spaced inset vertical dark />
+              <div class="col" v-if="[1, 2, 3, 4].includes(query.Campo.id)">
+                <q-input autofocus v-model="query.val" type="text" :label="query.Campo.label" dense filled />
+              </div>
+              <div v-else class="col">
+                <q-select v-model="query.val"
+                  :options="query.Campo.id == 5 ? state.opts : query.Campo.id == 6 ? secciones : query.Campo.id == 7 ? familias : query.Campo.id == 8 ? categorias : []"
+                  :label="query.Campo.label" filled option-label="name"
+                  @update:model-value="query.Campo.id == 5 ? state.val = query.val : query.Campo.id == 6 ? filters.secciones = query.val : query.Campo.id == 7 ? filters.familias = query.val : query.Campo.id == 8 ? filters.categorias = query.val : []" />
+              </div>
+            </div>
+          </q-card-section>
+          <q-card-actions align="right">
+            <q-btn flat label="Cancel" color="primary" v-close-popup />
+            <q-btn flat label="Buscar" type="submit" color="primary" />
+          </q-card-actions>
+        </q-form>
+      </q-card>
+    </q-dialog>
+
+    <q-dialog v-model="product.state" persistent >
+      <viewproduct :product="product.body" :providers="providers" :status="state.opts" :units="units"
+        :categories="categories" :edit="product.edit" :makers="maker" ></viewproduct>
     </q-dialog>
   </q-page>
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted, onBeforeUnmount } from 'vue'
 import { useQuasar } from 'quasar';
 import { useRouter } from 'vue-router';
 import prapi from 'src/API/Products';
 import viewproduct from 'src/components/Products/ProducView.vue';
+import { layoutCluster } from 'stores/layoutCluster'
 const $q = useQuasar();
 const $router = useRouter();
-
+const layout = layoutCluster()
 const filter = ref(null)
 const state = ref({
-  val: { id: 1, name: 'Disponible' },
+  val: null,
   opts: []
 });
 const products = ref([]);
+const maker = ref([])
 const categories = ref([]);
-const providers= ref([]);
+const providers = ref([]);
 const units = ref([]);
 const filters = ref({
   secciones: null,
   familias: null,
   categorias: null
 })
-
+const searhProduct = ref(false)
 const product = ref({
-  state:false,
-  body:null
+  state: false,
+  body: null,
+  edit:false
+})
+const query = ref({
+  val: '',
+  Campo: { id: 1, name: 'code', label: 'CODIGO', align: 'left', field: row => row.code, sortable: true },
 })
 
 const table = ref({
   columns: [
-    { id: 1, name: 'code', label: 'Codigo', align: 'left', field: row => row.code, sortable: true },
-    { id: 2, name: 'ccorto', label: 'Codigo Corto', sortable: true, align: 'left', field: row => row.short_code },
-    { id: 3, name: 'barcode', label: 'Codigo Barras', sortable: true, align: 'left', field: row => row.barcode },
-    { id: 4, name: 'description', label: 'Descripcion', sortable: true, align: 'left', field: row => row.description },
-    { id: 5, name: 'status', label: 'Estado', sortable: true, align: 'left', field: row => row.state.name },
-    { id: 6, name: 'section', label: 'Seccion', sortable: true, align: 'left', field: row => row.category.familia.seccion.name },
-    { id: 7, name: 'family', label: 'Familia', sortable: true, align: 'left', field: row => row.category.familia.name },
-    { id: 8, name: 'category', label: 'Categoria', sortable: true, align: 'left', field: row => row.category.name },
+    { id: 1, name: 'code', label: 'CODIGO', align: 'left', field: row => row.code, sortable: true },
+    { id: 2, name: 'short_code', label: 'CODIGO CORTO', sortable: true, align: 'left', field: row => row.short_code },
+    { id: 3, name: 'barcode', label: 'CODIGO DE BARRAS', sortable: true, align: 'left', field: row => row.barcode },
+    { id: 4, name: 'description', label: 'DESCRIPCION', sortable: true, align: 'left', field: row => row.description },
+    { id: 5, name: '_status', label: 'ESTADO', sortable: true, align: 'left', field: row => row.state.name },
+    { id: 6, name: 'section', label: 'SECCION', sortable: true, align: 'left', field: row => row.category.familia.seccion.name },
+    { id: 7, name: 'family', label: 'FAMILIA', sortable: true, align: 'left', field: row => row.category.familia.name },
+    { id: 8, name: 'category', label: 'CATEGORIA', sortable: true, align: 'left', field: row => row.category.name },
 
   ]
 })
-
-const fillist = computed(() => products.value.filter(e => e._state == state.value.val.id))
+const fillist = computed(() => {
+  if (state.value.val == null) {
+    return products.value
+  } else {
+    return products.value.filter(e => e._state == state.value.val.id)
+  }
+})
 const secciones = computed(() => categories.value.filter((e) => e.deep == 0));
 const familias = computed(() => {
   if (filters.value.secciones == null) {
@@ -98,7 +159,6 @@ const familias = computed(() => {
   } else {
     return categories.value.filter((e) => e.root == filters.value.secciones.id)
   }
-
 });
 const categorias = computed(() => {
   if (filters.value.familias == null) {
@@ -114,17 +174,13 @@ const profil = computed(() => {
   } else {
     return fillist.value.filter(e => e._category == filters.value.categorias.id)
   }
-
 })
 
-const editrow = (a,row) => {
+const editrow = (a, row) => {
   console.log(row);
   product.value.state = true
   product.value.body = row
-
 }
-
-
 
 const init = async () => {
   $q.loading.show({ message: 'Cargando Productos' })
@@ -133,17 +189,51 @@ const init = async () => {
   if (resp.error) {
     console.log(resp)
   } else {
-    products.value = resp.products;
     state.value.opts = resp.states;
     categories.value = resp.categories;
     providers.value = resp.providers;
     units.value = resp.units;
-    console.log(resp.products);
+    maker.value = resp.makers;
     $q.loading.hide();
   }
 
 }
-init()
+
+const handleKeyDown = (e) => {
+  if (e.ctrlKey && e.key.toLowerCase() === 'b') {
+    e.preventDefault()
+    if (!$q.dialog.isActive) {
+      searhProduct.value = true
+    }
+  }
+}
+
+const searching = async () => {
+  $q.loading.show({ message: 'Buscando...' })
+  console.log(query.value)
+  const resp = await prapi.searchProd(query.value);
+  if (resp.error) {
+    console.log(resp)
+  } else {
+    products.value = resp;
+    searhProduct.value = false;
+    query.value = {
+      val: '',
+      Campo: { id: 1, name: 'code', label: 'CODIGO', align: 'left', field: row => row.code, sortable: true },
+    }
+    $q.loading.hide()
+  }
+}
+
+
+onMounted(() => {
+  init()
+  window.addEventListener('keydown', handleKeyDown)
+  layout.setTitle('Productos')
+})
+onBeforeUnmount(() => {
+  window.removeEventListener('keydown', handleKeyDown)
+})
 </script>
 
 <style lang="sass">
@@ -174,5 +264,4 @@ init()
   td:first-child, th:first-child
     position: sticky
     left: 0
-
 </style>

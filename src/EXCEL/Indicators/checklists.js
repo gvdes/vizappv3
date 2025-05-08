@@ -1,7 +1,7 @@
 import ExcelJS from 'exceljs';
 import indpi from 'src/API/IndicatorApi.js';
 import dayjs from 'dayjs';
-import { vizmedia } from 'boot/axios';
+// import { vizmedia } from 'boot/axios';
 
 const excel = async (data) => {
   const workbook = new ExcelJS.Workbook();
@@ -74,7 +74,7 @@ const excel = async (data) => {
                 }
               } else if (e.question._type == 3) { // Evidencias
                 if (e.text) {
-                  let res = e.files?.map(fil => `${vizmedia}/${fil}`);
+                  let res = e.files?.map(fil => `${fil.url}`);
                   res.forEach((url, index) => {
                     let row;
                     if (index == 0) row = worksheet.addRow([e.question.question]);

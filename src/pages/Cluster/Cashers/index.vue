@@ -111,10 +111,12 @@ import { useQuasar } from 'quasar'
 import { useAccountStore } from 'stores/Account';
 import PreordersApi from 'src/API/PreordersApi.js';
 import Accounts from 'src/API/Accounts';
+import { layoutCluster } from 'stores/layoutCluster'
 
 const piniaAccount = useAccountStore();
 const $q = useQuasar();
 const $router = useRouter();
+const layout = layoutCluster();
 
 const mosCash = ref({
   state: false,
@@ -208,4 +210,5 @@ const reset = () => {
 }
 
 init()
+layout.setTitle('Cajas')
 </script>

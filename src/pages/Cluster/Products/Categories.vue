@@ -1,11 +1,9 @@
 <template>
   <q-page padding>
-    <!-- content -->
+    categories
   </q-page>
 </template>
 
-<script>
-export default {
-  // name: 'PageName',
-}
+<script setup>
+
 </script>

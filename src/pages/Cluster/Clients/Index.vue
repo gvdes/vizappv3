@@ -81,6 +81,7 @@ import { ref, computed, onBeforeUnmount, onMounted } from 'vue'
 
 import { useRoute, useRouter } from 'vue-router';
 import viewClient from 'components/Clients/viewClent.vue'
+import { layoutCluster } from 'stores/layoutCluster'
 import dayjs from 'dayjs';
 import clientApi from 'src/API/ClientsApi.js'
 import { useQuasar } from 'quasar'
@@ -93,6 +94,7 @@ import EditProduct from 'src/components/Restock/EditProduct.vue';
 const piniaAccount = useAccountStore();
 const $q = useQuasar();
 const $router = useRouter();
+const layout = layoutCluster()
 
 const editMos = ref({
   state: false,
@@ -229,6 +231,7 @@ const replyClient = async (client) => {
 
 
 init();
+layout.setTitle('Clientes')
 
 const confirmExit = (e) => {
   if (editMos.value.state && editMos.value.val?.fails?.length > 0) {

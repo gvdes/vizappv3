@@ -78,7 +78,7 @@
               <div
                 style="position: relative; border: 1px solid #EEEEEE; border-radius: 15px; width: 50px; height: 50px;">
                 <q-avatar size="50px" square>
-                  <q-img :src="`${vizmedia}/${file}`" style="height: 25px; width: 25px"></q-img>
+                  <q-img :src="`${file.url}`" style="height: 25px; width: 25px"></q-img>
                 </q-avatar>
               </div>
             </div>
@@ -110,7 +110,7 @@
         <q-card-section>
           <div class="q-pa-md">
             <q-carousel swipeable animated v-model="slide" thumbnails infinite>
-              <q-carousel-slide :name="index" :img-src="`${vizmedia}/${file}`" v-for="(file, index) in image.files"
+              <q-carousel-slide :name="index" :img-src="`${file.url}`" v-for="(file, index) in image.files"
                 :key="index" />
             </q-carousel>
           </div>

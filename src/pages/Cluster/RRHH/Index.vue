@@ -190,8 +190,10 @@ import { useRouter } from 'vue-router';
 import { useQuasar } from 'quasar';
 import rhpi from 'src/API/RhApi';
 import { useAccountStore } from 'stores/Account';
+import { layoutCluster } from 'stores/layoutCluster'
 const $q = useQuasar();
 const $router = useRouter();
+const layout = layoutCluster()
 import dayjs from 'dayjs';
 
 const piniaAccount = useAccountStore();
@@ -401,4 +403,5 @@ const sync = async () => {
 
 
 init()
+layout.setTitle('Recursos Humanos')
 </script>

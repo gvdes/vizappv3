@@ -1,0 +1,1 @@
+import{Q as e}from"./QPage.5bf3fc92.js";import{_ as o,o as t,e as a,w as r,J as s}from"./index.d99fe7ab.js";const c={},n=s("h1",null,"historywork",-1);function _(i,p,d,f,l,u){return t(),a(e,{padding:""},{default:r(()=>[n]),_:1})}var x=o(c,[["render",_]]);export{x as default};

@@ -100,12 +100,14 @@ import { ref, onMounted, computed } from 'vue';
 import { useAccountStore } from 'stores/Account';
 import { useRouter } from 'vue-router';
 import { useQuasar, useMeta } from 'quasar';
+import { layoutCluster } from 'stores/layoutCluster'
 import excel from 'src/EXCEL/Users/userList.js';
 import listuser from 'src/components/Users/Index/UserList.vue';
 import uapi from 'src/API/UserApi';
 const piniaAccount = useAccountStore();
 const $q = useQuasar();
 const $router = useRouter();
+const layout = layoutCluster();
 const maximizedToggle = ref(true)
 const usuarios = ref([]);
 const search = ref('');
@@ -232,6 +234,8 @@ const exportExcel = () => {
   excel.generateExcel(users.value);
 }
 
-onMounted(() => { init(); });
+onMounted(() => { init();
+  layout.setTitle('Usuarios')
+ });
 const isMob = computed(() => $q.platform.is.mobile);
 </script>

@@ -167,6 +167,7 @@ import { ref, onMounted, computed } from 'vue';
 import { useAccountStore } from 'stores/Account';
 import { useRouter } from 'vue-router';
 import { useQuasar } from 'quasar';
+import { layoutCluster } from 'stores/layoutCluster'
 import indpi from 'src/API/IndicatorApi';
 import pdf from 'src/PDF/Indicators/userclass.js';
 import excel from 'src/EXCEL/Indicators/bonuses.js';
@@ -175,6 +176,7 @@ import dayjs from 'dayjs';
 import viewUserClass from 'src/components/Indicator/viewUserClass.vue';
 import { vizmedia } from 'boot/axios'
 const piniaAccount = useAccountStore();
+const layout = layoutCluster()
 const $q = useQuasar();
 const $router = useRouter();
 
@@ -419,4 +421,5 @@ const generateExel = async () => {
 };
 
 init()
+layout.setTitle('Indicadores')
 </script>

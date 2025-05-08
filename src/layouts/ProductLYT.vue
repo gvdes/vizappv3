@@ -8,7 +8,7 @@
             <q-route-tab name="Product" icon="inventory" label="Productos" :to="'/cluster/products'" />
             <q-route-tab name="Category" icon="category" label="Categorias" :to="'/cluster/products/categories'" />
             <q-route-tab name="Prices" icon="price_change" label="Precios" :to="'/cluster/products/prices'" />
-            <q-route-tab name="Kit" icon="communities" label="Kits" :to="'/cluster/products/kits'" />
+            <q-route-tab name="Kit" icon="workspaces" label="Kits" :to="'/cluster/products/kits'" />
           </q-tabs>
         </div>
 

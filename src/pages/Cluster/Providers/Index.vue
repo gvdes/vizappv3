@@ -105,8 +105,10 @@ import { ref, computed } from 'vue'
 import { useQuasar } from 'quasar';
 import { useRouter } from 'vue-router';
 import papi from 'src/API/ProvidersApi';
+import { layoutCluster } from 'stores/layoutCluster'
 const $q = useQuasar();
 const $router = useRouter();
+const layout = layoutCluster()
 
 const providers = ref([]);
 const state = ref(false);
@@ -177,4 +179,5 @@ const changedb = async() => {
 }
 
 init()
+layout.setTitle('Proveedores')
 </script>

@@ -8,7 +8,7 @@
 
       <div class="col text-center anek-bld">
         <div :class="moduletitle ? 'fs-dec2':'text-uppercase text-bold'" class="self-start text-primary" @click="$router.push('/cluster')">Cluster</div>
-        <div>{{ moduletitle }}</div>
+        <div>{{ layout.title }}</div>
       </div>
 
       <div class="col text-right"></div>
@@ -34,10 +34,12 @@
   import { useRoute, useRouter } from 'vue-router';
   import { useQuasar } from 'quasar';
   import { useAccountStore } from 'stores/Account'
+  import { layoutCluster } from 'stores/layoutCluster'
 
   const $route = useRoute();
   const $router = useRouter();
   const $q = useQuasar();
+  const layout = layoutCluster();
   const piniaAccount = useAccountStore();
   const $emit = defineEmits(['toggleNavigatorStore','joinAt']);
 
