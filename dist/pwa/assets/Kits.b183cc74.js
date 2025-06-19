@@ -1,0 +1,1 @@
+import{Q as e}from"./QPage.3f607b77.js";import{_ as t,o as a,e as o,w as r,W as s}from"./index.1ab3c9fa.js";const c={},_=s(" kits ");function n(i,d){return a(),o(e,{padding:""},{default:r(()=>[_]),_:1})}var m=t(c,[["render",n]]);export{m as default};

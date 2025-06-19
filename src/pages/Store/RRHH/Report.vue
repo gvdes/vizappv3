@@ -3,7 +3,7 @@
     <q-btn flat rounded icon="arrow_back" @click="$router.push(`/store/${piniaAccount.join}/manpower`)" />
 
 
-    <q-table title="Asistencias" :rows="report" row-key="ID" flat bordered :separator="'cell'" dense
+    <q-table title="Asistencias" :columns="table.columns" :rows="report" row-key="ID" flat bordered :separator="'cell'" dense
         :filter="filter" no-data-label="No hay nada Aun">
         <template v-slot:top>
 
@@ -59,12 +59,42 @@ const init = async () => {
   }
 }
 
+
+
+const table = ref({
+  columns:[
+    {name:'year',label:'AÑO',field:r=>r.ANIO, align:'left'},
+    {name:'week',label:'#',field:r=>r.semana, align:'left'},
+    {name:'id',label:'ID',field:r=>r.ID, align:'left'},
+    {name:'name',label:'NOMBRE',field:r=>r.NOMBRE, align:'left'},
+    {name:'store',label:'SUCURSAL',field:r=>r.SUCURSAL, align:'left'},
+    {name:'device',label:'DISPOSITIVO',field:r=>r.DISPOSITIVO, align:'left'},
+    {name:'turn',label:'TURNO',field:r=>r.TURNO, align:'left'},
+    {name:'saturday',label:'SABADO',field:r=>r.SABADO, align:'left'},
+    {name:'sunday',label:'DOMINGO',field:r=>r.DOMINGO, align:'left'},
+    {name:'monday',label:'LUNES',field:r=>r.LUNES, align:'left'},
+    {name:'thuesday',label:'MARTES',field:r=>r.MARTES, align:'left'},
+    {name:'wednesday',label:'MIERCOLES',field:r=>r.MIERCOLES, align:'left'},
+    {name:'thursday',label:'JUEVES',field:r=>r.JUEVES, align:'left'},
+    {name:'friday',label:'VIERNES',field:r=>r.VIERNES, align:'left'},
+    {name:'absence',label:'FALTAS',field:r=>r.FALTAS, align:'left'},
+    {name:'retardment',label:'RETARDOS',field:r=>r.RETARDOS, align:'left'},
+    {name:'vacation',label:'VACACIONES',field:r=>r.VACACIONES, align:'left'},
+    // {name:'sanctions',label:'SANCIONES',field:r=>r.SANCIONES, align:'left'},
+    {name:'descount',label:'DESCUENTO',field:r=>Number(r.SANCIONES) + Number((r.RETARDOS * 100)), align:'left'},
+  ]
+})
+
+
+
 const exportTable = () => {
   const workbook = new ExcelJS.Workbook();
   const targetColumns = ['H', 'I', 'J', 'K', 'L','M','N'];
 
   const worksheet = workbook.addWorksheet(`Reporte`);
-  worksheet.addRow(Object.keys(report.value[0]).map(i => i));
+  const keys = Object.keys(report.value[0]).map(i => i).filter(key => key !== 'SANCIONES') // elimina 'SANCIONES'
+  .concat('DESCUENTOS');
+  worksheet.addRow(keys);
   report.value.forEach((row) => {
     worksheet.addRow([
       row.ANIO,
@@ -81,9 +111,11 @@ const exportTable = () => {
       row.MIERCOLES,
       row.JUEVES,
       row.VIERNES,
+      // Number(row.SANCIONES),
       Number(row.FALTAS),
       Number(row.RETARDOS),
-      Number(row.VACACIONES)
+      Number(row.VACACIONES),
+      Number(row.SANCIONES) + Number((row.RETARDOS * 100))
     ])
   })
 

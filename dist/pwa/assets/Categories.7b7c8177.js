@@ -1,1 +1,0 @@
-import{Q as e}from"./QPage.5bf3fc92.js";import{_ as t,o as a,e as o,w as r,V as s}from"./index.d99fe7ab.js";const c={},_=s(" categories ");function n(i,d){return a(),o(e,{padding:""},{default:r(()=>[_]),_:1})}var m=t(c,[["render",n]]);export{m as default};

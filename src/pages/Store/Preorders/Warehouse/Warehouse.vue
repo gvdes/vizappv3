@@ -47,8 +47,8 @@
       <q-fab vertical-actions-align="right" color="primary" text-color="white" icon="keyboard_arrow_left"
         :direction="isMobile ? 'up' : 'left'">
         <div v-for="(modulo, index) in permissions" :key="index">
-          <q-fab-action color="primary" label-position="left" :icon="modulo.module.icon" :to="`/store/${piniaAccount.join}/${modulo.module.path}`"
-            :label="modulo.module.name" />
+          <q-fab-action color="primary" label-position="left" :icon="modulo.module.icon"
+            :to="`/store/${piniaAccount.join}/${modulo.module.path}`" :label="modulo.module.name" />
         </div>
       </q-fab>
     </q-page-sticky>
@@ -72,7 +72,7 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted, onBeforeUnmount } from 'vue'
 import { useRoute, useRouter } from 'vue-router';
 import dayjs from 'dayjs';
 import pvtpi from 'src/API/PreordersApi.js'
@@ -85,48 +85,6 @@ import Accounts from 'src/API/Accounts';
 const piniaAccount = useAccountStore();
 const $q = useQuasar();
 const $router = useRouter();
-
-
-
-
-$sktpvt.connect();
-$sktpvt.on('connect', () => {
-  console.log('Conectado al servidor')
-  $sktpvt.emit('ParametrosConexion', piniaAccount)
-});
-
-$sktpvt.on('changeStateConfig', (params) => {
-  const id = params._state_order
-  console.log(params)
-  if (id == 3) {
-    let inx = configs.value.findIndex(e => e._state_order == id)
-    console.log()
-    configs.value[inx] = params
-    if (params.active == 1) {
-      getOrders()
-      $q.notify({ message: `'Servicion ${params.state.name} Encendido'`, type: 'positive', position: 'center' })
-    } else {
-      console.log('cambia los pendientes')
-      $q.notify({ message: `'Servicion ${params.state.name} Apagado'`, type: 'negative', position: 'center' })
-    }
-  }
-})
-$sktpvt.on('updOrder', (params) => {
-  console.log(params)
-  let inx = orders.value.findIndex(e => e.id == params.id)
-  console.log(inx);
-  if(inx >= 0){
-    orders.value[inx].state = params.state
-    orders.value[inx]._state = params._state
-  }
-})
-
-$sktpvt.on('warehouse', (params) => {
-  console.log(params)
-  orders.value.push(params)
-  sound.newOrder.play();
-})
-
 
 const permissions = computed(() => piniaAccount.account.modules.filter((e) => e.module.root == 'l02m'))
 
@@ -163,7 +121,7 @@ const init = async () => {
     configs.value = resp
     // let act = configs.value.filter(c => c._state_order == 2)[0]?.active
     // if (act == 1) {
-      getOrders();
+    getOrders();
     // }
   }
 }
@@ -229,6 +187,52 @@ const reprintTck = async () => {
 }
 
 init()
+//metodos Socket
+const changeStateConfig = (params) => {
+  const id = params._state_order
+  console.log(params)
+  if (id == 3) {
+    let inx = configs.value.findIndex(e => e._state_order == id)
+    console.log()
+    configs.value[inx] = params
+    if (params.active == 1) {
+      getOrders()
+      $q.notify({ message: `'Servicion ${params.state.name} Encendido'`, type: 'positive', position: 'center' })
+    } else {
+      console.log('cambia los pendientes')
+      $q.notify({ message: `'Servicion ${params.state.name} Apagado'`, type: 'negative', position: 'center' })
+    }
+  }
+}
+
+const updOrder = (params) => {
+  console.log(params)
+  let inx = orders.value.findIndex(e => e.id == params.id)
+  console.log(inx);
+  if (inx >= 0) {
+    orders.value[inx].state = params.state
+    orders.value[inx]._state = params._state
+  }
+}
+
+const warehouse = (params) => {
+  console.log(params)
+  orders.value.push(params)
+  sound.newOrder.play();
+}
+onMounted(() => {
+  $sktpvt.on('changeStateConfig', changeStateConfig)
+  $sktpvt.on('updOrder', updOrder)
+  $sktpvt.on('warehouse', warehouse)
+
+})
+
+onBeforeUnmount(() => {
+  $sktpvt.off('changeStateConfig', changeStateConfig)
+  $sktpvt.off('updOrder', updOrder)
+  $sktpvt.off('warehouse', warehouse)
+
+})
 
 
 </script>

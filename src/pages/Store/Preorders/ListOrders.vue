@@ -121,7 +121,7 @@
 
 <script setup>
 
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted , onBeforeUnmount } from 'vue'
 import { useRoute, useRouter } from 'vue-router';
 import dayjs from 'dayjs';
 import pvtpi from 'src/API/PreordersApi.js'
@@ -133,29 +133,6 @@ import PreordersApi from 'src/API/PreordersApi.js';
 const piniaAccount = useAccountStore();
 const $q = useQuasar();
 const $router = useRouter();
-
-$sktpvt.connect();
-
-$sktpvt.on('connect', () => {
-  console.log('Conectado al servidor')
-  $sktpvt.emit('ParametrosConexion', piniaAccount)
-});
-$sktpvt.on('PedidoCreado', (param) => {
-  if(piniaAccount.account.id == param._created_by){
-    orders.value.push(param)
-  }
-  console.log(`${param.user.nick} creo el pedido ${param.id} :)`)
-})
-
-$sktpvt.on('updOrder', (params) => {
-  // console.log(params)
-  if(piniaAccount.account.id == params._created_by){
-    let inx = orders.value.findIndex(e => e.id == params.id)
-    orders.value[inx].state = params.state
-    orders.value[inx]._state = params._state
-  }
-  console.log(`${params.user.nick} termino el pedido ${params.id} :)`)
-})
 const anexo = ref({
   state: false,
   val: null
@@ -358,6 +335,33 @@ const initPed = (item) => {
   console.log(item.id);
   $router.push(`/store/${piniaAccount.join}/preorders/pedidos/${item.id}/`);
 }
+//metodos Socket
+
+const PedidoCreado = (param) => {
+  if(piniaAccount.account.id == param._created_by){
+    orders.value.push(param)
+  }
+  console.log(`${param.user.nick} creo el pedido ${param.id} :)`)
+}
+
+const updOrder = (params) => {
+  if(piniaAccount.account.id == params._created_by){
+    let inx = orders.value.findIndex(e => e.id == params.id)
+    orders.value[inx].state = params.state
+    orders.value[inx]._state = params._state
+  }
+  console.log(`${params.user.nick} termino el pedido ${params.id} :)`)
+}
 
 init()
+
+onMounted(() => {
+$sktpvt.on('PedidoCreado', PedidoCreado)
+$sktpvt.on('updOrder', updOrder)
+})
+
+onBeforeUnmount(() => {
+$sktpvt.off('PedidoCreado', PedidoCreado)
+$sktpvt.off('updOrder', updOrder)
+})
 </script>

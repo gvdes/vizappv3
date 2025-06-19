@@ -7,6 +7,10 @@ export default{
     let burl = `cluster/Assist/index`;
     return vizapi.get(burl).then( done => done.data).catch( fail => { return {error:fail.error.response} });
   },
+  getSanctions(){
+    let burl = `cluster/Assist/getSanctions`;
+    return vizapi.get(burl).then( done => done.data).catch( fail => { return {error:fail.error.response} });
+  },
   ping(device){
     let burl = `cluster/Assist/ping/${device}`;
     return vizapi.get(burl).then( done => done.data).catch( fail => { return {error:fail.error.response} });
@@ -114,5 +118,12 @@ export default{
     let burl = `store/${piniaAccount.join}/rrhh/getReportWeek`;
     return vizapi.get(burl).then( done => done.data).catch( fail => { return {error:fail.error.response} });
   },
-
+  addSanctions(data){
+    let burl = `cluster/Assist/addSanctions`;
+    return vizapi.post(burl,data).then( done => done.data).catch( fail => { return {error:fail.error.response} });
+  },
+  addCommitment(data){
+    let burl = `cluster/Assist/addCommitment`;
+    return vizapi.post(burl,data).then( done => done.data).catch( fail => fail );
+  },
 }

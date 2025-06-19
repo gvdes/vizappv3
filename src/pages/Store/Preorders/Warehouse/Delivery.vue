@@ -1,37 +1,37 @@
 <template>
   <q-page padding>
     <div :class="isMobile ? '' : 'col'">
-        <div class="flex justify-center">
-          <div class="text-center " :style="`width: 50%;`">
-            <q-form @submit="onSubmit">
-              <q-input v-model="order" type="number" label="Pedido" :color="message == 1 ? 'green' : 'red'" autofocus
-                :bg-color="message == 1 ? 'green-1' : 'red-1'" rounded outlined />
-              <div :class="`text-center text-${message == 1 ? 'green' : 'red'}`">
-                {{ message == 1 ? 'Servicio Encendido' : 'Servicio Apagado' }}
-              </div>
-            </q-form>
-          </div>
-        </div>
-        <q-table :rows="bascketOrder" row-key="name" grid :pagination="pagination" hide-bottom>
-          <template v-slot:item="props">
-            <div class="q-pa-xs col-xs-12 col-sm-6 col-md-4">
-              <q-list bordered>
-                <q-item clickable v-ripple @click="changeStatus(props.row)">
-                  <q-item-section>
-                    <q-item-label class="text-center text-bold">{{ props.row.id }}</q-item-label>
-                    <q-item-label class="text-center">{{ props.row.name }}</q-item-label>
-                  </q-item-section>
-                </q-item>
-              </q-list>
+      <div class="flex justify-center">
+        <div class="text-center " :style="`width: 50%;`">
+          <q-form @submit="onSubmit">
+            <q-input v-model="order" type="number" label="Pedido" :color="message == 1 ? 'green' : 'red'" autofocus
+              :bg-color="message == 1 ? 'green-1' : 'red-1'" rounded outlined />
+            <div :class="`text-center text-${message == 1 ? 'green' : 'red'}`">
+              {{ message == 1 ? 'Servicio Encendido' : 'Servicio Apagado' }}
             </div>
-          </template>
-        </q-table>
+          </q-form>
+        </div>
       </div>
+      <q-table :rows="bascketOrder" row-key="name" grid :pagination="pagination" hide-bottom>
+        <template v-slot:item="props">
+          <div class="q-pa-xs col-xs-12 col-sm-6 col-md-4">
+            <q-list bordered>
+              <q-item clickable v-ripple @click="changeStatus(props.row)">
+                <q-item-section>
+                  <q-item-label class="text-center text-bold">{{ props.row.id }}</q-item-label>
+                  <q-item-label class="text-center">{{ props.row.name }}</q-item-label>
+                </q-item-section>
+              </q-item>
+            </q-list>
+          </div>
+        </template>
+      </q-table>
+    </div>
   </q-page>
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted, onBeforeUnmount } from 'vue'
 import { useRoute, useRouter } from 'vue-router';
 import dayjs from 'dayjs';
 import pvtpi from 'src/API/PreordersApi.js'
@@ -44,49 +44,6 @@ import Accounts from 'src/API/Accounts';
 const piniaAccount = useAccountStore();
 const $q = useQuasar();
 const $router = useRouter();
-
-
-
-
-$sktpvt.connect();
-$sktpvt.on('connect', () => {
-  console.log('Conectado al servidor')
-  $sktpvt.emit('ParametrosConexion', piniaAccount)
-});
-
-$sktpvt.on('changeStateConfig', (params) => {
-  const id = params._state_order
-  console.log(params)
-  if (id == 3) {
-    let inx = configs.value.findIndex(e => e._state_order == id)
-    console.log()
-    configs.value[inx] = params
-    if (params.active == 1) {
-      getOrders()
-      $q.notify({ message: `'Servicion ${params.state.name} Encendido'`, type: 'positive', position: 'center' })
-    } else {
-      console.log('cambia los pendientes')
-      $q.notify({ message: `'Servicion ${params.state.name} Apagado'`, type: 'negative', position: 'center' })
-    }
-  }
-})
-
-$sktpvt.on('delivery', (params) => {
-  console.log(params)
-  orders.value.push(params)
-})
-
-$sktpvt.on('updOrder', (params) => {
-  // console.log(params)
-  let inx = orders.value.findIndex(e => e.id == params.id)
-  if(inx >= 0 ){
-  if(orders.value[inx]._state != params._state){
-    orders.value[inx].state = params.state
-    orders.value[inx]._state = params._state
-  }
-  }
-})
-
 
 
 const configs = ref([]);
@@ -158,5 +115,53 @@ const changeStatus = async (pedido) => {
 
 
 init()
+
+//metodos Socket
+const changeStateConfig = (params) => {
+  const id = params._state_order
+  console.log(params)
+  if (id == 3) {
+    let inx = configs.value.findIndex(e => e._state_order == id)
+    console.log()
+    configs.value[inx] = params
+    if (params.active == 1) {
+      getOrders()
+      $q.notify({ message: `'Servicion ${params.state.name} Encendido'`, type: 'positive', position: 'center' })
+    } else {
+      console.log('cambia los pendientes')
+      $q.notify({ message: `'Servicion ${params.state.name} Apagado'`, type: 'negative', position: 'center' })
+    }
+  }
+}
+
+const updOrder = (params) => {
+  // console.log(params)
+  let inx = orders.value.findIndex(e => e.id == params.id)
+  if (inx >= 0) {
+    if (orders.value[inx]._state != params._state) {
+      orders.value[inx].state = params.state
+      orders.value[inx]._state = params._state
+    }
+  }
+}
+
+const delivery = (params) => {
+  console.log(params)
+  orders.value.push(params)
+}
+onMounted(() => {
+  $sktpvt.on('changeStateConfig', changeStateConfig)
+  $sktpvt.on('updOrder', updOrder)
+  $sktpvt.on('delivery', delivery)
+
+})
+
+onBeforeUnmount(() => {
+  $sktpvt.off('changeStateConfig', changeStateConfig)
+  $sktpvt.off('updOrder', updOrder)
+  $sktpvt.off('delivery', delivery)
+
+})
+
 
 </script>

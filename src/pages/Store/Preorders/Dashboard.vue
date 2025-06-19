@@ -6,13 +6,13 @@
         :pagination="table.pagination" dense /> -->
       <q-separator spaced inset vertical dark />
       <q-table class="col bg-red-1" title="Por Surtir" row-key="name" hide-bottom :rows="Xsurtir"
-        :columns="table.columns" :pagination="table.pagination" dense  />
+        :columns="table.columns" :pagination="table.pagination" dense />
       <q-separator spaced inset vertical dark />
       <q-table class="col bg-yellow-1" title="Surtiendo" row-key="name" hide-bottom :rows="Surtiendo"
-      :columns="table.columns" :pagination="table.pagination" dense  />
+        :columns="table.columns" :pagination="table.pagination" dense />
       <q-separator spaced inset vertical dark />
       <q-table class="col bg-green-1" title="Pase a Caja" row-key="name" hide-bottom :rows="Xvalidar"
-      :columns="table.columns" :pagination="table.pagination" dense  />
+        :columns="table.columns" :pagination="table.pagination" dense />
       <q-separator spaced inset vertical dark />
     </div>
 
@@ -20,7 +20,7 @@
 </template>
 
 <script setup>
-import { ref, watch, onBeforeMount, computed, onMounted } from 'vue';
+import { ref, watch, onBeforeMount, computed, onMounted, onBeforeUnmount } from 'vue';
 import ProductFinder from 'src/components/ProductFinder.vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useQuasar, LocalStorage, Loading } from 'quasar';
@@ -34,33 +34,6 @@ const $q = useQuasar();
 const $route = useRoute();
 const $router = useRouter()
 const piniaAccount = useAccountStore();
-
-$sktpvt.connect();
-$sktpvt.on('connect', () => {
-  console.log('Conectado al servidor')
-  $sktpvt.emit('ParametrosConexion', piniaAccount)
-});
-
-$sktpvt.on('warehouse', (params) => {
-  console.log(params)
-  // let inx = orders.value.findIndex(e => e.id == params.id)
-  // if(inx >= 0 ){
-    orders.value.push(params)
-  // }
-})
-
-$sktpvt.on('updOrder', (params) => {
-  // console.log(params)
-  let inx = orders.value.findIndex(e => e.id == params.id)
-  if(inx >= 0 ){
-  if(orders.value[inx]._state != params._state){
-    orders.value[inx].state = params.state
-    orders.value[inx]._state = params._state
-  }
-  }
-})
-
-
 const Xsurtir = computed(() => orders.value.filter(e => e._state == 3));
 const Surtiendo = computed(() => orders.value.filter(e => e._state == 4));
 const Xvalidar = computed(() => orders.value.filter(e => e._state == 5));
@@ -96,4 +69,39 @@ const init = async () => {
 }
 
 init()
+
+
+//metodos Socket
+
+const updOrder = (params) => {
+  // console.log(params)
+  let inx = orders.value.findIndex(e => e.id == params.id)
+  if (inx >= 0) {
+    if (orders.value[inx]._state != params._state) {
+      orders.value[inx].state = params.state
+      orders.value[inx]._state = params._state
+    }
+  }
+}
+
+const warehouse = (params) => {
+  console.log(params)
+  // let inx = orders.value.findIndex(e => e.id == params.id)
+  // if(inx >= 0 ){
+  orders.value.push(params)
+  // }
+}
+onMounted(() => {
+  $sktpvt.on('updOrder', updOrder)
+  $sktpvt.on('warehouse', warehouse)
+})
+
+onBeforeUnmount(() => {
+  $sktpvt.off('updOrder', updOrder)
+  $sktpvt.off('warehouse', warehouse)
+})
+
+
+
+
 </script>

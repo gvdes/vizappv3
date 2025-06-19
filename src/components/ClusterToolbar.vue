@@ -1,14 +1,19 @@
 <template>
   <div class="text-dark bg-white">
     <div class="q-pa-sm row items-center">
-      <div class="col row items-center">
-        <q-btn flat round dense icon="menu" @click="toggleMenu"/>
-        <div class="text-h6" @click="$router.push('/')"><strong class="text-grey-6">Viz</strong>App </div>
+      <div class="col text-left row items-center">
+        <q-btn flat round dense icon="menu" @click="toggleMenu" />
+        <q-btn dense class="q-pl-sm text-h6" v-if="!isMobile" flat @click="$router.push('/')"><strong
+            class="text-grey-6">Viz</strong>App</q-btn>
+        <q-btn dense class="q-pl-sm text-h6" v-if="isMobile" flat @click="$router.push('/')"> E <strong
+            class="text-grey-6"> V </strong>A</q-btn>
       </div>
 
       <div class="col text-center anek-bld">
         <div :class="moduletitle ? 'fs-dec2':'text-uppercase text-bold'" class="self-start text-primary" @click="$router.push('/cluster')">Cluster</div>
-        <div>{{ layout.title }}</div>
+        <!-- <div>{{ layout.title }}</div> -->
+        <div>{{ $route.name }}</div>
+
       </div>
 
       <div class="col text-right"></div>
@@ -35,20 +40,17 @@
   import { useQuasar } from 'quasar';
   import { useAccountStore } from 'stores/Account'
   import { layoutCluster } from 'stores/layoutCluster'
-
   const $route = useRoute();
   const $router = useRouter();
   const $q = useQuasar();
   const layout = layoutCluster();
   const piniaAccount = useAccountStore();
   const $emit = defineEmits(['toggleNavigatorStore','joinAt']);
-
   const stores = computed(() => piniaAccount.unjoinStores );
   const joinedStore = computed(() => piniaAccount.joinedStore );
   const moduletitle = computed(() => piniaAccount.clumdlname );
-
   const wndStores = ref({ state:false });
-
+  const isMobile = computed(() => $q.platform.is.mobile);
   const toggleMenu = () => $emit('toggleNavigatorStore');
   const joinAt = (sid) => $router.replace(`/store/${sid}`);
 </script>

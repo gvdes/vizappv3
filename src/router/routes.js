@@ -151,38 +151,38 @@ const routes = [
       {
         path: 'usuarios',
         children: [
-          { path: '', name: 'users', component: () => import('pages/Cluster/Users/Index.vue') },
-          { path: 'create', name: 'create_user', component: () => import('pages/Cluster/Users/Create.vue') },
-          { path: 'branch', name: 'branches', component: () => import('pages/Cluster/Users/Branches.vue') },
-          { path: 'positions', name: 'positions', component: () => import('pages/Cluster/Users/Positions.vue') },
+          { path: '', name: 'Usuarios', component: () => import('pages/Cluster/Users/Index.vue') },
+          { path: 'create', name: 'Usuarios/Creacion', component: () => import('pages/Cluster/Users/Create.vue') },
+          { path: 'branch', name: 'Usuarios/Sucursales', component: () => import('pages/Cluster/Users/Branches.vue') },
+          { path: 'positions', name: 'Usuarios/Puestos', component: () => import('pages/Cluster/Users/Positions.vue') },
 
         ]
       },
       {
         path: 'clients',
         children: [
-          { path: '', name: 'client', component: () => import('pages/Cluster/Clients/Index.vue') },
-          { path: 'create', name: 'create_client', component: () => import('pages/Cluster/Clients/Create.vue') },
+          { path: '', name: 'Clientes', component: () => import('pages/Cluster/Clients/Index.vue') },
+          { path: 'create', name: 'Clientes/Creacion', component: () => import('pages/Cluster/Clients/Create.vue') },
         ]
       },
       {
         path: 'printers',
         children: [
-          { path: '', component: () => import('src/pages/Cluster/Prints/Printers.vue') },
+          { path: '',name:'Impresoras', component: () => import('src/pages/Cluster/Prints/Printers.vue') },
         ]
       },
       {
         path: 'stores',
         children: [
-          { path: '', name: 'stores', component: () => import('pages/Cluster/Stores/Index.vue') },
-          { path: 'create', name: 'create_stores', component: () => import('pages/Cluster/Stores/Create.vue') },
+          { path: '', name: 'Sucursales', component: () => import('pages/Cluster/Stores/Index.vue') },
+          { path: 'create', name: 'Sucursales/Creacion', component: () => import('pages/Cluster/Stores/Create.vue') },
         ]
       },
       {
         path: 'providers',
         children: [
-          { path: '', name: 'providers', component: () => import('pages/Cluster/Providers/Index.vue') },
-          { path: 'create', name: 'create_provider', component: () => import('pages/Cluster/Providers/Create.vue') },
+          { path: '', name: 'Proveedores', component: () => import('pages/Cluster/Providers/Index.vue') },
+          { path: 'create', name: 'Proveedores/Creacion', component: () => import('pages/Cluster/Providers/Create.vue') },
         ]
       },
 
@@ -190,18 +190,18 @@ const routes = [
         path: 'products',
         // component: () => import('layouts/ProductLYT.vue'),
         children: [
-          { path: '', name: 'products', component: () => import('pages/Cluster/Products/Index.vue') },
-          { path: 'categories', name: 'categories', component: () => import('pages/Cluster/Products/Categories.vue') },
-          { path: 'prices', name: 'prices', component: () => import('pages/Cluster/Products/Prices.vue') },
-          { path: 'kits', name: 'kits', component: () => import('pages/Cluster/Products/Kits.vue') },
+          { path: '', name: 'Productos', component: () => import('pages/Cluster/Products/Index.vue') },
+          { path: 'categories', name: 'Productos/Cateogorias', component: () => import('pages/Cluster/Products/Categories.vue') },
+          { path: 'prices', name: 'Productos/Precios', component: () => import('pages/Cluster/Products/Prices.vue') },
+          { path: 'kits', name: 'Productos/Kits', component: () => import('pages/Cluster/Products/Kits.vue') },
         ]
       },
       {
         path: 'cashers',
         children: [
-          { path: '', name: 'cash', component: () => import('pages/Cluster/Cashers/index.vue') },
-          { path: 'documents', name: 'cshdoc', component: () => import('pages/Cluster/Cashers/document.vue') },
-          { path: 'tpv', name: 'cshtpv', component: () => import('pages/Cluster/Cashers/tpv.vue') },
+          { path: '', name: 'Cajas', component: () => import('pages/Cluster/Cashers/index.vue') },
+          { path: 'documents', name: 'Cajas/Documentos', component: () => import('pages/Cluster/Cashers/document.vue') },
+          { path: 'tpv', name: 'Cajas/Puntos de Venta', component: () => import('pages/Cluster/Cashers/tpv.vue') },
 
         ]
       },
@@ -209,27 +209,27 @@ const routes = [
         path: 'manpower',
         component: () => import('layouts/RhLYT.vue'),
         children: [
-          { path: '', name: 'rh', component: () => import('pages/Cluster/RRHH/Index.vue') },
-          { path: 'create', name: 'create', component: () => import('pages/Cluster/RRHH/Create.vue') },
-          { path: 'report', name: 'repot', component: () => import('pages/Cluster/RRHH/Report.vue') },
-          { path: 'justification', name: 'justification', component: () => import('pages/Cluster/RRHH/Justification.vue') },
-          { path: 'proceedings', name: 'actas_admon', component: () => import('pages/Cluster/RRHH/proceedings.vue') },
-          { path: 'roster', name: 'roster', component: () => import('pages/Cluster/RRHH/Roster.vue') },
+          { path: '', name: 'Recursos Humanos', component: () => import('pages/Cluster/RRHH/Index.vue') },
+          { path: 'create', name: 'Dispositivos/Creacion', component: () => import('pages/Cluster/RRHH/Create.vue') },
+          { path: 'report', name: 'Asistencia/Reporte', component: () => import('pages/Cluster/RRHH/Report.vue') },
+          { path: 'justification', name: 'Asistencia/Justificaciones', component: () => import('pages/Cluster/RRHH/Justification.vue') },
+          { path: 'proceedings', name: 'Actas Administrativas', component: () => import('pages/Cluster/RRHH/proceedings.vue') },
+          { path: 'sanctions', name: 'Sanciones', component: () => import('pages/Cluster/RRHH/sanctions.vue') },
+          { path: 'commitment', name: 'Cartas Compromiso', component: () => import('pages/Cluster/RRHH/commitment.vue') },
+          { path: 'roster', name: 'Lista', component: () => import('pages/Cluster/RRHH/Roster.vue') },
         ]
       },
       {
         path: 'indicators',
         component: () => import('layouts/indicatorLYT.vue'),
         children: [
-          { path: '', name: 'rht', component: () => import('pages/Cluster/Indicator/Index.vue') },
-          { path: 'forms', name: 'frm', component: () => import('pages/Cluster/Indicator/Forms.vue') },
-          { path: 'forms/:fid', name: 'fid', component: () => import('pages/Cluster/Indicator/ViewForm.vue') },
-          { path: 'reports', name: 'rus', component: () => import('pages/Cluster/Indicator/Report.vue') },
-          { path: 'reports/:fid', name: 'rfi', component: () => import('pages/Cluster/Indicator/ViewFormResponse.vue') },
-          { path: 'classifications', name: 'cls', component: () => import('pages/Cluster/Indicator/Classification/Index.vue')},
-          { path: 'classifications/stores', name: 'clw', component: () => import('pages/Cluster/Indicator/Classification/Stores.vue'), }
-
-
+          { path: '', name: 'Indicadores', component: () => import('pages/Cluster/Indicator/Index.vue') },
+          { path: 'forms', name: 'Indicadores/Formularios', component: () => import('pages/Cluster/Indicator/Forms.vue') },
+          { path: 'forms/:fid', name: 'Vista Formulario', component: () => import('pages/Cluster/Indicator/ViewForm.vue') },
+          { path: 'reports', name: 'Indicadores/Reportes', component: () => import('pages/Cluster/Indicator/Report.vue') },
+          { path: 'reports/:fid', name: 'Vista Respuestas', component: () => import('pages/Cluster/Indicator/ViewFormResponse.vue') },
+          { path: 'classifications', name: 'Clasificaciones', component: () => import('pages/Cluster/Indicator/Classification/Index.vue')},
+          { path: 'classifications/stores', name: 'Clasificacion de Sucursales', component: () => import('pages/Cluster/Indicator/Classification/Stores.vue'), }
         ]
       },
     ]

@@ -72,6 +72,7 @@
           <q-tabs v-model="tab" class="text-primary">
             <q-tab name="user" icon="person" label="Usuario" />
             <q-tab name="assist" icon="alarm" label="Asistencia" />
+            <q-tab name="sanctions" icon="bolt" label="Sanciones" />
           </q-tabs>
         </q-card-section>
 
@@ -87,10 +88,7 @@
                 </q-badge>
               </div>
             </q-card-section>
-
-
           </q-tab-panel>
-
           <q-tab-panel name="assist">
             <div class="text-h6 text-center">Asistencias</div>
             <q-card-section>
@@ -108,18 +106,18 @@
                   <q-item-section>
                     <q-item-label class="text-center text-bold">Retardos</q-item-label>
                     <q-item-label class="text-center text-caption">{{report.reduce((a, v) => a + Number(v.RETARDOS), 0)
-                      }}</q-item-label>
+                    }}</q-item-label>
                   </q-item-section>
                   <q-item-section>
                     <q-item-label class="text-center text-bold">FALTAS</q-item-label>
                     <q-item-label class="text-center text-caption">{{report.reduce((a, v) => a + Number(v.FALTAS), 0)
-                      }}</q-item-label>
+                    }}</q-item-label>
                   </q-item-section>
                   <q-item-section>
                     <q-item-label class="text-center text-bold">VACACIONES</q-item-label>
                     <q-item-label class="text-center text-caption">{{report.reduce((a, v) => a + Number(v.VACACIONES),
                       0)
-                      }}</q-item-label>
+                    }}</q-item-label>
                   </q-item-section>
                 </q-item>
               </q-list>
@@ -139,7 +137,17 @@
               </q-table>
             </q-card-section>
           </q-tab-panel>
+          <q-tab-panel name="sanctions">
+            <q-card-section>
+              <q-table title="Sanciones" :rows="viewUser.val.sanctions" dense :columns="tableCol.columnsSan" />
+              <q-separator spaced inset vertical dark />
+              <q-table title="Actas" :rows="viewUser.val.proceeding" dense :columns="tableCol.columnsPro" />
+              <q-separator spaced inset vertical dark />
+              <q-table title="Cartas Compromiso" :rows="viewUser.val.commitment" dense :columns="tableCol.columnCom"  />
+            </q-card-section>
+          </q-tab-panel>
         </q-tab-panels>
+
         <q-card-actions align="center">
           <q-btn flat color="negative" icon="close" v-close-popup />
           <q-btn color="primary" label="Resetear Contrasena" rounded @click="resetPass" />
@@ -196,6 +204,28 @@ const table = ref({
     { name: 'miercoles', label: 'MIERCOLES', field: r => r.MIERCOLES, sortable: true, align: 'center' },
     { name: 'jueves', label: 'JUEVES', field: r => r.JUEVES, sortable: true, align: 'center' },
     { name: 'viernes', label: 'VIERNES', field: r => r.VIERNES, sortable: true, align: 'center' },
+  ]
+})
+
+const tableCol = ref({
+  columnsPro:[
+    {name:'id',label:'ID',field: r=> r.id, align: 'center'},
+    {name:'created_at',label:'FECHA',field: r=>  dayjs(r.created_at).format('YYYY-MM-DD'), align: 'left'},
+    {name:'reason',label:'OBSERVACION',field: r=> r.reason, align: 'left'},
+  ],
+    columnCom:[
+    {name:'id',label:'ID',field: r=> r.id, align: 'center'},
+    {name:'created_at',label:'FECHA',field: r=> dayjs(r.created_at).format('YYYY-MM-DD'), align: 'left'},
+    {name:'reason',label:'OBSERVACION',field: r=> r.reason , align: 'left'},
+  ],
+    columnsSan:[
+    {name:'id',label:'ID',field: r=> r.id, align: 'center'},
+    {name:'created_at',label:'FECHA',field: r=> dayjs(r.created_at).format('YYYY-MM-DD'), align: 'left'},
+    {name:'reason',label:'MOTIVO',field: r=>  r.sanction.name, align: 'left'},
+    {name:'observation',label:'OBSERVACION',field: r=>  r.observation, align: 'left'},
+    {name:'mount',label:'MONTO',field: r=>  r.mount, align: 'left'},
+
+
   ]
 })
 

@@ -2,13 +2,16 @@
   <div class="text-dark bg-white">
     <div class="q-pa-sm row items-center">
       <div class="col text-left row items-center">
-        <q-btn flat round dense icon="menu" @click="toggleMenu"/>
-        <div class="q-pl-sm text-h6" @click="$router.push('/')"><strong class="text-grey-6">Viz</strong>App</div>
+        <q-btn flat round dense icon="menu" @click="toggleMenu" />
+        <q-btn dense class="q-pl-sm text-h6" v-if="!isMobile" flat @click="$router.push('/')"><strong
+            class="text-grey-6">Viz</strong>App</q-btn>
+        <q-btn dense class="q-pl-sm text-h6" v-if="isMobile" flat @click="$router.push('/')"> E <strong
+            class="text-grey-6"> V </strong>A</q-btn>
       </div>
 
       <div class="col text-center anek-bld">
-        <template v-if="stores.length>1">
-          <q-btn flat :label="labelStore" >
+        <template v-if="stores.length > 1">
+          <q-btn flat :label="labelStore">
             <q-menu fit anchor="bottom left" self="top start" class="shadow-1">
               <q-list style="min-width: 200px">
                 <div class="text-grey-6 anek-lg q-pa-sm">Sucursal</div>
@@ -22,26 +25,37 @@
         </template>
         <template v-else>{{ piniaAccount.joinedStore.name }}</template>
       </div>
-
       <div class="col text-right"></div>
     </div>
   </div>
 </template>
 
 <script setup>
-  import { computed } from 'vue';
-  import { useRouter } from 'vue-router';
-  import { useQuasar } from 'quasar';
-  import { useAccountStore } from 'stores/Account'
+import { computed } from 'vue';
+import { useRouter, useRoute } from 'vue-router';
+import { useQuasar } from 'quasar';
+import { useAccountStore } from 'stores/Account'
 
-  let $q = useQuasar();
-  const $router = useRouter();
-  const piniaAccount = useAccountStore();
+let $q = useQuasar();
+const $router = useRouter();
+const $route = useRoute();
+const piniaAccount = useAccountStore();
 
-  const $emit = defineEmits([ 'toggleNavigatorStore' ]);
-  const stores = computed(() => piniaAccount.unjoinStores );
-  const labelStore = computed(() => $q.screen.xs ? piniaAccount.joinedStore.alias : piniaAccount.joinedStore.name )
+const $emit = defineEmits(['toggleNavigatorStore']);
+const stores = computed(() => piniaAccount.unjoinStores);
+const isMobile = computed(() => $q.platform.is.mobile);
+const labelStore = computed(() => $q.screen.xs ? piniaAccount.joinedStore.alias : piniaAccount.joinedStore.name)
 
-  const toggleMenu = () => $emit('toggleNavigatorStore');
-  const switchStore = sid =>$router.push(`/store/${sid}/`);
+const toggleMenu = () => $emit('toggleNavigatorStore');
+const switchStore = async  (sid) => {
+  // console.log(sid)
+  const currentPath = $route.path
+  // console.log($route.path)
+  const newPath = currentPath.replace(/\/store\/\d+/, `/store/${sid}`);
+  await $router.push(`${newPath}`);
+  window.location.reload()
+
+};
+
+// const switchStore = sid =>$router.push(`/store/${sid}/`);
 </script>

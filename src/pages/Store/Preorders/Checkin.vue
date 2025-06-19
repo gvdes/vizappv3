@@ -33,7 +33,7 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted, onBeforeUnmount } from 'vue'
 import { useRoute, useRouter } from 'vue-router';
 import dayjs from 'dayjs';
 import pvtpi from 'src/API/PreordersApi.js'
@@ -46,54 +46,14 @@ const piniaAccount = useAccountStore();
 const $q = useQuasar();
 const $router = useRouter();
 
-$sktpvt.connect();
-$sktpvt.on('connect', () => {
-  console.log('Conectado al servidor')
-  $sktpvt.emit('ParametrosConexion', piniaAccount)
-});
-
-$sktpvt.on('changeStateConfig', (params) => {
-  const id = params._state_order
-  console.log(params)
-  if (id == 2) {
-    let inx = configs.value.findIndex(e => e._state_order == id)
-    console.log()
-    configs.value[inx] = params
-    if (params.active == 1) {
-      getOrders()
-      $q.notify({ message: `'Servicion ${params.state.name} Encendido'`, type: 'positive', position: 'center' })
-    } else {
-      console.log('cambia los pendientes')
-      $q.notify({ message: `'Servicion ${params.state.name} Apagado'`, type: 'negative', position: 'center' })
-    }
-  }
-})
-
-$sktpvt.on('Checkin', (params) => {
-  console.log(params)
-  orders.value.push(params)
-})
-
-$sktpvt.on('updOrder', (params) => {
-  // console.log(params)
-  let inx = orders.value.findIndex(e => e.id == params.id)
-  if(inx >= 0 ){
-  if(orders.value[inx]._state != params._state){
-    orders.value[inx].state = params.state
-    orders.value[inx]._state = params._state
-  }
-  }
-})
-
 const order = ref(null)
-
 const orders = ref([]);
 const configs = ref([]);
 const pagination = ref({ rowsPerPage: [0] })
 
 const message = computed(() => configs.value.filter(c => c._state_order == 2)[0]?.active)
 
-const bascketOrder = computed(() => orders.value.filter( e =>  e.state.id == 2));
+const bascketOrder = computed(() => orders.value.filter(e => e.state.id == 2));
 
 const init = async () => {
   const resp = await pvtpi.getConfig();
@@ -140,7 +100,7 @@ const changeStatus = async (pedido) => {
   const resp = await pvtpi.changeStatus(pedido);
   if (resp.error) {
     console.log(resp)
-    $q.notify({message:resp.error.data,type:'negative',position:'center'});
+    $q.notify({ message: resp.error.data, type: 'negative', position: 'center' });
     $q.loading.hide()
   } else {
     $sktpvt.emit('ChangeStatusOrder', resp)
@@ -158,4 +118,52 @@ const changeStatus = async (pedido) => {
 }
 
 init()
+
+//metodos Socket
+const changeStateConfig = (params) => {
+  const id = params._state_order
+  console.log(params)
+  if (id == 2) {
+    let inx = configs.value.findIndex(e => e._state_order == id)
+    console.log()
+    configs.value[inx] = params
+    if (params.active == 1) {
+      getOrders()
+      $q.notify({ message: `'Servicion ${params.state.name} Encendido'`, type: 'positive', position: 'center' })
+    } else {
+      console.log('cambia los pendientes')
+      $q.notify({ message: `'Servicion ${params.state.name} Apagado'`, type: 'negative', position: 'center' })
+    }
+  }
+}
+
+const updOrder = (params) => {
+  // console.log(params)
+  let inx = orders.value.findIndex(e => e.id == params.id)
+  if (inx >= 0) {
+    if (orders.value[inx]._state != params._state) {
+      orders.value[inx].state = params.state
+      orders.value[inx]._state = params._state
+    }
+  }
+}
+
+const Checkin = (params) => {
+  console.log(params)
+  orders.value.push(params)
+}
+onMounted(() => {
+  $sktpvt.on('changeStateConfig', changeStateConfig)
+  $sktpvt.on('updOrder', updOrder)
+  $sktpvt.on('Checkin', Checkin)
+})
+
+onBeforeUnmount(() => {
+  $sktpvt.off('changeStateConfig', changeStateConfig)
+  $sktpvt.off('updOrder', updOrder)
+  $sktpvt.off('Checkin', Checkin)
+})
+
+
+
 </script>

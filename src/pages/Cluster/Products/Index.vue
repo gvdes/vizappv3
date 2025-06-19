@@ -45,7 +45,8 @@
           </q-input>
         </div>
         <q-separator spaced inset vertical dark />
-        <q-btn color="primary" icon="add" flat rounded title="Agregar Articulo" />
+        <q-btn color="primary" icon="add" flat rounded title="Agregar Articulo"
+          @click="product.state = !product.state" />
         <q-separator spaced inset vertical dark />
         <q-btn color="primary" icon="upload" flat rounded title="Subir Archivo" />
         <q-separator spaced inset vertical dark />
@@ -89,9 +90,9 @@
       </q-card>
     </q-dialog>
 
-    <q-dialog v-model="product.state" persistent >
-      <viewproduct :product="product.body" :providers="providers" :status="state.opts" :units="units"
-        :categories="categories" :edit="product.edit" :makers="maker" ></viewproduct>
+    <q-dialog v-model="product.state" persistent>
+      <viewproduct :product="product.edit ? product.body : newProduct" :providers="providers" :status="state.opts"
+        :units="units" :categories="categories" :edit="product.edit" :makers="maker" @reset="reset"></viewproduct>
     </q-dialog>
   </q-page>
 </template>
@@ -111,6 +112,37 @@ const state = ref({
   val: null,
   opts: []
 });
+const newProduct = ref({
+  code: '',
+  barcode: '',
+  short_code: '',
+  pieces: '',
+  reference: '',
+  relateds: [],
+  description: '',
+  category: null,
+  provider: null,
+  maker: null,
+  atributos: '',
+  cost: 0,
+  prices: [
+    { _rate: 1, _type: 1, _product: null, rates: { id: 1, name: "Menudeo", alias: 'MEN' }, price: 0 },
+    { _rate: 2, _type: 1, _product: null, rates: { id: 2, name: "Mayoreo", alias: 'MAY' }, price: 0 },
+    { _rate: 3, _type: 1, _product: null, rates: { id: 3, name: "Docena", alias: 'DOC' }, price: 0 },
+    { _rate: 4, _type: 1, _product: null, rates: { id: 4, name: "Caja", alias: 'CAJ' }, price: 0 },
+    { _rate: 5, _type: 1, _product: null, rates: { id: 5, name: "Especial", alias: 'ESP' }, price: 0 },
+    { _rate: 6, _type: 1, _product: null, rates: { id: 6, name: "Centro", alias: 'CEN' }, price: 0 },
+    { _rate: 7, _type: 1, _product: null, rates: { id: 7, name: "AAA", alias: 'AAA' }, price: 0 },
+    { _rate: 1, _type: 2, _product: null, rates: { id: 1, name: "Menudeo", alias: 'MEN' }, price: 0 },
+    { _rate: 2, _type: 2, _product: null, rates: { id: 2, name: "Mayoreo", alias: 'MAY' }, price: 0 },
+    { _rate: 3, _type: 2, _product: null, rates: { id: 3, name: "Docena", alias: 'DOC' }, price: 0 },
+    { _rate: 4, _type: 2, _product: null, rates: { id: 4, name: "Caja", alias: 'CAJ' }, price: 0 },
+    { _rate: 5, _type: 2, _product: null, rates: { id: 5, name: "Especial", alias: 'ESP' }, price: 0 },
+    { _rate: 6, _type: 2, _product: null, rates: { id: 6, name: "Centro", alias: 'CEN' }, price: 0 },
+    { _rate: 7, _type: 2, _product: null, rates: { id: 7, name: "AAA", alias: 'AAA' }, price: 0 },
+  ]
+})
+
 const products = ref([]);
 const maker = ref([])
 const categories = ref([]);
@@ -125,7 +157,7 @@ const searhProduct = ref(false)
 const product = ref({
   state: false,
   body: null,
-  edit:false
+  edit: false
 })
 const query = ref({
   val: '',
@@ -178,8 +210,10 @@ const profil = computed(() => {
 
 const editrow = (a, row) => {
   console.log(row);
+  product.value.edit = true
   product.value.state = true
   product.value.body = row
+
 }
 
 const init = async () => {
@@ -222,6 +256,14 @@ const searching = async () => {
       Campo: { id: 1, name: 'code', label: 'CODIGO', align: 'left', field: row => row.code, sortable: true },
     }
     $q.loading.hide()
+  }
+}
+
+const reset = () => {
+  product.value = {
+    state: false,
+    body: null,
+    edit: false
   }
 }
 

@@ -15,4 +15,16 @@ export default{
     let burl = `cluster/Products/getProduct/${data}`;
     return vizapi.get(burl).then( done => done.data).catch( fail => { return {error:fail.response} });
   },
+  searchBarcode(data){
+    let burl = `cluster/Products/searchBarcode`;
+    return vizapi.post(burl,data).then( done => done.data).catch( fail => { return {error:fail} });
+  },
+  genBarcode(data){
+    let burl = `cluster/Products/genBarcode`;
+    return vizapi.post(burl,data).then( done => done.data).catch( fail => { return {error:fail} });
+  },
+  editProduct(data){
+    let burl = `cluster/Products/editProduct`;
+    return vizapi.post(burl,data).then( done => done.data).catch( fail => { return {error:fail} });
+  },
 }

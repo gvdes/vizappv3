@@ -58,13 +58,13 @@
           <q-item-section>
             <q-item-label overline>Piezas</q-item-label>
             <q-item-label caption>{{order.bodie?.reduce((acc, item) => acc + item.amount_require, 0)
-            }}</q-item-label>
+              }}</q-item-label>
           </q-item-section>
           <q-separator spaced inset vertical dark />
           <q-item-section>
             <q-item-label overline>Total</q-item-label>
             <q-item-label caption>$ {{order.bodie?.reduce((acc, item) => acc + parseFloat(item.total), 0)
-            }}</q-item-label>
+              }}</q-item-label>
           </q-item-section>
         </q-item>
       </q-list>
@@ -97,7 +97,7 @@
         <div class="q-pa-xs col-xs-12 col-sm-6 col-sm-4 col-md-3 grid-style-transition">
           <q-card class="my-card" bordered @click="productEdit(product.row)">
             <q-card-section class="row items-center">
-              <div class="q-pr-sm" v-if="product.row.product.picture">
+              <div class="q-pr-sm" v-if="product.row.picture">
                 <q-avatar size="60px" font-size="52px"> <q-img
                     :src="`https://apimport.grupovizcarra.mx/storage/LUPITS.jpeg`" spinner-color="primary"
                     spinner-size="82px" /></q-avatar>
@@ -108,33 +108,32 @@
                     spinner-size="82px" /></q-avatar>
               </div>
               <div class="col q-pr-sm">
-                <div class="text-h6">{{ product.row.product.code }} -- {{ product.row.product.short_code }}</div>
-                <div class="text-caption text-grey-14 text-bold">{{ product.row.product.category.familia.seccion.name
-                }}
-                  - {{ product.row.product.category.familia.name }} - {{ product.row.product.category.name }} (PXC {{
-                    product.row.product.pieces }})</div>
-                <div class="text-caption">{{ product.row.product.description }}</div>
-                <div class="text-caption"> {{ product.row.unitsupply.name }}s {{ product.row.units }}
-                  ({{ product.row.amount_require }} pzs), PU: ${{ product.row.price }} </div>
-                <div class="text-caption text-blue text-bold">{{ product.row.notes }}</div>
+                <div class="text-h6">{{ product.row.code }} -- {{ product.row.short_code }}</div>
+                <div class="text-caption text-grey-14 text-bold">{{ product.row.category.familia.seccion.name
+                  }}
+                  - {{ product.row.category.familia.name }} - {{ product.row.category.name }} (PXC {{
+                    product.row.pieces }})</div>
+                <div class="text-caption">{{ product.row.description }}</div>
+                <div class="text-caption">
+                  {{ product.row.pivot.unitsupply.name }}s {{ product.row.pivot.units }}
+                  ({{ product.row.pivot.amount_require }} pzs), PU: ${{ product.row.pivot.price }}
+                </div>
+                <div class="text-caption text-blue text-bold">{{ product.row.pivot.notes }}</div>
               </div>
               <div class="text-right q-pr-sm">
-                <div class=""> $ {{ product.row.total }} </div>
-                <div class="text-blue text-bold ">{{ product.row.rates.name }}</div>
+                <div class=""> $ {{ product.row.pivot.total }} </div>
+                <div class="text-blue text-bold ">{{ product.row.pivot.rates.name }}</div>
               </div>
-
             </q-card-section>
-
           </q-card>
         </div>
       </template>
     </q-table>
 
-
-    <q-dialog v-model="wndProduct" position="bottom" :style="`${isMobile ? '' : 'width: 300px'}`">
-      <addProduct :EditProduct="EditProduct" :order="order" :products="products" :unit_measure="unit_measure"
-        :firstProducts="firstProducts" :insertPro="insertPro" @addingProd="addingProd" @delProd="delProd"
-        @ModifyProd="ModifyProd" :rules="rules">
+    <q-dialog v-model="EditProduct.state" position="bottom" :style="`${isMobile ? '' : 'width: 300px'}`">
+      <addProduct :product="EditProduct.val" :order="order" :products="products" :unit_measure="unit_measure"
+        :firstProducts="firstProducts" :edit="EditProduct.edit" @addingProd="addingProd" @delProd="delProd"
+        @ModifyProd="ModifyProd" @reset="reset" :rules="rules">
       </addProduct>
     </q-dialog>
 
@@ -152,7 +151,6 @@
         </q-card-actions>
       </q-card>
     </q-dialog>
-
 
     <q-separator spaced inset vertical dark />
     <q-footer>
@@ -182,15 +180,17 @@ const $route = useRoute();
 const $router = useRouter()
 const piniaAccount = useAccountStore();
 
-
-
 const order = ref(null);
 const wndProduct = ref(false);
 
 const products = ref([])
 const firstProducts = ref([]);
 
-const EditProduct = ref([])
+const EditProduct = ref({
+  state: false,
+  val: null,
+  edit: false
+})
 const unit_measure = ref({
   opts: null,
   val: null
@@ -205,7 +205,8 @@ const insertPro = ref({
   _rate: null,
   _state: null,
   notes: null,
-  _supply_by: null
+  _supply_by: null,
+  unitsupply: null
 })
 const rules = ref([]);
 const printers = ref({
@@ -236,8 +237,7 @@ const init = async () => {
       if (resp.order._order_by) {
         firstProducts.value = resp.order.order.bodie
       }
-      products.value = resp.order.bodie
-      // insertPro.value = resp.order.id
+      products.value = resp.order.products
       unit_measure.value.opts = resp.unit_measures
       rules.value = resp.rules;
       console.log(resp);
@@ -257,51 +257,47 @@ const finderFound = (item) => {
   console.log("Finder encontro lo + chido");
   console.log(item);
   if (item) {
-    let inx = products.value.findIndex(i => i.product.id == item.id);
+    let inx = products.value.findIndex(i => i.id == item.id);
+    console.log(inx)
     if (inx >= 0) {
-      $q.notify({ message: `El articulo ya esta en la lista`, type: 'warning', position: 'center' })
+      console.log(products.value[inx])
+      EditProduct.value.val = products.value[inx]
+      EditProduct.value.state = true
+      EditProduct.value.edit = true
     } else {
-      unit_measure.value.val = item.measure
-      wndProduct.value = true
-      EditProduct.value = item
+      insertPro.value.unitsupply = item.measure
+      insertPro.value._order = $route.params.oid
+      insertPro.value._product = item.id
+      item.pivot = insertPro.value
+      EditProduct.value.val = item
+      EditProduct.value.state = true
+      EditProduct.value.edit = false
     }
   }
 }
 
 const productEdit = async (item) => {
-  unit_measure.value.val = item.unitsupply
-  EditProduct.value = item.product
-  EditProduct.value.measure = item.unitsupply
-  insertPro.value._order = item._order,
-  insertPro.value._product = item._product,
-  insertPro.value.amount_require = item.amount_require,
-  insertPro.value.units = item.units,
-  insertPro.value.price = item.price,
-  insertPro.value.total = item.total,
-  insertPro.value._rate = item._rate,
-  insertPro.value._state = item._state,
-  insertPro.value.notes = item.notes,
-  insertPro.value._supply_by = item._supply_by
-  console.log(insertPro.value);
-  wndProduct.value = true
+  EditProduct.value.val = item
+  EditProduct.value.state = true
+  EditProduct.value.edit = true
 }
 
 const addingProd = (item) => {
   products.value.push(item);
-  wndProduct.value = false;
+  EditProduct.value.state = false;
 }
 
 const delProd = (item) => {
   let inx = products.value.findIndex(e => e.product.id == item._product)
   products.value.splice(inx, 1);
-  wndProduct.value = false;
+  EditProduct.value.state = false;
 }
 
 const ModifyProd = (item) => {
   console.log(item);
   let inx = products.value.findIndex(e => e.product.id == item._product)
   products.value.splice(inx, 1, item);
-  wndProduct.value = false;
+  EditProduct.value.state = false;
 }
 
 const getPrint = async () => {
@@ -312,6 +308,14 @@ const getPrint = async () => {
   } else {
     printers.value.state = true
     printers.value.opts = resp
+  }
+}
+
+const reset = () => {
+  EditProduct.value = {
+    state: false,
+    val: null,
+    edit: false
   }
 }
 

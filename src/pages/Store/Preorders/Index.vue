@@ -32,7 +32,7 @@
         <q-card-section>
           <div class="text-h6 text-center">Total Orders</div>
           <div class="text-h4 text-center"> <q-badge color="primary" class="text-h4 text-center">{{ orders?.length
-              }}</q-badge></div>
+          }}</q-badge></div>
         </q-card-section>
 
       </q-card>
@@ -54,7 +54,7 @@
       <q-card class="my-card col">
         <q-card-section>
           <div class="text-h6 text-center">Orders Terminadas</div>
-          <div class="text-h4 text-center"> <q-badge color="primary" class="text-h4 text-center">{{ orders?.filter(e =>
+          <div class="text-h4 text-center"> <q-badge color="primary" class="text-h4 text-center">{{orders?.filter(e =>
             e._state == 9).length }}</q-badge></div>
         </q-card-section>
 
@@ -77,7 +77,7 @@
         </q-card-section>
         <q-card-section class="row">
           <div class=" col">Pedidos Terminados</div>
-          <div class=" col">{{ orders?.filter(e => e._state == 9).length }}</div>
+          <div class=" col">{{orders?.filter(e => e._state == 9).length}}</div>
         </q-card-section>
       </q-card>
       <q-separator spaced inset vertical dark />
@@ -126,7 +126,8 @@
     </div>
 
     <q-page-sticky position="bottom-right" :offset="[20, 20]">
-      <q-fab  vertical-actions-align="right" color="primary" text-color="white" icon="keyboard_arrow_left" :direction="isMobile ? 'up' : 'left'">
+      <q-fab vertical-actions-align="right" color="primary" text-color="white" icon="keyboard_arrow_left"
+        :direction="isMobile ? 'up' : 'left'">
         <!-- <template v-slot:label="{ opened }" v-if="!isMobile" >
           <div :class="{ 'example-fab-animate--hover': opened !== true }">
             {{ opened !== true ? 'Opciones' : 'Cerrar' }}
@@ -143,7 +144,7 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted, onBeforeUnmount } from 'vue'
 import { useRoute, useRouter } from 'vue-router';
 import dayjs from 'dayjs';
 import pvtpi from 'src/API/PreordersApi.js'
@@ -156,29 +157,6 @@ import Accounts from 'src/API/Accounts';
 const piniaAccount = useAccountStore();
 const $q = useQuasar();
 const $router = useRouter();
-
-
-$sktpvt.connect();
-
-$sktpvt.on('connect', () => {
-  console.log('Conectado al servidor')
-  $sktpvt.emit('ParametrosConexion', piniaAccount)
-});
-$sktpvt.on('PedidoCreado', (param) => {
-  orders.value.push(param)
-  console.log(`${param.user.nick} creo el pedido ${param.id} :)`)
-})
-$sktpvt.on('updateUserList', (users) => {
-  connected.value = users
-})
-
-$sktpvt.on('updOrder', (params) => {
-  console.log(params)
-  let inx = orders.value.findIndex(e => e.id == params.id)
-  orders.value[inx].state = params.state
-  orders.value[inx]._state = params._state
-
-})
 
 // referencias
 
@@ -257,6 +235,37 @@ const getOrders = async () => {
   }
 }
 
+// metodos Socket
+
+const PedidoCreado = (param) => {
+  orders.value.push(param)
+  console.log(`${param.user.nick} creo el pedido ${param.id} :)`)
+}
+const updateUserList = (users) => {
+  console.log(users)
+  console.log('user')
+  connected.value = users
+}
+
+const updOrder = (param) => {
+  console.log(param)
+  let inx = orders.value.findIndex(e => e.id == param.id)
+  orders.value[inx].state = param.state
+  orders.value[inx]._state = param._state
+}
+
 init()
+
+onMounted(() => {
+  $sktpvt.on('PedidoCreado', PedidoCreado)
+  $sktpvt.on('updateUserList', updateUserList)
+  $sktpvt.on('updOrder', updOrder)
+})
+
+onBeforeUnmount(() => {
+  $sktpvt.off('PedidoCreado', PedidoCreado)
+  $sktpvt.off('updateUserList', updateUserList)
+  $sktpvt.off('updOrder', updOrder)
+})
 
 </script>

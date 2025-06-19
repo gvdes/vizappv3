@@ -83,7 +83,7 @@ import indpi from 'src/API/IndicatorApi.js'
 import { $sktind } from 'boot/socket'
 const $q = useQuasar();
 
-$sktind.connect()
+// $sktind.connect()
 
 $sktind.on('NotifyForm', (param) => {
   console.log(param);

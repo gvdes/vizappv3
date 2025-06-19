@@ -22,8 +22,6 @@
         </q-expansion-item>
       </div>
     </div>
-
-
     <div>
       <q-list>
         <q-item class="text-center bg-white">
@@ -57,13 +55,13 @@
           <q-separator spaced inset vertical dark />
           <q-item-section>
             <q-item-label overline>Piezas</q-item-label>
-            <q-item-label caption>{{ order.bodie?.reduce((acc, item) => acc + item.amount_require, 0)
+            <q-item-label caption>{{order.bodie?.reduce((acc, item) => acc + item.amount_require, 0)
               }}</q-item-label>
           </q-item-section>
           <q-separator spaced inset vertical dark />
           <q-item-section>
             <q-item-label overline>Total</q-item-label>
-            <q-item-label caption>$ {{ order.bodie?.reduce((acc, item) => acc + parseFloat(item.total), 0)
+            <q-item-label caption>$ {{order.bodie?.reduce((acc, item) => acc + parseFloat(item.total), 0)
               }}</q-item-label>
           </q-item-section>
         </q-item>
@@ -81,8 +79,8 @@
           <div class="row">
             <div class="col">Pedido {{ order.order.id }}</div>
             <div class="col">Modelos: {{ order.order.bodie.length }}</div>
-            <div class="col">Piezas: {{ order.order.bodie.reduce((acc, item) => acc + item.amount_require, 0) }}</div>
-            <div class="col">Total: {{ order.order.bodie.reduce((acc, item) => acc + parseFloat(item.total), 0) }}</div>
+            <div class="col">Piezas: {{order.order.bodie.reduce((acc, item) => acc + item.amount_require, 0)}}</div>
+            <div class="col">Total: {{order.order.bodie.reduce((acc, item) => acc + parseFloat(item.total), 0)}}</div>
 
 
           </div>
@@ -168,7 +166,7 @@
 
 
 <script setup>
-import { ref, watch, onBeforeMount, computed, onMounted } from 'vue';
+import { ref, watch, onBeforeMount, computed, onMounted, onBeforeUnmount } from 'vue';
 import ProductFinder from 'src/components/ProductFinder.vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useQuasar, LocalStorage, Loading } from 'quasar';
@@ -181,15 +179,6 @@ const $q = useQuasar();
 const $route = useRoute();
 const $router = useRouter()
 const piniaAccount = useAccountStore();
-
-
-$sktpvt.connect();
-$sktpvt.on('connect', () => {
-  console.log('Conectado al servidor')
-  $sktpvt.emit('ParametrosConexion', piniaAccount)
-});
-
-
 
 const order = ref(null);
 const wndProduct = ref(false);
@@ -238,25 +227,15 @@ const init = async () => {
     $q.loading.hide();
     $router.push(`/store/${piniaAccount.join}/preorders/checkout`)
   } else {
-    if(resp.order._created_by === piniaAccount.account.id){
-      order.value = (resp.order)
+    order.value = (resp.order)
     if (resp.order._order_by) {
       firstProducts.value = resp.order.order.bodie
     }
     products.value = resp.order.bodie
-    // insertPro.value = resp.order.id
     unit_measure.value.opts = resp.unit_measures
     rules.value = resp.rules;
     console.log(resp);
     $q.loading.hide();
-    }else{
-      $router.push(`/store/${piniaAccount.join}/preorders/checkout`)
-      $q.notify({
-      message: 'No puedes ingresar a este Pedido',
-      type: 'negative',
-      position: 'center'
-    })
-    }
 
   }
 }

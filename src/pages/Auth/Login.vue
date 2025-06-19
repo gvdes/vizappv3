@@ -2,16 +2,15 @@
   <q-page padding class="flex flex-center bg-grey-3">
     <transition appear enter-active-class="animated fadeInUp" leave-active-class="animated fadeOutDown">
       <div>
-        <div class="text-center q-pb-md"><q-icon name="fab fa-atlassian fa-rotate-180" color="primary" size="50px"/></div>
+        <!-- <div class="text-center q-pb-md"><q-icon name="fab fa-atlassian fa-rotate-180" color="primary" size="50px"/></div> -->
 
-        <!-- <div class="logo-container flex">
-
-          <q-avatar size="200px">
-
-            <img :src="currentCandyImage" alt="Candy Logo" class="justify-center logo-image" />
-          </q-avatar>
+        <div class="logo-container flex">
+          <!-- <q-avatar size="200px"> -->
+          <img :src="currentCandyImage" alt="Candy Logo"
+            style="width: 200px; height: 180px;  display: flex; justify-content: center; align-items: center; " />
+          <!-- </q-avatar> -->
         </div>
-        <q-separator spaced inset vertical dark /> -->
+        <q-separator spaced inset vertical dark />
         <q-card flat>
           <div v-if="failReq.state" class="q-pa-md bg-negative row items-center text-grey-2">
             <q-icon size="sm" :name="errorsBank[failReq.code].i" color="white" />
@@ -64,7 +63,7 @@ const errorsBank = {
 
 const focusnick = ref(false)
 const isAnimating = ref(false); // Whether the animation is running
-const currentFrame = ref(0); // Current frame of crouching animation
+const currentFrame = ref(1); // Current frame of crouching animation
 const iptnick = ref(null); // hace referencia al elemento (input) del nick|tel|email
 const iptpass = ref(null); // hace referencia al elemento (input) de la contraseña
 const nick = ref({ v: "" }); // bind al dato del nick
@@ -72,6 +71,9 @@ const pass = ref({ v: "", dim: true }); // bind al dato de la contraseña , dim:
 const btnLogin = ref({ l: false, d: false }); // refiera al elemento boton y sus propiedades l:loading, d:disable
 const tries = ref(0); // numero de intentos de inisio de sesion
 const failReq = ref({ state: false, code: 0 });// se activa cuando hubo intento fallido de inisio de sesion
+const animationRunning = ref(false)
+let animationDirection = null;
+let currentAnimation = null;
 
 const trySignin = async () => {
   failReq.value.state = false; // regresa a un estado inicial el mensaje de error (si existe)
@@ -118,41 +120,48 @@ const trySignin = async () => {
 
 const currentCandyImage = computed(() => {
   if (isAnimating.value) {
-    return `src/assets/crounching/candycrouching${currentFrame.value}.png`;
+    const folder = animationDirection === 'crouch' ? 'crounching' : 'incrounching';
+    return `src/assets/${folder}/frames_robot_candy_${currentFrame.value}.png`;
   }
   if (focusnick.value) {
-    const length = nick.value.v.length;
-    const index = Math.floor(length / 2) + Math.floor(length / 3);
-    const imageNumber = (index % 20) + 1; // Candy images 1 to 20
-    return `src/assets/seeing/candy${imageNumber}.png`;
-  }
-  return `src/assets/crounching/cantdystatic.png`;
-})
+  const length = nick.value.v.length;
+  const imageNumber = Math.min(Math.floor(length / 2) + 1, 9);
+  return `src/assets/seeing/frames_robot_candy_${imageNumber}.png`;
+}
+  return `src/assets/crounching/frames_robot_candy_1.png`;
+});
 
 const onFocus = () => {
   focusnick.value = true;
-  startCrouching();
+  animate('crouch');
 };
 
-// Handle input blur
 const onBlur = () => {
   focusnick.value = false;
-  isAnimating.value = false;
+  animate('incrouch');
 };
-
-const startCrouching = async () => {
+const animate = async (direction) => {
+  if (isAnimating.value && animationDirection === direction) return;
   isAnimating.value = true;
-  const totalFrames = 10;
+  animationDirection = direction;
 
-  for (let i = 1; i <= totalFrames; i++) {
-    currentFrame.value = i;
-    await new Promise((resolve) => setTimeout(resolve, 5)); // 100ms per frame
-    if (!focusnick.value) {
-      break;
+  const totalFrames = 5;
+  const frames = direction === 'crouch'
+    ? [...Array(totalFrames).keys()].map(i => i + 1)
+    : [...Array(totalFrames).keys()].map(i => totalFrames - i);
+
+  for (const frame of frames) {
+    if ((direction === 'crouch' && !focusnick.value) ||
+      (direction === 'incrouch' && focusnick.value)) {
+      break; // Cancelar si cambia el foco durante la animación
     }
+    currentFrame.value = frame;
+    await new Promise(resolve => setTimeout(resolve, 100)); // Menor tiempo = más fluido
   }
+
   isAnimating.value = false;
 };
+
 
 
 const canTrySign = computed(() => nick.value.v.length > 3 && pass.value.v.length > 4);
