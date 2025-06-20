@@ -2,12 +2,12 @@
   <q-page padding class="flex flex-center bg-grey-3">
     <transition appear enter-active-class="animated fadeInUp" leave-active-class="animated fadeOutDown">
       <div>
-        <!-- <div class="text-center q-pb-md"><q-icon name="fab fa-atlassian fa-rotate-180" color="primary" size="50px"/></div> -->
+        <div class="text-center q-pb-md"><q-icon name="fab fa-atlassian fa-rotate-180" color="primary" size="50px"/></div>
 
         <div class="logo-container flex">
           <!-- <q-avatar size="200px"> -->
-          <img :src="currentCandyImage" alt="Candy Logo"
-            style="width: 200px; height: 180px;  display: flex; justify-content: center; align-items: center; " />
+          <!-- <img :src="currentCandyImage" alt="Candy Logo"
+            style="width: 200px; height: 180px;  display: flex; justify-content: center; align-items: center; " /> -->
           <!-- </q-avatar> -->
         </div>
         <q-separator spaced inset vertical dark />
