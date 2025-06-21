@@ -1,0 +1,1 @@
+import{Q as e}from"./QPage.09432c63.js";import{_ as o,o as s,e as t,w as r,J as a}from"./index.29f8f289.js";const c={},d=a("div",{class:"q-pa-md"},[a("div",{class:"text-h4 q-ma-md"},"Hello from Radio")],-1);function _(i,l){return s(),t(e,null,{default:r(()=>[d]),_:1})}var m=o(c,[["render",_]]);export{m as default};

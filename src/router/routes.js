@@ -216,7 +216,7 @@ const routes = [
           { path: 'proceedings', name: 'Actas Administrativas', component: () => import('pages/Cluster/RRHH/proceedings.vue') },
           { path: 'sanctions', name: 'Sanciones', component: () => import('pages/Cluster/RRHH/sanctions.vue') },
           { path: 'commitment', name: 'Cartas Compromiso', component: () => import('pages/Cluster/RRHH/commitment.vue') },
-          { path: 'roster', name: 'Lista', component: () => import('pages/Cluster/RRHH/Roster.vue') },
+          { path: 'roster', name: 'Nomina', component: () => import('pages/Cluster/RRHH/Roster.vue') },
         ]
       },
       {
