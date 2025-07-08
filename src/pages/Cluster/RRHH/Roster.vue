@@ -11,7 +11,7 @@
         </div>
       </div>
     </div>
-    <div v-if="report.length > 0" class="text-center text-bold text-h6">
+    <div v-if="report.length > 0" class="q-mr-xl  text-center text-h6">
       Reporte Listo ({{ report.length }})
     </div>
     <q-separator spaced inset vertical dark />
@@ -23,7 +23,6 @@
 
   </q-page>
 </template>
-
 <script setup>
 import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router';
@@ -35,8 +34,6 @@ const $router = useRouter();
 import ExcelJS from 'exceljs';
 import indpi from 'src/API/IndicatorApi.js';
 import dayjs from 'dayjs';
-// import { vizmedia } from 'boot/axios';
-
 
 const staffs = ref([]);
 const devices = ref({
@@ -53,13 +50,16 @@ const table = ref({
     { name: 'id', label: 'ID', field: r => r.id, align: 'center' },
     { name: 'name', label: 'NOMBRE', field: r => r.nombre, align: 'left' },
     { name: 'store', label: 'SUCURSAL', field: r => r.sucursal, align: 'center' },
+    { name: 'device', label: 'DISPOSITIVO', field: r => r.device, align: 'left' },
     { name: 'absence', label: 'FALTAS', field: r => Number(r.faltasSem), align: 'center' },
     { name: 'retardment', label: 'RETARDOS', field: r => Number(r.retardosSem), align: 'center' },
     { name: 'vacation', label: 'VACACIONES', field: r => Number(r.vacacionesSem), align: 'center' },
     { name: 'descount', label: 'DESCUENTO', field: r => Number(r.descuentoExtra), align: 'center' },
+    { name: 'faltas', label: 'T FALTAS', field: r => Number(r.descuentoFaltas), align: 'center' },
     { name: 'perception', label: 'T PERCEPCIONES', field: r => Number(r.totalPercepciones), align: 'center' },
     { name: 'deduccion', label: 'T DEDUCCIONES', field: r => Number(r.totalDeducciones), align: 'center' },
-    { name: 'faltas', label: 'T FALTAS', field: r => Number(r.descuentoFaltas), align: 'center' },
+    { name: 'imss', label: 'IMSS', field: r => Number(r.imss), align: 'center' },
+    { name: 'prestamo', label: 'PRESTAMO', field: r => Number(r.prestamo), align: 'center' },
     { name: 'neto', label: 'T NETO', field: r => Number(r.neto), align: 'center' },
   ]
 })
@@ -83,8 +83,6 @@ const init = async () => {
     $q.loading.hide();
   }
 }
-
-
 
 const clickFile = () => {
   inputFile.value.click()
@@ -134,15 +132,12 @@ const readFile = () => {
         const incDescontar = 0;
         const uniforme = 0;
         const pension = 0;
-
         const descuentoExtra = Number(r.SANCIONES) + Number((r.RETARDOS * 100));
         const faltas = Number(r.FALTAS || 0);
-        const descuentoFaltas = Math.round((sueldo / 7) * faltas);
-
+        const descuentoFaltas = parseFloat((sueldo / 7) * faltas).toFixed(2);
         const totalPercepciones = sueldo + bono + incPagar + vacaciones;
-        const totalDeducciones = lentes + prestamo + imss + incDescontar + uniforme + pension + descuentoExtra + descuentoFaltas;
+        const totalDeducciones = lentes + prestamo + imss + incDescontar + uniforme + pension + descuentoExtra + Number(descuentoFaltas);
         const neto = totalPercepciones - totalDeducciones;
-
         const anio = r.ANIO;
         const semana = r.semana;
         const nombre = r.NOMBRE;
@@ -150,6 +145,7 @@ const readFile = () => {
         const faltasSem = faltas;
         const retardosSem = Number(r.RETARDOS);
         const vacacionesSem = Number(r.VACACIONES);
+        const device =r.DISPOSITIVO;
 
         return {
           anio,
@@ -157,13 +153,16 @@ const readFile = () => {
           id,
           nombre,
           sucursal,
+          device,
           faltasSem,
           retardosSem,
           vacacionesSem,
           descuentoExtra,
+          descuentoFaltas,
           totalPercepciones,
           totalDeducciones,
-          descuentoFaltas,
+          imss,
+          prestamo,
           neto
         };
 
@@ -181,11 +180,9 @@ const readFile = () => {
         const pension = Number(String(excelRow["PENSION"]).replace(/[^0-9.-]+/g, "") || 0);
         const descuentoExtra = Number(r.SANCIONES) + Number((r.RETARDOS * 100))
         const faltas = Number(r.FALTAS || 0);
-
-        const descuentoFaltas = Math.round((sueldo / 7) * faltas);
-
+        const descuentoFaltas = parseFloat((sueldo / 7) * faltas).toFixed(2);
         const totalPercepciones = sueldo + bono + incPagar + vacaciones;
-        const totalDeducciones = lentes + prestamo + imss + incDescontar + uniforme + pension + descuentoExtra + descuentoFaltas;
+        const totalDeducciones = lentes + prestamo + imss + incDescontar + uniforme + pension + descuentoExtra + Number(descuentoFaltas);
         const neto = totalPercepciones - totalDeducciones;
         const anio = r.ANIO;
         const semana = r.semana;
@@ -195,26 +192,27 @@ const readFile = () => {
         const faltasSem = Number(r.FALTAS);
         const retardosSem = Number(r.RETARDOS);
         const vacacionesSem = Number(r.VACACIONES);
+        const device = r.DISPOSITIVO;
         return {
           anio,
           semana,
           id,
           nombre,
           sucursal,
+          device,
           faltasSem,
           retardosSem,
           vacacionesSem,
           descuentoExtra,
+          descuentoFaltas,
           totalPercepciones,
           totalDeducciones,
-          descuentoFaltas,
+          imss,
+          prestamo,
           neto
         };
       }
-      // return r; // si no se encontró en el Excel, devuélvelo igual
-
     });
-
     console.log(enrichedReport);
     roster.value = enrichedReport;
     $q.loading.hide();

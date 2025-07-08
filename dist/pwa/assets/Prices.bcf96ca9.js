@@ -1,0 +1,1 @@
+import{Q as e}from"./QPage.363b4a84.js";import{_ as r,o as t,e as a,w as c,W as o}from"./index.6ac4aac4.js";const s={},_=o(" Prices ");function n(i,d){return t(),a(e,{padding:""},{default:c(()=>[_]),_:1})}var m=r(s,[["render",n]]);export{m as default};

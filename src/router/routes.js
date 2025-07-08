@@ -124,6 +124,8 @@ const routes = [
           { path: 'report', name: 'rpt', component: () => import('pages/Store/RRHH/Report.vue') },
           { path: 'justifications', name: 'jst', component: () => import('pages/Store/RRHH/Justification.vue') },
           { path: 'turns', name: 'trn', component: () => import('pages/Store/RRHH/Turn.vue') },
+          { path: 'sanctions', name: 'Sanciones', component: () => import('src/pages/Store/RRHH/sanctions.vue') },
+          { path: 'commitment', name: 'Cartas Compromiso', component: () => import('src/pages/Store/RRHH/commitment.vue') },
         ],
       },
       {
@@ -214,9 +216,9 @@ const routes = [
           { path: 'report', name: 'Asistencia/Reporte', component: () => import('pages/Cluster/RRHH/Report.vue') },
           { path: 'justification', name: 'Asistencia/Justificaciones', component: () => import('pages/Cluster/RRHH/Justification.vue') },
           { path: 'proceedings', name: 'Actas Administrativas', component: () => import('pages/Cluster/RRHH/proceedings.vue') },
-          { path: 'sanctions', name: 'Sanciones', component: () => import('pages/Cluster/RRHH/sanctions.vue') },
-          { path: 'commitment', name: 'Cartas Compromiso', component: () => import('pages/Cluster/RRHH/commitment.vue') },
-          { path: 'roster', name: 'Nomina', component: () => import('pages/Cluster/RRHH/Roster.vue') },
+          // { path: 'sanctions', name: 'Sanciones', component: () => import('pages/Cluster/RRHH/sanctions.vue') },
+          // { path: 'commitment', name: 'Cartas Compromiso', component: () => import('pages/Cluster/RRHH/commitment.vue') },
+          { path: 'roster', name: 'Nomina', component: () => import('src/pages/Cluster/RRHH/Roster.vue') },
         ]
       },
       {
