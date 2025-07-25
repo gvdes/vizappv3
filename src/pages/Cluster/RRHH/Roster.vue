@@ -56,6 +56,7 @@ const table = ref({
     { name: 'vacation', label: 'VACACIONES', field: r => Number(r.vacacionesSem), align: 'center' },
     { name: 'descount', label: 'DESCUENTO', field: r => Number(r.descuentoExtra), align: 'center' },
     { name: 'faltas', label: 'T FALTAS', field: r => Number(r.descuentoFaltas), align: 'center' },
+    { name: 'domingo', label: 'DOMINGO', field: r => Number(r.domingo), align: 'center' },
     { name: 'perception', label: 'T PERCEPCIONES', field: r => Number(r.totalPercepciones), align: 'center' },
     { name: 'deduccion', label: 'T DEDUCCIONES', field: r => Number(r.totalDeducciones), align: 'center' },
     { name: 'imss', label: 'IMSS', field: r => Number(r.imss), align: 'center' },
@@ -135,9 +136,7 @@ const readFile = () => {
         const descuentoExtra = Number(r.SANCIONES) + Number((r.RETARDOS * 100));
         const faltas = Number(r.FALTAS || 0);
         const descuentoFaltas = parseFloat((sueldo / 7) * faltas).toFixed(2);
-        const totalPercepciones = sueldo + bono + incPagar + vacaciones;
-        const totalDeducciones = lentes + prestamo + imss + incDescontar + uniforme + pension + descuentoExtra + Number(descuentoFaltas);
-        const neto = totalPercepciones - totalDeducciones;
+
         const anio = r.ANIO;
         const semana = r.semana;
         const nombre = r.NOMBRE;
@@ -146,6 +145,10 @@ const readFile = () => {
         const retardosSem = Number(r.RETARDOS);
         const vacacionesSem = Number(r.VACACIONES);
         const device =r.DISPOSITIVO;
+        const domingo = r.DOMINGO == "DESCANSO" ? 0 :  parseFloat((sueldo / 7) * 2).toFixed(2);
+        const totalPercepciones = sueldo + bono + incPagar + vacaciones + domingo;
+        const totalDeducciones = lentes + prestamo + imss + incDescontar + uniforme + pension + descuentoExtra + Number(descuentoFaltas);
+        const neto = totalPercepciones - totalDeducciones;
 
         return {
           anio,
@@ -159,6 +162,7 @@ const readFile = () => {
           vacacionesSem,
           descuentoExtra,
           descuentoFaltas,
+          domingo,
           totalPercepciones,
           totalDeducciones,
           imss,
@@ -181,9 +185,7 @@ const readFile = () => {
         const descuentoExtra = Number(r.SANCIONES) + Number((r.RETARDOS * 100))
         const faltas = Number(r.FALTAS || 0);
         const descuentoFaltas = parseFloat((sueldo / 7) * faltas).toFixed(2);
-        const totalPercepciones = sueldo + bono + incPagar + vacaciones;
-        const totalDeducciones = lentes + prestamo + imss + incDescontar + uniforme + pension + descuentoExtra + Number(descuentoFaltas);
-        const neto = totalPercepciones - totalDeducciones;
+
         const anio = r.ANIO;
         const semana = r.semana;
         // const idChecador = r.ID;
@@ -193,6 +195,10 @@ const readFile = () => {
         const retardosSem = Number(r.RETARDOS);
         const vacacionesSem = Number(r.VACACIONES);
         const device = r.DISPOSITIVO;
+        const domingo = r.DOMINGO == "DESCANSO" ? 0 :  parseFloat((sueldo / 7) * 2).toFixed(2);
+        const totalPercepciones = sueldo + bono + incPagar + vacaciones + domingo;
+        const totalDeducciones = lentes + prestamo + imss + incDescontar + uniforme + pension + descuentoExtra + Number(descuentoFaltas);
+        const neto = totalPercepciones - totalDeducciones;
         return {
           anio,
           semana,
@@ -205,11 +211,13 @@ const readFile = () => {
           vacacionesSem,
           descuentoExtra,
           descuentoFaltas,
+          domingo,
           totalPercepciones,
           totalDeducciones,
           imss,
           prestamo,
-          neto
+          neto,
+
         };
       }
     });

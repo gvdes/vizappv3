@@ -1,0 +1,1 @@
+import{v as r}from"./axios.d9af921e.js";var n={trySignin(i){return r.post("signin",i).then(t=>t.data).catch(t=>t)},firstLogin(i){return r.post("kraken/firstlogin",i).then(t=>t.data).catch(t=>t)}};export{n as A};
