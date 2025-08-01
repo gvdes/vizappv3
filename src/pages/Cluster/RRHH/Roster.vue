@@ -135,7 +135,7 @@ const readFile = () => {
         const pension = 0;
         const descuentoExtra = Number(r.SANCIONES) + Number((r.RETARDOS * 100));
         const faltas = Number(r.FALTAS || 0);
-        const descuentoFaltas = parseFloat((sueldo / 7) * faltas).toFixed(2);
+        const descuentoFaltas = parseFloat((sueldo / 7) * faltas);
 
         const anio = r.ANIO;
         const semana = r.semana;
@@ -145,7 +145,7 @@ const readFile = () => {
         const retardosSem = Number(r.RETARDOS);
         const vacacionesSem = Number(r.VACACIONES);
         const device =r.DISPOSITIVO;
-        const domingo = r.DOMINGO == "DESCANSO" ? 0 :  parseFloat((sueldo / 7) * 2).toFixed(2);
+        const domingo = r.DOMINGO == "DESCANSO" ? 0 :  parseFloat((sueldo / 7) * 2);
         const totalPercepciones = sueldo + bono + incPagar + vacaciones + domingo;
         const totalDeducciones = lentes + prestamo + imss + incDescontar + uniforme + pension + descuentoExtra + Number(descuentoFaltas);
         const neto = totalPercepciones - totalDeducciones;
@@ -195,7 +195,7 @@ const readFile = () => {
         const retardosSem = Number(r.RETARDOS);
         const vacacionesSem = Number(r.VACACIONES);
         const device = r.DISPOSITIVO;
-        const domingo = r.DOMINGO == "DESCANSO" ? 0 :  parseFloat((sueldo / 7) * 2).toFixed(2);
+        const domingo = r.DOMINGO == "DESCANSO" ? 0 :  parseFloat((sueldo / 7) * 2);
         const totalPercepciones = sueldo + bono + incPagar + vacaciones + domingo;
         const totalDeducciones = lentes + prestamo + imss + incDescontar + uniforme + pension + descuentoExtra + Number(descuentoFaltas);
         const neto = totalPercepciones - totalDeducciones;
