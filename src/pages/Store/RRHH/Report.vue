@@ -92,7 +92,7 @@ const exportTable = () => {
   const targetColumns = ['H', 'I', 'J', 'K', 'L','M','N'];
 
   const worksheet = workbook.addWorksheet(`Reporte`);
-  const keys = Object.keys(report.value[0]).map(i => i).filter(key => key !== 'SANCIONES') // elimina 'SANCIONES'
+  const keys = Object.keys(report.value[0]).map(i => i).filter(key => key !== 'SANCIONES' && key !== 'SANCION') // elimina 'SANCIONES'
   .concat('DESCUENTOS');
   worksheet.addRow(keys);
   report.value.forEach((row) => {

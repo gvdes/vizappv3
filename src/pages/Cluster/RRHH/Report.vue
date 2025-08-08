@@ -92,7 +92,7 @@ const table = ref({
     {name:'absence',label:'FALTAS',field:r=>r.FALTAS, align:'left'},
     {name:'retardment',label:'RETARDOS',field:r=>r.RETARDOS, align:'left'},
     {name:'vacation',label:'VACACIONES',field:r=>r.VACACIONES, align:'left'},
-    // {name:'sanctions',label:'SANCIONES',field:r=>r.SANCIONES, align:'left'},
+    // {name:'sanctions',label:'SANCIONES',field:r=>r.SANCIONES ?? 0, align:'left'},
     {name:'descount',label:'DESCUENTO',field:r=>Number(r.SANCIONES) + Number((r.RETARDOS * 100)), align:'left'},
   ]
 })
@@ -149,7 +149,7 @@ const exportTable = () => {
   const targetColumns = ['H', 'I', 'J', 'K', 'L', 'M', 'N'];
 
   const worksheet = workbook.addWorksheet(`Reporte`);
-  const keys = Object.keys(mosconfil.value[0]).map(i => i).filter(key => key !== 'SANCIONES') // elimina 'SANCIONES'
+  const keys = Object.keys(mosconfil.value[0]).map(i => i).filter(key => key !== 'SANCIONES' && key !== 'SANCION') // elimina 'SANCIONES'
   .concat('DESCUENTOS');
   // keys.push('DESCUENTOS');
   worksheet.addRow(keys);

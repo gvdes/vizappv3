@@ -1,1 +1,0 @@
-import{v as o}from"./axios.b6c0eeb3.js";import{u as n}from"./Account.7b6ef7a0.js";const a=n();var s={search(e){let t=`/pfinder/${a.join}?${e}`;return o.get(t).then(r=>r.data).catch(r=>({error:r.response}))}};export{s as P};

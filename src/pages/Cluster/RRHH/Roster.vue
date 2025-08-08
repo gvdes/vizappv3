@@ -34,7 +34,7 @@ const $router = useRouter();
 import ExcelJS from 'exceljs';
 import indpi from 'src/API/IndicatorApi.js';
 import dayjs from 'dayjs';
-
+//44, 70
 const staffs = ref([]);
 const devices = ref({
   val: 'TODOS',
@@ -55,6 +55,7 @@ const table = ref({
     { name: 'retardment', label: 'RETARDOS', field: r => Number(r.retardosSem), align: 'center' },
     { name: 'vacation', label: 'VACACIONES', field: r => Number(r.vacacionesSem), align: 'center' },
     { name: 'descount', label: 'DESCUENTO', field: r => Number(r.descuentoExtra), align: 'center' },
+    { name: 'sanctions', label: 'SANCIONES', field: r => Number(r.sanciones), align: 'center' },
     { name: 'faltas', label: 'T FALTAS', field: r => Number(r.descuentoFaltas), align: 'center' },
     { name: 'domingo', label: 'DOMINGO', field: r => Number(r.domingo), align: 'center' },
     { name: 'perception', label: 'T PERCEPCIONES', field: r => Number(r.totalPercepciones), align: 'center' },
@@ -62,6 +63,7 @@ const table = ref({
     { name: 'imss', label: 'IMSS', field: r => Number(r.imss), align: 'center' },
     { name: 'prestamo', label: 'PRESTAMO', field: r => Number(r.prestamo), align: 'center' },
     { name: 'neto', label: 'T NETO', field: r => Number(r.neto), align: 'center' },
+    { name: 'sanction', label: 'SANCION', field: r => r.sancion, align: 'center' },
   ]
 })
 
@@ -118,7 +120,9 @@ const readFile = () => {
       }
     });
 
-    const enrichedReport = report.value.map((r) => {
+    const filtrado = report.value.filter(item =>  !item.NOMBRE.toLowerCase().includes('seguridad'));
+
+    const enrichedReport = filtrado.map((r) => {
       const id = Number(r.ID);
       const excelRow = excelData[id];
 
@@ -133,9 +137,11 @@ const readFile = () => {
         const incDescontar = 0;
         const uniforme = 0;
         const pension = 0;
+        const sanciones = Number(r.SANCIONES);
         const descuentoExtra = Number(r.SANCIONES) + Number((r.RETARDOS * 100));
         const faltas = Number(r.FALTAS || 0);
-        const descuentoFaltas = parseFloat((sueldo / 7) * faltas);
+        // const descuentoFaltas = parseFloat((sueldo / 7) * faltas).toFixed(2);
+        const descuentoFaltas =  Number(r.DOMINGO != "DESCANSO" && faltas >= 1   ? parseFloat((sueldo / 7) * (faltas + 1)).toFixed(2) :  parseFloat((sueldo / 7) * faltas).toFixed(2));
 
         const anio = r.ANIO;
         const semana = r.semana;
@@ -145,9 +151,10 @@ const readFile = () => {
         const retardosSem = Number(r.RETARDOS);
         const vacacionesSem = Number(r.VACACIONES);
         const device =r.DISPOSITIVO;
-        const domingo = r.DOMINGO == "DESCANSO" ? 0 :  parseFloat((sueldo / 7) * 2);
-        const totalPercepciones = sueldo + bono + incPagar + vacaciones + domingo;
-        const totalDeducciones = lentes + prestamo + imss + incDescontar + uniforme + pension + descuentoExtra + Number(descuentoFaltas);
+        const domingo = Number(r.DOMINGO == "DESCANSO" ? 0 :  parseFloat((sueldo / 7) * 2).toFixed(2));
+        const totalPercepciones = sueldo + bono + incPagar + vacaciones + Number(domingo);
+        const totalDeducciones = Number(lentes + prestamo + imss + incDescontar + uniforme + pension + descuentoExtra + Number(descuentoFaltas));
+        const sancion = r.SANCION ?? '';
         const neto = totalPercepciones - totalDeducciones;
 
         return {
@@ -162,12 +169,14 @@ const readFile = () => {
           vacacionesSem,
           descuentoExtra,
           descuentoFaltas,
+          sanciones,
           domingo,
           totalPercepciones,
           totalDeducciones,
           imss,
           prestamo,
-          neto
+          neto,
+          sancion
         };
 
 
@@ -182,9 +191,10 @@ const readFile = () => {
         const incDescontar = Number(String(excelRow["INCIDENCIAS X DESCONTAR"]).replace(/[^0-9.-]+/g, "") || 0);
         const uniforme = Number(String(excelRow["UNIFORME"]).replace(/[^0-9.-]+/g, "") || 0);
         const pension = Number(String(excelRow["PENSION"]).replace(/[^0-9.-]+/g, "") || 0);
+        const sanciones = Number(r.SANCIONES);
         const descuentoExtra = Number(r.SANCIONES) + Number((r.RETARDOS * 100))
         const faltas = Number(r.FALTAS || 0);
-        const descuentoFaltas = parseFloat((sueldo / 7) * faltas).toFixed(2);
+        const descuentoFaltas =  Number(r.DOMINGO != "DESCANSO" && faltas >= 1 ? parseFloat((sueldo / 7) * (faltas + 1)).toFixed(2) :  parseFloat((sueldo / 7) * faltas).toFixed(2));
 
         const anio = r.ANIO;
         const semana = r.semana;
@@ -195,10 +205,11 @@ const readFile = () => {
         const retardosSem = Number(r.RETARDOS);
         const vacacionesSem = Number(r.VACACIONES);
         const device = r.DISPOSITIVO;
-        const domingo = r.DOMINGO == "DESCANSO" ? 0 :  parseFloat((sueldo / 7) * 2);
-        const totalPercepciones = sueldo + bono + incPagar + vacaciones + domingo;
-        const totalDeducciones = lentes + prestamo + imss + incDescontar + uniforme + pension + descuentoExtra + Number(descuentoFaltas);
+        const domingo = Number(r.DOMINGO == "DESCANSO" ? 0 :  parseFloat((sueldo / 7) * 2).toFixed(2));
+        const totalPercepciones = sueldo + bono + incPagar + vacaciones + Number(domingo);
+        const totalDeducciones = Number(lentes + prestamo + imss + incDescontar + uniforme + pension + descuentoExtra + Number(descuentoFaltas));
         const neto = totalPercepciones - totalDeducciones;
+        const sancion = r.SANCION ?? '';
         return {
           anio,
           semana,
@@ -211,17 +222,18 @@ const readFile = () => {
           vacacionesSem,
           descuentoExtra,
           descuentoFaltas,
+          sanciones,
           domingo,
           totalPercepciones,
           totalDeducciones,
           imss,
           prestamo,
           neto,
-
+          sancion
         };
       }
     });
-    console.log(enrichedReport);
+    // console.log(enrichedReport);
     roster.value = enrichedReport;
     $q.loading.hide();
   });
@@ -233,7 +245,7 @@ const exportTable = () => {
   const worksheet = workbook.addWorksheet(`Reporte`);
   const keys = Object.keys(roster.value[0]).map(i => i)
   const columns = keys.map((key, index) => {
-  const isLast = index === keys.length - 1;
+  const isLast = index === keys.length - 2;
   return {
     name: key.toUpperCase(),
     filterButton: true,
@@ -277,9 +289,6 @@ const exportTable = () => {
 
   downloadExcel();
 }
-
-
-
 
 init();
 </script>
