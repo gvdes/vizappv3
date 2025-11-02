@@ -1,0 +1,1 @@
+import{Q as a}from"./QPage.4766ca7a.js";import{o as s,e as t,w as o,J as e}from"./index.db04577a.js";const c=e("div",{class:"q-pa-md"},[e("div",{class:"text-h4 q-ma-sm"}," Hola desde el index ")],-1),m={__name:"Index",setup(r){return(d,_)=>(s(),t(a,null,{default:o(()=>[c]),_:1}))}};export{m as default};
